@@ -26,26 +26,34 @@ subprojects {
     }
 }
 
+project.ext.mcDir = new File(rootDir, project.ext.mcDir).absolutePath
 project.ext.runDir = new File(rootDir, project.ext.runDir).absolutePath
 tasks.register('runClient', JavaExec) {
     dependsOn project(':izmk-loader').tasks.jar
-    workingDir "$rootDir/run"
+    workingDir runDir
+    description 'Runs the Minecraft client with IZMK'
+
+    doFirst {
+        if (!file(runDir).exists()) {
+            file(runDir).mkdirs()
+        }
+    }
 
     jvmArgs = [
             "-Xmx4096m",
-            "-Dminecraft.client.jar=.minecraft\\versions\\1.20.6-Forge\\1.20.6-Forge.jar",
-            "-Djava.library.path=$runDir/natives",
+            "-Dminecraft.client.jar=$mcDir/1.20.6/1.20.6-Forge.jar",
+            "-Djava.library.path=$mcDir/natives",
             "-javaagent:${project(':izmk-loader').tasks.jar.outputs.files.singleFile}"
     ]
 
-    classpath = fileTree("$runDir/libs")
-    classpath += fileTree("$runDir/1.20.6/1.20.6-Forge.jar")
+    classpath = fileTree("$mcDir/libs")
+    classpath += fileTree("$mcDir/1.20.6/1.20.6-Forge.jar")
 
     args = [
             "--username", "xsvf",
             "--version", "IZMK",
             "--gameDir", runDir,
-            "--assetsDir", "$runDir/assets",
+            "--assetsDir", "$mcDir/assets",
             "--assetIndex", "16",
             "--accessToken", UUID.randomUUID().toString(),
             "--launchTarget", "forge_client"
