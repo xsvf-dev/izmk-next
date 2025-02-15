@@ -1,0 +1,58 @@
+plugins {
+    id 'com.gradleup.shadow' version '9.0.0-beta8' apply false
+}
+
+subprojects {
+    apply plugin: 'com.gradleup.shadow'
+
+    // mirror repositories to speed up builds
+    repositories {
+        mavenLocal()
+        maven { url 'https://lss233.littleservice.cn/repositories/minecraft/'}
+        maven { url 'https://repository.hanbings.io/proxy' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url "https://maven.aliyun.com/repository/central" }
+        maven { url "https://maven.aliyun.com/repository/public" }
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
+        maven { url "https://maven.aliyun.com/repository/apache-snapshots" }
+        maven { url 'https://jitpack.io' }
+    }
+
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.encoding = 'UTF-8'
+        }
+    }
+}
+
+project.ext.runDir = new File(rootDir, project.ext.runDir).absolutePath
+tasks.register('runClient', JavaExec) {
+    dependsOn project(':izmk-loader').tasks.jar
+    workingDir "$rootDir/run"
+
+    jvmArgs = [
+            "-Xmx4096m",
+            "-Dminecraft.client.jar=.minecraft\\versions\\1.20.6-Forge\\1.20.6-Forge.jar",
+            "-Djava.library.path=$runDir/natives",
+            "-javaagent:${project(':izmk-loader').tasks.jar.outputs.files.singleFile}"
+    ]
+
+    classpath = fileTree("$runDir/libs")
+    classpath += fileTree("$runDir/1.20.6/1.20.6-Forge.jar")
+
+    args = [
+            "--username", "xsvf",
+            "--version", "IZMK",
+            "--gameDir", runDir,
+            "--assetsDir", "$runDir/assets",
+            "--assetIndex", "16",
+            "--accessToken", UUID.randomUUID().toString(),
+            "--launchTarget", "forge_client"
+    ]
+
+    mainClass = 'net.minecraftforge.bootstrap.ForgeBootstrap'
+
+    standardOutput = System.out
+    errorOutput = System.err
+}
