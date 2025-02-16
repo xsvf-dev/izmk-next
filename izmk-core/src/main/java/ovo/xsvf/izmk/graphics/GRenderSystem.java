@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.opengl.GL46;
+import ovo.xsvf.izmk.event.EventManager;
+import ovo.xsvf.izmk.event.impl.events.Render2DEvent;
 import ovo.xsvf.izmk.misc.MinecraftInstance;
 
 public class GRenderSystem implements MinecraftInstance {
@@ -21,16 +23,16 @@ public class GRenderSystem implements MinecraftInstance {
     }
 
     public void onRender2D(GuiGraphics guiGraphics, float partialTick) {
-        renderPre();
+        // renderPre();
         {
             poseStack.pushPose();
             {
-                // TODO: Post render event here.
-                guiGraphics.drawString(mc.font, "Hello, World!", 10, 10, 0xFFFFFFFF);
+                Render2DEvent render2DEvent = new Render2DEvent(guiGraphics, partialTick);
+                EventManager.getInstance().call(render2DEvent);
             }
             poseStack.popPose();
         }
-        renderPost();
+        // renderPost();
     }
 
     private void renderPre() {

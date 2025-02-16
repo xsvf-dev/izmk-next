@@ -13,11 +13,13 @@ public class MixinGui {
     @Inject(method = "render", desc = "(Lnet/minecraft/client/gui/GuiGraphics;F)V")
     public static void renderGui(GuiGraphics pGuiGraphics, float pPartialTick, CallbackInfo callbackInfo) {
         GRenderSystem.getInstance().onRender2D(pGuiGraphics, pPartialTick);
+        /*
         GlStateManager._enableBlend();
         GlStateManager._disableCull();
         GlStateManager._disableDepthTest();
         com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
         com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+         */
     }
 
 }
