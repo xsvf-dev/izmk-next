@@ -2,8 +2,8 @@ package ovo.xsvf.izmk.module;
 
 import lombok.Getter;
 import lombok.Setter;
-import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.izmk.event.EventManager;
+import ovo.xsvf.izmk.misc.Constants;
 
 /**
  * @author LangYa466
@@ -11,7 +11,7 @@ import ovo.xsvf.izmk.event.EventManager;
  */
 @Getter
 @Setter
-public class Module extends IZMK {
+public abstract class Module implements Constants {
     private final String name;
     private final Category category;
     private final String description;

@@ -5,5 +5,6 @@ package ovo.xsvf.izmk.module;
  * @since 2025/2/16
  */
 public enum Category {
-    Combat, Render
+    Combat,
+    Render
 }

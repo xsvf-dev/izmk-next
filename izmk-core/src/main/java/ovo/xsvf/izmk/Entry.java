@@ -13,6 +13,5 @@ public class Entry {
         IZMK.logger = Logger.of("IZMK", logPort);
 
         MixinLoader.instance.loadMixin(MixinMinecraft.class);
-        MixinLoader.instance.loadMixin(MixinGui.class);
     }
 }

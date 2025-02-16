@@ -15,10 +15,9 @@ public class MixinMinecraft implements Constants {
     private static boolean initialized = false;
 
     @Inject(method = "tick", desc = "()V")
-    public static void tick(Minecraft minecraft, CallbackInfo callbackInfo) throws Exception {
+    public static void tick(Minecraft minecraft, CallbackInfo callbackInfo) throws Throwable {
         if (initialized) return;
         IZMK.mc = Minecraft.getInstance();
-        logger.debug("mixin tick");
         IZMK.init();
         initialized = true;
     }
