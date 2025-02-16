@@ -1,7 +1,7 @@
 package ovo.xsvf.izmk;
 
 import ovo.xsvf.izmk.injection.mixin.MixinLoader;
-import ovo.xsvf.izmk.injection.mixin.impl.special.MixinMinecraft;
+import ovo.xsvf.izmk.injection.mixin.impl.special.*;
 import ovo.xsvf.izmk.misc.ClassUtil;
 import ovo.xsvf.logging.Logger;
 
@@ -13,5 +13,6 @@ public class Entry {
         IZMK.logger = Logger.of("IZMK", logPort);
 
         MixinLoader.instance.loadMixin(MixinMinecraft.class);
+        MixinLoader.instance.loadMixin(MixinGui.class);
     }
 }
