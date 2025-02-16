@@ -648,7 +648,7 @@ public class MixinLoader implements IMixinLoader {
                             case TAIL -> injectTail(method, injectMethod);
                             case BEFORE_INVOKE, AFTER_INVOKE -> {
                                 if (at.method().isEmpty() || at.desc().isEmpty())
-                                    throw new IllegalArgumentException("At annotation in method " + injectMethod.getName() + " in class " + mixinClass.getName() + " is missing method or desc");
+                                    throw new IllegalArgumentException("Relocate annotation in method " + injectMethod.getName() + " in class " + mixinClass.getName() + " is missing method or desc");
                                 injectMethod(method, injectMethod, Pair.of(at.method(), at.desc()), at.value() == At.Type.BEFORE_INVOKE);
                             }
                         }

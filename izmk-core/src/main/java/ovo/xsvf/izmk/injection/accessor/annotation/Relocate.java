@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface Name {
-    String value();
+public @interface Relocate {
+    Class<?> value();
 }

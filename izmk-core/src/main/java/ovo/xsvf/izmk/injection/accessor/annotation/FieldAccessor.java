@@ -7,5 +7,12 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.METHOD})
-public @interface Final {
+public @interface FieldAccessor {
+    String value();
+
+    /**
+     * Whether this accessor is a getter or a setter.
+     * @return true if this accessor is a getter, false if it is a setter.
+     */
+    boolean getter() default true;
 }

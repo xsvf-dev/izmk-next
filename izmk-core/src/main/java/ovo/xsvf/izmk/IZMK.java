@@ -11,4 +11,8 @@ public class IZMK {
     public static final List<Class<?>> excludedLoading = new ArrayList<>();
     public static Minecraft mc;
     public static boolean runHeypixel = false;
+
+    public static void init() {
+        logger.info("Start initializing IZMK...");
+    }
 }

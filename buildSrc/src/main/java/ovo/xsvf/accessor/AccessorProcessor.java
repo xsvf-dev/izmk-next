@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -28,14 +26,15 @@ import java.util.jar.JarOutputStream;
 
 @Builder
 public class AccessorProcessor implements Opcodes {
-    private final static String UTIL_CLASS = "ovo/xsvf/izmk/injection/ReflectionUtil";
-    private final static String METHOD_HELPER_CLASS = "ovo/xsvf/izmk/injection/MethodHelper";
-
     private final static String ACCESSOR_ANNOTATION_DESC = "Lovo/xsvf/izmk/injection/accessor/annotation/Accessor;";
     private final static String FINAL_ANNOTATION_DESC = "Lovo/xsvf/izmk/injection/accessor/annotation/Final;";
-    private final static String AT_ANNOTATION_DESC = "Lovo/xsvf/izmk/injection/accessor/annotation/At;";
-    private final static String NAME_ANNOTATION_DESC = "Lovo/xsvf/izmk/injection/accessor/annotation/Name;";
-    private final static String METHOD_HELPER_CLASS_DESC = "L"+METHOD_HELPER_CLASS+";";
+    private final static String RELOCATE_ANNOTATION_DESC = "Lovo/xsvf/izmk/injection/accessor/annotation/Relocate;";
+    private final static String FIELD_ACCESSOR_DESC = "Lovo/xsvf/izmk/injection/accessor/annotation/FieldAccessor;";
+    private final static String METHOD_ACCESSOR_DESC = "Lovo/xsvf/izmk/injection/accessor/annotation/MethodAccessor;";
+
+    private final static String UTIL_CLASS = "ovo/xsvf/izmk/injection/ReflectionUtil";
+    private final static String METHOD_HELPER_CLASS = "ovo/xsvf/izmk/injection/MethodHelper";
+    private final static String METHOD_HELPER_CLASS_DESC = "L" + METHOD_HELPER_CLASS + ";";
 
     private final @NotNull File inputJarFile;
     private final @NotNull File outputFile;
@@ -195,207 +194,131 @@ public class AccessorProcessor implements Opcodes {
     }
 
     public void preProcess() {
-        classNodes.values().forEach(node -> {
-            if (node.invisibleAnnotations != null) {
-                node.invisibleAnnotations.forEach(annotation -> {
-                    if (annotation.desc.equals(ACCESSOR_ANNOTATION_DESC)) {
-                        String shadowName = node.superName;
-                        List<Field> fields = new ArrayList<>();
-                        List<Method> methods = new ArrayList<>();
-                        node.fields.forEach(field -> {
-                            AtomicBoolean isFinal = new AtomicBoolean(false);
-                            AtomicReference<String> shadowOwner = new AtomicReference<>(shadowName);
-                            AtomicReference<String> realName = new AtomicReference<>(field.name);
-                            if (field.invisibleAnnotations != null) {
-                                field.invisibleAnnotations.forEach(fieldAnnotation -> {
-                                    if (fieldAnnotation.desc.equals(FINAL_ANNOTATION_DESC)) {
-                                        isFinal.set(true);
-                                    }
-                                    if (fieldAnnotation.desc.equals(AT_ANNOTATION_DESC)) {
-                                        shadowOwner.set(((Type) fieldAnnotation.values.get(1)).getInternalName());
-                                    }
-                                    if (fieldAnnotation.desc.equals(NAME_ANNOTATION_DESC)) {
-                                        realName.set(fieldAnnotation.values.get(1).toString());
-                                    }
-                                });
-                            }
-                            fields.add(new Field(field.name,realName.get(), isFinal.get(), shadowOwner.get()));
-                        });
-                        node.methods.forEach(method -> {
-                            AtomicReference<String> shadowOwner = new AtomicReference<>(shadowName);
-                            AtomicReference<String> realName = new AtomicReference<>(method.name);
-                            if (method.invisibleAnnotations != null) {
-                                method.invisibleAnnotations.forEach(methodAnnotation -> {
-                                    if (methodAnnotation.desc.equals(AT_ANNOTATION_DESC)) {
-                                        shadowOwner.set(((Type) methodAnnotation.values.get(1)).getInternalName());
-                                    }
-                                    if (methodAnnotation.desc.equals(NAME_ANNOTATION_DESC)) {
-                                        realName.set(methodAnnotation.values.get(1).toString());
-                                    }
-                                });
-                            }
-                            methods.add(new Method(method.name, realName.get(), method.desc, shadowOwner.get()));
-                        });
-                        shadowClasses.add(node.name);
-                        shadowFields.put(node.name, fields);
-                        shadowMethods.put(node.name, methods);
+        for (ClassNode node : classNodes.values()) {
+            if (node.invisibleAnnotations == null || node.invisibleAnnotations.stream().noneMatch(it -> it.desc.equals(ACCESSOR_ANNOTATION_DESC)))
+                continue;
+            shadowClasses.add(node.name);
+            String accessor = node.invisibleAnnotations.stream()
+                    .filter(it -> it.desc.equals(ACCESSOR_ANNOTATION_DESC))
+                    .map(it -> ((Type) it.values.get(1)).getInternalName())
+                    .findFirst().orElseThrow();
+
+            for (MethodNode method : node.methods) {
+                for (AnnotationNode anno : method.invisibleAnnotations) {
+                    String owner = method.invisibleAnnotations.stream()
+                            .filter(it -> it.desc.equals(RELOCATE_ANNOTATION_DESC))
+                            .map(it -> ((Type) it.values.get(1)).getInternalName())
+                            .findFirst().orElse(accessor);
+                    if (anno.desc.equals(FIELD_ACCESSOR_DESC)) {
+                        String name = (String) anno.values.get(1);
+                        String desc = Type.getReturnType(method.desc).getDescriptor();
+                        boolean finalAccess = method.invisibleAnnotations.stream()
+                                .anyMatch(it -> it.desc.equals(FINAL_ANNOTATION_DESC));
+                        boolean isGetter = anno.values.size() < 3 || (boolean) anno.values.get(3);
+                        shadowFields.computeIfAbsent(node.name, k -> new ArrayList<>()).add(new Field(name, desc, method.name, finalAccess, isGetter, owner));
+                        break;
+                    } else if (anno.desc.equals(METHOD_ACCESSOR_DESC)) {
+                        shadowMethods.computeIfAbsent(node.name, k -> new ArrayList<>()).add(new Method(method.name, method.desc, owner));
+                        break;
                     }
-                });
+                }
             }
-        });
+        }
     }
 
     public void postProcess() {
-        classNodes.values().forEach(it -> it.methods.forEach(method -> method.instructions.forEach(insnNode -> {
-            if (insnNode instanceof TypeInsnNode && insnNode.getOpcode() == CHECKCAST &&
-                    shadowClasses.contains(((TypeInsnNode) insnNode).desc)) {
-                method.instructions.remove(insnNode);
-            } else if (insnNode instanceof FieldInsnNode) {
-                String owner = ((FieldInsnNode) insnNode).owner;
-                String name = ((FieldInsnNode) insnNode).name;
-                String desc = ((FieldInsnNode) insnNode).desc;
-
-                if (shadowClasses.contains(owner)) {
-                    InsnList insnList = new InsnList();
-                    Field field = shadowFields.get(owner).stream()
-                            .filter(f -> f.name.equals(name))
-                            .findFirst().orElseThrow();
-                    switch (insnNode.getOpcode()) {
-                        case GETFIELD -> {
-                            insnList.add(new LdcInsnNode(field.realName));
-                            insnList.add(new LdcInsnNode(field.classOwner));
-                            insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "forName",
-                                    "(Ljava/lang/String;)Ljava/lang/Class;"));
-                            insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "getField",
-                                    "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;"));
-                            insnList.add(checkcastFromObject(desc));
-                        }
-                        case GETSTATIC -> {
-                            insnList.add(new InsnNode(ACONST_NULL));
-                            insnList.add(new LdcInsnNode(field.realName));
-                            insnList.add(new LdcInsnNode(field.classOwner));
-                            insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "forName",
-                                    "(Ljava/lang/String;)Ljava/lang/Class;"));
-                            insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "getField",
-                                    "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;"));
-                            insnList.add(checkcastFromObject(desc));
-                        }
-                        case PUTFIELD -> {
-                            insnList.add(checkcastToObject(desc));
-                            if (field.finalAccess) {
-                                insnList.add(new LdcInsnNode(field.realName));
-                                insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "setFieldFinal",
-                                        "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/String;)V"));
-                            } else {
-                                insnList.add(new LdcInsnNode(field.realName));
-                                insnList.add(new LdcInsnNode(field.classOwner));
-                                insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "forName",
-                                        "(Ljava/lang/String;)Ljava/lang/Class;"));
-                                insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "setField",
-                                        "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;)V"));
-                            }
-                        }
-                        case PUTSTATIC -> {
-                            insnList.add(checkcastToObject(desc));
-                            if (field.finalAccess) {
-                                insnList.add(new LdcInsnNode(field.realName));
-                                insnList.add(new LdcInsnNode(field.classOwner));
-                                insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "forName",
-                                         "(Ljava/lang/String;)Ljava/lang/Class;"));
-                                insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "setFieldFinalStatic",
-                                        "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;)V"));
-                            } else {
-                                insnList.add(new LdcInsnNode(field.realName));
-                                insnList.add(new LdcInsnNode(field.classOwner));
-                                insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "forName",
-                                        "(Ljava/lang/String;)Ljava/lang/Class;"));
-                                insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "setFieldStatic",
-                                        "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;)V"));
-                            }
-                        }
-                    }
-                    if (insnList.size() > 0) {
-                        method.instructions.insert(insnNode, insnList);
-                        method.instructions.remove(insnNode);
-                    }
-                }
-            } else if (insnNode instanceof MethodInsnNode) {
-                String owner = ((MethodInsnNode) insnNode).owner;
-                String name = ((MethodInsnNode) insnNode).name;
-                String desc = ((MethodInsnNode) insnNode).desc;
-
-
-                if (shadowClasses.contains(owner)) {
+        classNodes.values().forEach(it -> it.methods.forEach(method -> {
+            for (var insnNode : method.instructions) {
+                if (insnNode instanceof TypeInsnNode && insnNode.getOpcode() == CHECKCAST &&
+                        shadowClasses.contains(((TypeInsnNode) insnNode).desc)) {
+                    method.instructions.remove(insnNode);
+                } else if (insnNode instanceof MethodInsnNode) {
+                    String owner = ((MethodInsnNode) insnNode).owner;
+                    if (!shadowClasses.contains(owner)) continue;
 
                     InsnList insnList = new InsnList();
-                    Method methodInfo = shadowMethods.get(owner).stream()
-                            .filter(m -> m.name.equals(name) && m.desc.equals(desc))
-                            .findFirst().orElseThrow();
-                    Type[] args = Type.getArgumentTypes(desc);
-                    Type returnType = Type.getReturnType(desc);
-                    // print all method datas
-                    log.accept(methodInfo.toString());
-                    switch (insnNode.getOpcode()) {
-                        case INVOKEVIRTUAL, INVOKESTATIC -> {
-                            // first, get a MethodHelper instance
-                            insnList.add(new MethodInsnNode(INVOKESTATIC, METHOD_HELPER_CLASS,
-                                    "getInstance", "()" + METHOD_HELPER_CLASS_DESC));
-                            // next, for every param, do swap, and invoke addParam in MethodHelper
-                            for (int i = args.length - 1; i >= 0; i--) {
-                                Type type = args[i];
-                                // stack: param, instance
-                                if (type == Type.LONG_TYPE || type == Type.DOUBLE_TYPE) {
-                                    // long and double take two slots in stack
-                                    int temp = method.maxLocals - 1; // use temp to store the original value
-                                    int temp2 = method.maxLocals;
-                                    insnList.add(new VarInsnNode(ASTORE, temp));
-                                    insnList.add(new VarInsnNode(type == Type.LONG_TYPE ? LSTORE : DSTORE, temp2));
-                                    insnList.add(new VarInsnNode(ALOAD, temp));
-                                    insnList.add(new VarInsnNode(type == Type.LONG_TYPE ? LLOAD : DLOAD, temp2));
+                    if (shadowFields.getOrDefault(owner, List.of()).stream().anyMatch(field -> field.accessMethod.equals(((MethodInsnNode) insnNode).name))) {
+                        Field field = shadowFields.get(owner).stream()
+                               .filter(field1 -> field1.accessMethod.equals(((MethodInsnNode) insnNode).name))
+                               .findFirst().orElseThrow();
+                        if (field.isGetter) {
+                            if (insnNode.getOpcode() == INVOKESTATIC) {
+                                insnList.add(new InsnNode(ACONST_NULL));
+                            } else if (insnNode.getOpcode() != INVOKEINTERFACE) {
+                                throw new IllegalStateException("Unexpected opcode: " + insnNode.getOpcode());
+                            }
+                            insnList.add(new LdcInsnNode(field.name));
+                            insnList.add(new LdcInsnNode(field.owner));
+                            insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "getField", "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;", false));
+                            insnList.add(checkcastFromObject(field.desc));
+                        } else {
+                            if (insnNode.getOpcode() == INVOKESTATIC) {
+                                // static : [value]
+                                insnList.add(new LdcInsnNode(field.name));
+                                insnList.add(new LdcInsnNode(field.owner));
+                                insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, field.finalAccess ? "setFieldFinalStatic" : "setFieldStatic",
+                                        "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", false));
+                            } else if (insnNode.getOpcode() == INVOKEINTERFACE) {
+                                // interface : [instance, value]
+                                insnList.add(new LdcInsnNode(field.name));
+                                if (field.finalAccess) {
+                                    insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "setFieldFinal", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/String;)V", false));
                                 } else {
-                                    // swap directly
-                                    insnList.add(new InsnNode(SWAP));
+                                    insnList.add(new LdcInsnNode(field.owner));
+                                    insnList.add(new MethodInsnNode(INVOKESTATIC, UTIL_CLASS, "setField", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V", false));
                                 }
-                                insnList.add(checkcastToObject(type));
-                                insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_HELPER_CLASS, "addParam", "(Ljava/lang/Object;)" + METHOD_HELPER_CLASS_DESC));
-                            }
-                            // stack: (if virtual) oinstance instance
-                            // we need to swap the instance and oinstance again,
-                            // because the instance is the first param in the method signature
-                            if (insnNode.getOpcode() == INVOKEVIRTUAL) {
-                                insnList.add(new InsnNode(SWAP));
-                            }
-                            // stack: instance (if virtual) oinstance
-                            // finally, put the classowner, name and desc into stack,
-                            // and do the virtual method call
-                            insnList.add(new LdcInsnNode(methodInfo.classOwner));
-                            insnList.add(new LdcInsnNode(methodInfo.realName));
-                            insnList.add(new LdcInsnNode(methodInfo.desc));
-                            if (insnNode.getOpcode() == INVOKEVIRTUAL) {
-                                insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_HELPER_CLASS, "call", "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;"));
-                            } else {
-                                insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_HELPER_CLASS, "callStatic", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;"));
-                            }
-                            if (returnType == Type.VOID_TYPE) {
-                                insnList.add(new InsnNode(POP));
-                            } else {
-                                insnList.add(checkcastFromObject(returnType));
                             }
                         }
-                        case INVOKESPECIAL -> {
-                            // should not process this
+                    } else if (shadowMethods.getOrDefault(owner, List.of()).stream().anyMatch(m -> m.name.equals(((MethodInsnNode) insnNode).name) && m.desc.equals(((MethodInsnNode) insnNode).desc))) {
+                        Method method1 = shadowMethods.get(owner).stream()
+                               .filter(m -> m.name.equals(((MethodInsnNode) insnNode).name) && m.desc.equals(((MethodInsnNode) insnNode).desc))
+                               .findFirst().orElseThrow();
+                        int methodHelperIndex = method.maxLocals; method.maxLocals += 1;
+
+                        // stack: [<instance>, args...]
+                        insnList.add(new MethodInsnNode(INVOKESTATIC, METHOD_HELPER_CLASS, "getInstance", "()L" + METHOD_HELPER_CLASS + ";", false));
+                        insnList.add(new VarInsnNode(ASTORE, methodHelperIndex));
+                        // stack: [<instance>, args...]
+                        Type[] argTypes = Type.getArgumentTypes(method1.desc);
+                        for (int i = argTypes.length - 1; i >= 0; i--) {
+                            insnList.add(checkcastToObject(argTypes[i]));
+                            insnList.add(new VarInsnNode(ALOAD, methodHelperIndex));
+                            insnList.add(new InsnNode(SWAP));
+                            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_HELPER_CLASS, "addParam", "(Ljava/lang/Object;)L" + METHOD_HELPER_CLASS + ";", false));
+                            insnList.add(new InsnNode(POP));
+                            // stack: [<instance>, args...]
                         }
-                        case INVOKEINTERFACE -> {
-                            // TODO: invoke interface method
+                        insnList.add(new VarInsnNode(ALOAD, methodHelperIndex));
+                        if (insnNode.getOpcode() != INVOKESTATIC) {
+                            insnList.add(new InsnNode(SWAP));
                         }
+                        insnList.add(new LdcInsnNode(method1.owner));
+                        insnList.add(new LdcInsnNode(method1.name));
+                        insnList.add(new LdcInsnNode(method1.desc));
+                        if (insnNode.getOpcode() == INVOKESTATIC) {
+                            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_HELPER_CLASS, "callStatic", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;", false));
+                        } else if (insnNode.getOpcode() == INVOKEINTERFACE) {
+                            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_HELPER_CLASS, "call", "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;", false));
+                        } else {
+                            throw new IllegalStateException("Unexpected opcode: " + insnNode.getOpcode());
+                        }
+
+                        if (Type.getReturnType(method1.desc) == Type.VOID_TYPE) {
+                            insnList.add(new InsnNode(POP));
+                        } else {
+                            insnList.add(checkcastFromObject(Type.getReturnType(method1.desc)));
+                        }
+                    } else {
+                        throw new IllegalStateException("Unexpected method: " + owner + "." + ((MethodInsnNode) insnNode).name + " " + ((MethodInsnNode) insnNode).desc);
                     }
+
                     if (insnList.size() > 0) {
                         method.instructions.insert(insnNode, insnList);
                         method.instructions.remove(insnNode);
                     }
                 }
             }
-        })));
+        }));
         shadowClasses.forEach(classNodes::remove);
     }
 
@@ -408,7 +331,6 @@ public class AccessorProcessor implements Opcodes {
                 jarOutputStream.closeEntry();
             }
             for (Map.Entry<String, ClassNode> entry : classNodes.entrySet()) {
-                log.accept("Writing class: " + entry.getKey());
                 ClassWriter classWriter = new ClassWriter(writeFlags) {
                     @Override
                     protected ClassLoader getClassLoader() {
@@ -432,9 +354,11 @@ public class AccessorProcessor implements Opcodes {
     @AllArgsConstructor
     private static class Field {
         private final String name;
-        private final String realName;
+        private final String desc;
+        private final String accessMethod;
         private final boolean finalAccess;
-        private final String classOwner;
+        private final boolean isGetter;
+        private final String owner;
     }
 
     @ToString
@@ -442,8 +366,7 @@ public class AccessorProcessor implements Opcodes {
     @AllArgsConstructor
     private static class Method {
         private final String name;
-        private final String realName;
         private final String desc;
-        private final String classOwner;
+        private final String owner;
     }
 }

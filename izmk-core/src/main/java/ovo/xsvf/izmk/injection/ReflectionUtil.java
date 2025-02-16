@@ -1,6 +1,5 @@
 package ovo.xsvf.izmk.injection;
 
-import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Type;
 import ovo.xsvf.izmk.misc.Constants;
 import sun.misc.Unsafe;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 public class ReflectionUtil implements Constants {
     private static final HashMap<String, Field> cachedFields = new HashMap<>();
     private static final HashMap<String, Class<?>> cachedClasses = new HashMap<>();
-    private static final @NotNull Unsafe unsafe;
+    private static final Unsafe unsafe;
 
     static {
         try {
@@ -24,12 +23,12 @@ public class ReflectionUtil implements Constants {
         }
     }
 
-    private static Field getCachedField(@NotNull Class<?> clazz, @NotNull String field) {
+    private static Field getCachedField(Class<?> clazz, String field) {
         String key = Type.getInternalName(clazz) + "/" + field;
         return cachedFields.get(key);
     }
 
-    private static Field getField(@NotNull Class<?> clazz, @NotNull String field) throws NoSuchFieldException {
+    private static Field getField(Class<?> clazz, String field) throws NoSuchFieldException {
         String key = Type.getInternalName(clazz) + "/" + field;
         Field privField = getCachedField(clazz, field);
         if (privField != null) {
@@ -49,37 +48,40 @@ public class ReflectionUtil implements Constants {
         return privField;
     }
 
-    public static Object getField(@NotNull Object instance, @NotNull String field, @NotNull Class<?> clazz) {
+    public static Object getField(Object instance, String field, String className) {
         try {
+            Class<?> clazz = forName(className);
             Field privField = getField(clazz, field);
             return privField.get(instance);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Error occurred while accessing field %s in class %s: %s", e, field, clazz.getName());
-            throw new RuntimeException("Failed to access field " + field + " in class " + clazz.getName(), e);
+            logger.error("Error occurred while accessing field %s in class %s: %s", e, field, className);
+            throw new RuntimeException("Failed to access field " + field + " in class " + className, e);
         }
     }
 
-    public static void setField(@NotNull Object instance, @NotNull Object value, @NotNull String field, @NotNull Class<?> clazz) {
+    public static void setField(Object instance, Object value, String field, String className) {
         try {
+            Class<?> clazz = forName(className);
             Field privField = getField(clazz, field);
             privField.set(instance, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Error occurred while setting field %s in class %s: %s", e, field, clazz.getName());
-            throw new RuntimeException("Failed to set field " + field + " in class " + clazz.getName(), e);
+            logger.error("Error occurred while setting field %s in class %s: %s", e, field, className);
+            throw new RuntimeException("Failed to set field " + field + " in class " + className, e);
         }
     }
 
-    public static void setFieldStatic(@NotNull Object value, @NotNull String field, @NotNull Class<?> clazz) {
+    public static void setFieldStatic(Object value, String field, String className) {
         try {
+            Class<?> clazz = forName(className);
             Field privField = getField(clazz, field);
             privField.set(null, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Error occurred while setting static field %s in class %s: %s", e, field, clazz.getName());
-            throw new RuntimeException("Failed to set static field " + field + " in class " + clazz.getName(), e);
+            logger.error("Error occurred while setting static field %s in class %s: %s", e, field, className);
+            throw new RuntimeException("Failed to set static field " + field + " in class " + className, e);
         }
     }
 
-    public static void setFieldFinal(@NotNull Object instance, @NotNull Object value, @NotNull String field) {
+    public static void setFieldFinal(Object instance, Object value, String field) {
         Class<?> clazz = instance.getClass();
         try {
             Field privField = getField(clazz, field);
@@ -90,7 +92,8 @@ public class ReflectionUtil implements Constants {
         }
     }
 
-    public static void setFieldFinalStatic(@NotNull Object value, @NotNull Class<?> clazz, @NotNull String field) {
+    public static void setFieldFinalStatic(Object value, String field, String className) {
+        Class<?> clazz = forName(className);
         try {
             Field privField = getField(clazz, field);
             unsafe.putObject(unsafe.staticFieldBase(privField), unsafe.staticFieldOffset(privField), value);
@@ -111,8 +114,8 @@ public class ReflectionUtil implements Constants {
             logger.debug("Cached class: %s", className);
             return clazz;
         } catch (ClassNotFoundException e) {
-            logger.error("Failed to obtain class %s: %s", e, className);
-            throw new RuntimeException("Failed to obtain class " + className, e);
+            logger.error("Failed to find class %s: %s", e, className);
+            throw new RuntimeException("Failed to find class " + className, e);
         }
     }
 

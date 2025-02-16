@@ -52,6 +52,10 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:1.18.36"
     compileOnly "org.projectlombok:lombok:1.18.36"
 
+    shade "com.twelvemonkeys.imageio:imageio-core:3.7.0"
+    shade 'com.twelvemonkeys.imageio:imageio-metadata:3.7.1'
+    shade "com.twelvemonkeys.imageio:imageio-webp:3.7.1"
+
     shade project(':izmk-common')
 }
 
