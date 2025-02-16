@@ -17,6 +17,8 @@ public class Launcher {
     }
 
     public static void main(String[] args) throws Exception {
+        cn.langya.Logger.setLogFilePath("izmk.0721.log");
+
         printLogo();
 
         if (!JNAUtil.tryEnableAnsiSupport()) {

@@ -36,12 +36,16 @@ public class Logger {
         return format;
     }
 
-    public void sendJson(JsonObject jsonObject) throws IOException {
-        writer.write(Base64.getEncoder().encodeToString(jsonObject.toString().getBytes(StandardCharsets.UTF_8)) + "\n");
-        writer.flush();
+    public void sendJson(JsonObject jsonObject) {
+        try {
+            writer.write(Base64.getEncoder().encodeToString(jsonObject.toString().getBytes(StandardCharsets.UTF_8)) + "\n");
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void log(int level, String message) throws IOException {
+    public void log(int level, String message) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("type", "log");
         jsonObject.addProperty("level", level);
@@ -50,21 +54,66 @@ public class Logger {
         sendJson(jsonObject);
     }
 
-    public void debug(String message, Object... args) throws IOException {
+    public void debug(String message, Object... args) {
         log(Level.DEBUG, format(message, args));
     }
 
-    public void info(String message, Object... args) throws IOException {
+    public void info(String message, Object... args) {
         log(Level.INFO, format(message, args));
     }
 
-    public void warn(String message, Object... args) throws IOException {
+    public void warn(String message, Object... args) {
         log(Level.WARN, format(message, args));
     }
 
-    public void error(String message, Object... args) throws IOException {
+    public void error(String message, Object... args) {
         log(Level.ERROR, format(message, args));
     }
+
+    public void error(String msg, Throwable throwable, Object... args) {
+        StringBuilder errorMessage = new StringBuilder();
+        errorMessage.append(String.format(msg, args))
+                .append(System.lineSeparator());
+        errorMessage.append("    ").append("Exception: ")
+                .append(throwable.getClass().getSimpleName()).append(": ")
+                .append(throwable.getMessage() == null ? "" : throwable.getMessage())
+                .append(System.lineSeparator());
+        Throwable cause = throwable.getCause();
+        if (cause != null) {
+            errorMessage.append("    ").append("Cause: ")
+                    .append(cause.getMessage() == null ? cause.getClass().getSimpleName() : cause.getMessage())
+                    .append(System.lineSeparator());
+        }
+        errorMessage.append("    ").append("Stack Trace: ")
+                .append(System.lineSeparator());
+        for (StackTraceElement element : throwable.getStackTrace()) {
+            errorMessage.append("    ").append("    ").append(element.toString()).append(System.lineSeparator());
+        }
+
+        error(errorMessage.toString());
+    }
+
+    public void error(Throwable throwable, Object... args) {
+        StringBuilder errorMessage = new StringBuilder();
+        errorMessage.append("Exception: ")
+                .append(throwable.getClass().getSimpleName()).append(": ")
+                .append(throwable.getMessage() == null ? "" : throwable.getMessage())
+                .append(System.lineSeparator());
+        Throwable cause = throwable.getCause();
+        if (cause != null) {
+            errorMessage.append("    ").append("Cause: ")
+                    .append(cause.getMessage() == null ? cause.getClass().getSimpleName() : cause.getMessage())
+                    .append(System.lineSeparator());
+        }
+        errorMessage.append("    ").append("Stack Trace: ")
+                .append(System.lineSeparator());
+        for (StackTraceElement element : throwable.getStackTrace()) {
+            errorMessage.append("    ").append("    ").append(element.toString()).append(System.lineSeparator());
+        }
+
+        error(errorMessage.toString());
+    }
+
 
     public static class Level {
         public static final int DEBUG = 0;

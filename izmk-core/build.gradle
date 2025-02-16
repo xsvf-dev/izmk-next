@@ -1,5 +1,8 @@
+import ovo.xsvf.task.AccessorTask
+
 plugins {
     id 'java'
+    id 'com.gradleup.shadow' version '9.0.0-beta8'
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
@@ -17,11 +20,39 @@ minecraft {
 
     reobf = false
     copyIdeResources = true
-    generateRunFolders = true
+}
+
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+
+jar {
+    archiveClassifier = 'slim'
+}
+
+tasks.register('accessor', AccessorTask) {
+    dependsOn shadowJar
+
+    targetFile = tasks.shadowJar.archiveFile.get().asFile
+    outputFile = tasks.shadowJar.archiveFile.get().asFile
+}
+
+shadowJar {
+    configurations = [project.configurations.shade]
+    archiveClassifier = ''
+
+    finalizedBy accessor
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // lombok
+    annotationProcessor "org.projectlombok:lombok:1.18.36"
+    compileOnly "org.projectlombok:lombok:1.18.36"
+
+    shade project(':izmk-common')
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
