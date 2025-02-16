@@ -33,7 +33,9 @@ public class AgentMain {
         final ClassLoader finalClassLoader = classLoader;
 
         logger.debug("loading class...");
+        System.out.println(finalClassLoader.getClass().getName());
         Thread.currentThread().setContextClassLoader(finalClassLoader);
+
         for (Class<?> clazz : new ClassAnalyzer((name, b) -> defineClass(name, finalClassLoader, b), logger)
                 .loadClasses(CoreFileProvider.getBinaryFiles(file))) {
             if (clazz.getName().equals("ovo.xsvf.izmk.Entry")) {

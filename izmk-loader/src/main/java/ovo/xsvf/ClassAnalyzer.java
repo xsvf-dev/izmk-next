@@ -76,6 +76,7 @@ public class ClassAnalyzer {
         // Check for cycles
         if (sortedClasses.size() != classMap.size()) {
             logger.error("Circular dependency detected among classes.");
+            throw new RuntimeException("Circular dependency detected among classes.");
         }
 
         // Step 3: Load classes in topological order
