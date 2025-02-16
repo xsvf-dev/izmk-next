@@ -37,7 +37,7 @@ tasks.register('runClient', JavaExec) {
             "-Xmx4096m",
             "-Dminecraft.client.jar=$mcDir/1.20.6/1.20.6-Forge.jar",
             "-Djava.library.path=$mcDir/natives",
-            "-javaagent:${project(':izmk-loader').tasks.merge.output}"
+            "-javaagent:${project(':izmk-loader').tasks.merge.output}=${project(':izmk-loader').projectDir.absolutePath}"
     ]
 
     classpath = fileTree("$mcDir/libs")

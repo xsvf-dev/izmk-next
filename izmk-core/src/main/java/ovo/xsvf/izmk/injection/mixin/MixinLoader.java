@@ -180,8 +180,6 @@ public class MixinLoader implements IMixinLoader {
                 inject.getDeclaredAnnotation(Inject.class).slice(),
                 insnNode -> insnNode.getOpcode() == retOpCode);
 
-
-
         for (AbstractInsnNode insnNode : toInsert) {
             InsnList insnList = new InsnList();
             // STACK: [result]

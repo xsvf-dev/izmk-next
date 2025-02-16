@@ -43,15 +43,15 @@ public class AgentMain {
         }
     }
 
-    public static void premain(String agentArgs, Instrumentation inst) throws Exception {
+    public static void premain(String loaderSrcPath, Instrumentation inst) throws Exception {
         System.out.println("premain starting..");
         cn.langya.Logger.setHasColorInfo(true);
         cn.langya.Logger.setLogLevel(cn.langya.Logger.LogLevel.DEBUG);
         LogServer.start();
 
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("dll", "D:\\izmk-next\\izmk-loader\\src\\main\\resources\\lib.dll");
-        jsonObject.addProperty("file", "D:\\izmk-next\\izmk-loader\\build\\libs\\merged-loader.jar");
+        jsonObject.addProperty("dll", loaderSrcPath + "\\src\\main\\resources\\lib.dll");
+        jsonObject.addProperty("file", loaderSrcPath + "\\build\\libs\\merged-loader.jar");
         jsonObject.addProperty("port", LogServer.getPort());
         jsonObject.addProperty("debug", true);
 

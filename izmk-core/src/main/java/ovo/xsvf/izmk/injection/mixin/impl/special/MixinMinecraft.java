@@ -7,12 +7,15 @@ import ovo.xsvf.izmk.injection.mixin.annotation.Inject;
 import ovo.xsvf.izmk.injection.mixin.annotation.Mixin;
 import ovo.xsvf.izmk.misc.Constants;
 
+/**
+ * @author xsvf
+ */
 @Mixin(Minecraft.class)
 public class MixinMinecraft implements Constants {
     private static boolean initialized = false;
 
     @Inject(method = "tick", desc = "()V")
-    public static void tick(Minecraft minecraft, CallbackInfo callbackInfo) {
+    public static void tick(Minecraft minecraft, CallbackInfo callbackInfo) throws Exception {
         if (initialized) return;
         IZMK.mc = Minecraft.getInstance();
         logger.debug("mixin tick");
