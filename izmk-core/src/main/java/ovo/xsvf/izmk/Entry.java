@@ -10,8 +10,7 @@ import java.lang.instrument.Instrumentation;
 public class Entry {
     public static void entry(Instrumentation inst, int logPort, String jar) throws Exception {
         ClassUtil.init(inst);
-        IZMK.logger = Logger.of("IZMK", logPort);
-
+        IZMK.INSTANCE.setLogger(Logger.of("IZMK", logPort));
         MixinLoader.instance.loadMixin(MixinMinecraft.class);
     }
 }

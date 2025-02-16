@@ -1,27 +1,17 @@
-package ovo.xsvf.izmk.event;
+package ovo.xsvf.izmk.event
 
-import lombok.Getter;
-import ovo.xsvf.izmk.IZMK;
-import ovo.xsvf.izmk.event.impl.Event;
-
-import java.lang.reflect.Method;
+import java.lang.reflect.Method
 
 /**
- * @author LangYa466
+ * @author LangYa466, xsvf
  * @since 2025/2/16
  */
-public record MethodWrapper(Object obj, Method method, @Getter int priority) {
-
-    public void invoke(Event event) {
-        try {
-            method.setAccessible(true);
-            method.invoke(obj, event);
-        } catch (Exception e) {
-            IZMK.logger.error(e);
-        }
+data class MethodWrapper(val obj: Any, val method: Method, val priority: Int) {
+    fun invoke(event: Event) {
+        method.invoke(obj, event)
     }
 
-    public boolean matches(Object obj, Method method) {
-        return this.obj.equals(obj) && this.method.equals(method);
+    fun matches(obj: Any, method: Method): Boolean {
+        return this.obj == obj && this.method == method
     }
 }

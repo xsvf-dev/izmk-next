@@ -1,7 +1,5 @@
 package ovo.xsvf.izmk.injection.mixin;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import ovo.xsvf.izmk.injection.MethodHelper;
 import ovo.xsvf.izmk.injection.mixin.annotation.WrapInvoke;
 import ovo.xsvf.izmk.injection.mixin.api.Invocation;
@@ -14,12 +12,18 @@ import ovo.xsvf.izmk.injection.mixin.api.Invocation;
  * @see VirtualInvocation
  * @see WrapInvoke
  */
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class StaticInvocation implements Invocation {
     private final MethodHelper helper;
     private final String owner;
     private final String name;
     private final String desc;
+
+    private StaticInvocation(MethodHelper helper, String owner, String name, String desc) {
+        this.helper = helper;
+        this.owner = owner;
+        this.name = name;
+        this.desc = desc;
+    }
 
     /**
      * Factory method to create a new StaticInvocation object.

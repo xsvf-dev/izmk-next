@@ -1,0 +1,22 @@
+package ovo.xsvf.izmk.module
+
+import net.minecraft.client.Minecraft
+import ovo.xsvf.izmk.event.EventBus
+
+/**
+ * @author LangYa466
+ * @since 2025/2/16
+ */
+abstract class Module(val name: String, val description: String = "") {
+    var enabled = false
+        set(value) {
+            if (enabled) EventBus.register(this)
+            else EventBus.unregister(this)
+            field = value
+        }
+    protected val mc: Minecraft = Minecraft.getInstance()
+
+    fun toggle() {
+        this.enabled = !enabled
+    }
+}

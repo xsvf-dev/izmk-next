@@ -1,28 +1,24 @@
 package ovo.xsvf.izmk.injection.mixin;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovo.xsvf.izmk.injection.MethodHelper;
-import ovo.xsvf.izmk.injection.mixin.annotation.WrapInvoke;
 import ovo.xsvf.izmk.injection.mixin.api.Invocation;
 
-/**
- * This class represents a virtual method invocation.
- * <p>
- *     <b>Note:</b> All the field and method names are hard-coded in the ASM code. DO NOT CHANGE THEM.
- * </p>
- * @see StaticInvocation
- * @see Invocation
- * @see WrapInvoke
- */
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+
 public class VirtualInvocation implements Invocation {
     private final Object methodInstance;
     private final MethodHelper helper;
     private final String owner;
     private final String name;
     private final String desc;
+
+    private VirtualInvocation(Object methodInstance, MethodHelper helper, String owner, String name, String desc) {
+        this.methodInstance = methodInstance;
+        this.helper = helper;
+        this.owner = owner;
+        this.name = name;
+        this.desc = desc;
+    }
 
     /**
      * Factory method to create a new virtual method invocation instance.

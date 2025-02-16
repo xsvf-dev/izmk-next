@@ -1,9 +1,8 @@
 package ovo.xsvf.izmk.injection;
 
-import lombok.Getter;
 import org.objectweb.asm.Type;
-import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.Pair;
+import ovo.xsvf.izmk.IZMK;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Getter
 public class MethodHelper {
     private static final HashMap<Pair<String, String>, Method> cachedMethods = new HashMap<>();
 
@@ -19,6 +17,10 @@ public class MethodHelper {
 
     public static MethodHelper getInstance() {
         return new MethodHelper();
+    }
+
+    public List<Object> getMethodParams() {
+        return methodParams;
     }
 
     public MethodHelper addParam(Object param) {
@@ -39,7 +41,7 @@ public class MethodHelper {
         if (method == null) {
             method = findMethod(clazz, methodName, methodDesc);
             if (method == null) {
-                IZMK.logger.error("Method %s not found in class %s", methodName, classOwner);
+                IZMK.INSTANCE.getLogger().error("Method %s not found in class %s", methodName, classOwner);
                 throw new IllegalArgumentException("Method " + methodName + " not found in class " + classOwner);
             }
             cachedMethods.put(key, method);
@@ -56,7 +58,7 @@ public class MethodHelper {
         if (method == null) {
             method = findMethod(clazz, methodName, methodDesc);
             if (method == null) {
-                IZMK.logger.error("Method %s not found in class %s", methodName, clazz.getName());
+                IZMK.INSTANCE.getLogger().error("Method %s not found in class %s", methodName, clazz.getName());
                 throw new IllegalArgumentException("Method " + methodName + " not found in class " + clazz.getName());
             }
             cachedMethods.put(key, method);
@@ -80,10 +82,10 @@ public class MethodHelper {
         try {
             return method.invoke(instance, methodParams.toArray());
         } catch (IllegalAccessException e) {
-            IZMK.logger.error("IllegalAccessException occurred while invoking method %s: %s", e, method.getName());
+            IZMK.INSTANCE.getLogger().error("IllegalAccessException occurred while invoking method %s: %s", e, method.getName());
             throw new RuntimeException("IllegalAccessException occurred while invoking method " + method.getName(), e);
         } catch (InvocationTargetException e) {
-            IZMK.logger.error("InvocationTargetException occurred while invoking method %s: %s", e.getTargetException(), method.getName());
+            IZMK.INSTANCE.getLogger().error("InvocationTargetException occurred while invoking method %s: %s", e.getTargetException(), method.getName());
             throw new RuntimeException("InvocationTargetException occurred while invoking method " + method.getName(), e.getTargetException());
         } finally {
             methodParams.clear(); // 清空参数列表，以便下次使用

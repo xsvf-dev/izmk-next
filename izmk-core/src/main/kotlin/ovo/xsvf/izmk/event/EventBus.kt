@@ -1,69 +1,65 @@
-package ovo.xsvf.izmk.event;
+package ovo.xsvf.izmk.event
 
-import ovo.xsvf.izmk.event.annotations.EventPriority;
-import ovo.xsvf.izmk.event.annotations.EventTarget;
-import ovo.xsvf.izmk.event.impl.Event;
 
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import ovo.xsvf.izmk.event.annotations.EventPriority
+import ovo.xsvf.izmk.event.annotations.EventTarget
+import java.lang.reflect.Method
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @author LangYa466
  * @since 2025/2/16
  */
-public class EventManager {
-    private static EventManager INSTANCE;
+object EventBus {
+    private val eventMethods: MutableMap<Class<out Event>, MutableList<MethodWrapper>> = ConcurrentHashMap()
 
-    public static EventManager getInstance() {
-        if (INSTANCE == null) INSTANCE = new EventManager();
-        return INSTANCE;
+    /** 注册事件监听对象  */
+    fun register(vararg objs: Any) {
+        for (obj in objs) register(obj)
     }
 
-    private final Map<Class<? extends Event>, List<MethodWrapper>> eventMethods = new ConcurrentHashMap<>();
-
-    /** 注册事件监听对象 */
-    public void register(Object... objs) {
-        for (Object obj : objs) register(obj);
+    private fun register(obj: Any) {
+        Arrays.stream(obj.javaClass.declaredMethods)
+            .filter { method: Method -> isValidEventMethod(method) }
+            .forEach { method: Method -> registerMethod(obj, method) }
     }
 
-    private void register(Object obj) {
-        Arrays.stream(obj.getClass().getDeclaredMethods())
-                .filter(this::isValidEventMethod)
-                .forEach(method -> registerMethod(obj, method));
+    private fun isValidEventMethod(method: Method): Boolean {
+        return method.isAnnotationPresent(EventTarget::class.java) && method.parameterCount == 1
+                && method.parameterTypes[0].isInterface && Event::class.java.isAssignableFrom(method.parameterTypes[0])
     }
 
-    private boolean isValidEventMethod(Method method) {
-        return method.isAnnotationPresent(EventTarget.class) && method.getParameterCount() == 1;
+    private fun registerMethod(obj: Any, method: Method) {
+        val eventClass = method.parameterTypes[0] as Class<out Event>
+        val priority = Optional.ofNullable(
+            method.getAnnotation(EventPriority::class.java)
+        ).map { eventPriority: EventPriority -> eventPriority.value }.orElse(10)
+        eventMethods.computeIfAbsent(eventClass) { CopyOnWriteArrayList() }
+            .add(MethodWrapper(obj, method, priority))
     }
 
-    private void registerMethod(Object obj, Method method) {
-        Class<? extends Event> eventClass = (Class<? extends Event>) method.getParameterTypes()[0];
-        int priority = Optional.ofNullable(method.getAnnotation(EventPriority.class)).map(EventPriority::value).orElse(10);
-        eventMethods.computeIfAbsent(eventClass, k -> new CopyOnWriteArrayList<>())
-                .add(new MethodWrapper(obj, method, priority));
+    /** 取消注册事件监听对象  */
+    fun unregister(obj: Any) {
+        Arrays.stream(obj.javaClass.declaredMethods)
+            .filter { method: Method -> isValidEventMethod(method) }
+            .forEach { method: Method -> unregisterMethod(obj, method) }
     }
 
-    /** 取消注册事件监听对象 */
-    public void unregister(Object obj) {
-        Arrays.stream(obj.getClass().getDeclaredMethods())
-                .filter(this::isValidEventMethod)
-                .forEach(method -> unregisterMethod(obj, method));
+    private fun unregisterMethod(obj: Any, method: Method) {
+        val methods = eventMethods[method.parameterTypes[0] as Class<out Event>]
+        methods?.removeIf { wrapper: MethodWrapper -> wrapper.matches(obj, method) }
     }
 
-    private void unregisterMethod(Object obj, Method method) {
-        List<MethodWrapper> methods = eventMethods.get((Class<? extends Event>) method.getParameterTypes()[0]);
-        if (methods != null) methods.removeIf(wrapper -> wrapper.matches(obj, method));
-    }
-
-    /** 调用事件 */
-    public Event call(Event event) {
-        List<MethodWrapper> methods = eventMethods.get(event.getClass());
-        if (methods != null) {
-            methods.stream().sorted(Comparator.comparingInt(MethodWrapper::priority))
-                    .forEach(wrapper -> wrapper.invoke(event));
-        }
-        return event;
+    /** 调用事件  */
+    fun call(event: Event): Event {
+        val methods: List<MethodWrapper>? = eventMethods[event.javaClass]
+        methods?.stream()
+            ?.sorted(Comparator.comparingInt(MethodWrapper::priority))
+            ?.forEach { wrapper: MethodWrapper ->
+                wrapper.invoke(event)
+            }
+        return event
     }
 }

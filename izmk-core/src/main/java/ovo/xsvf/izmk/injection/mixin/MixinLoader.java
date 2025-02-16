@@ -24,12 +24,11 @@ public class MixinLoader implements IMixinLoader {
 
     public static void loadMixins(Class<?>... classes) throws Exception {
         for (Class<?> clazz : classes) {
-            if (!IZMK.excludedLoading.contains(clazz) && clazz.isAnnotationPresent(Mixin.class)) {
-                logger.debug("load??");
+            if (!IZMK.INSTANCE.getExcludedLoading().contains(clazz) && clazz.isAnnotationPresent(Mixin.class)) {
                 instance.loadMixin(clazz);
             }
         }
-        IZMK.runHeypixel = true;
+        IZMK.INSTANCE.setRunHeypixel(true);
     }
 
     private static Inject getInject(Class<?> mixinClass, Method method) {
@@ -70,7 +69,7 @@ public class MixinLoader implements IMixinLoader {
     private static List<AbstractInsnNode> getInjectionPoints(InsnList insnList, Slice slice, Predicate<AbstractInsnNode> filter) {
         final List<AbstractInsnNode> injectionPoints = new ArrayList<>();
         if (slice.start().value() == At.Type.HEAD && slice.end().value() == At.Type.TAIL && slice.startIndex() == -1 && slice.endIndex() == -1) {
-            logger.debug("head-tail slice injection point found!");
+            IZMK.INSTANCE.getLogger().debug("head-tail slice injection point found!");
             injectionPoints.addAll(Arrays.stream(insnList.toArray()).filter(filter).toList());
         } else if (slice.startIndex() != -1 && slice.endIndex() != -1) {
             // This is an index-based slice
@@ -78,9 +77,9 @@ public class MixinLoader implements IMixinLoader {
             for (AbstractInsnNode insnNode : insnList) {
                 if (filter.test(insnNode)) {
                     count++;
-                    logger.debug("index-based slice match found!, count = " + count);
+                    IZMK.INSTANCE.getLogger().debug("index-based slice match found!, count = " + count);
                     if (count >= slice.startIndex() && count <= slice.endIndex()) {
-                        logger.debug("index-based slice injection point found!");
+                        IZMK.INSTANCE.getLogger().debug("index-based slice injection point found!");
                         injectionPoints.add(insnNode);
                     } else if (count > slice.endIndex()) {
                         break;
@@ -88,7 +87,7 @@ public class MixinLoader implements IMixinLoader {
                 }
             }
         } else {
-            logger.debug("method/head-tail before/after slice injection point found!");
+            IZMK.INSTANCE.getLogger().debug("method/head-tail before/after slice injection point found!");
             // this is a method-based slice
             boolean head = slice.start().value() == At.Type.HEAD;
             boolean tail = slice.end().value() == At.Type.TAIL;
@@ -105,7 +104,7 @@ public class MixinLoader implements IMixinLoader {
                     break;
                 }
                 if (foundStart) {
-                    logger.debug("method-based slice injection point found!");
+                    IZMK.INSTANCE.getLogger().debug("method-based slice injection point found!");
                     injectionPoints.add(insnNode);
                 }
             }
@@ -253,7 +252,7 @@ public class MixinLoader implements IMixinLoader {
 
         var split = ASMUtil.splitDesc(invoke.first);
         // log invoke1 and split
-        logger.debug("method: {}/{}, invoke1 = {}, split = {}", inject.getDeclaringClass().getName(), inject.getName(), invoke, split);
+        IZMK.INSTANCE.getLogger().debug("method: {}/{}, invoke1 = {}, split = {}", inject.getDeclaringClass().getName(), inject.getName(), invoke, split);
 
         List<AbstractInsnNode> toInject = getInjectionPoints(method.instructions,
                 inject.getDeclaredAnnotation(Inject.class).slice(),
@@ -261,7 +260,7 @@ public class MixinLoader implements IMixinLoader {
                         m.name.equals(split.second) && m.desc.equals(invoke.second));
 
         if (toInject.isEmpty()) {
-            logger.warn("method invocation with name = {}, desc = {} cannot be found in target method", invoke.first, invoke.second);
+            IZMK.INSTANCE.getLogger().warn("method invocation with name = {}, desc = {} cannot be found in target method", invoke.first, invoke.second);
             return;
         }
 
@@ -386,7 +385,7 @@ public class MixinLoader implements IMixinLoader {
                         m.name.equals(split.second) && m.desc.equals(wrap.second));
 
         if (toWrap.isEmpty()) {
-            logger.warn("method invocation with name = {}, desc = {} cannot be found in target method", wrap.first, wrap.second);
+            IZMK.INSTANCE.getLogger().warn("method invocation with name = {}, desc = {} cannot be found in target method", wrap.first, wrap.second);
             return;
         }
 
@@ -580,7 +579,7 @@ public class MixinLoader implements IMixinLoader {
         if (!mixinClass.isAnnotationPresent(Mixin.class))
             throw new IllegalArgumentException("Class " + mixinClass.getName() + " is not annotated with @Mixin");
         
-        logger.debug("loading mixin {}", mixinClass.getName());
+        IZMK.INSTANCE.getLogger().debug("loading mixin {}", mixinClass.getName());
 
         Class<?> targetClass = mixinClass.getAnnotation(Mixin.class).value();
         ClassNode targetNode = ClassUtil.node(ClassUtil.getClassBytes(targetClass));
@@ -634,7 +633,7 @@ public class MixinLoader implements IMixinLoader {
                 var injectMethods = injectMap.get(Pair.of(targetNode.name + "/" + method.name, method.desc));
 
                 for (var injectMethod : injectMethods) {
-                    logger.info("processing method " + method.name + " in class " + targetClass.getName() + " with mixin method " + injectMethod.getName() + " in class " + mixinClass.getName());
+                    IZMK.INSTANCE.getLogger().info("processing method " + method.name + " in class " + targetClass.getName() + " with mixin method " + injectMethod.getName() + " in class " + mixinClass.getName());
                     if (injectMethod.isAnnotationPresent(Inject.class)) {
                         At at = injectMethod.getAnnotation(Inject.class).at();
                         switch (at.value()) {
@@ -653,7 +652,7 @@ public class MixinLoader implements IMixinLoader {
                     } else if (injectMethod.isAnnotationPresent(Overwrite.class)) {
                         overwrite(method, injectMethod);
                     } else if (injectMethod.isAnnotationPresent(Transform.class)) {
-                        logger.debug("transforming method " + method.name + " in class " + targetClass.getName());
+                        IZMK.INSTANCE.getLogger().debug("transforming method " + method.name + " in class " + targetClass.getName());
                         injectMethod.invoke(null, method);
                     } else if (injectMethod.isAnnotationPresent(WrapInvoke.class)) {
                         int index = Modifier.isStatic(method.access) ? 0 : 1;

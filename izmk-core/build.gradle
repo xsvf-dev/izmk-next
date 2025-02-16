@@ -5,15 +5,11 @@ plugins {
     id 'com.gradleup.shadow' version '9.0.0-beta8'
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 group = 'ovo.xsvf'
 version = '1.0-SNAPSHOT'
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
 
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
@@ -46,17 +42,12 @@ shadowJar {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-    // lombok
-    annotationProcessor "org.projectlombok:lombok:1.18.36"
-    compileOnly "org.projectlombok:lombok:1.18.36"
-
+    shade project(':izmk-common')
     shade "com.twelvemonkeys.imageio:imageio-core:3.7.0"
     shade 'com.twelvemonkeys.imageio:imageio-metadata:3.7.1'
     shade "com.twelvemonkeys.imageio:imageio-webp:3.7.1"
-
-    shade project(':izmk-common')
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
@@ -65,4 +56,11 @@ sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
+}
+repositories {
+    mavenCentral()
+}
+
+kotlin {
+    jvmToolchain(21)
 }

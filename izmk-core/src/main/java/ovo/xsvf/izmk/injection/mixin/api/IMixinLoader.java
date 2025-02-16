@@ -1,10 +1,9 @@
 package ovo.xsvf.izmk.injection.mixin.api;
 
 import org.objectweb.asm.Opcodes;
-import ovo.xsvf.izmk.misc.Constants;
 import ovo.xsvf.izmk.injection.mixin.annotation.Mixin;
 
-public interface IMixinLoader extends Constants, Opcodes {
+public interface IMixinLoader extends Opcodes {
     /**
      * Load a mixin class into the current JVM.
      * <p>

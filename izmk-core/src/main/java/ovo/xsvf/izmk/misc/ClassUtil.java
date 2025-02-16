@@ -1,13 +1,12 @@
 package ovo.xsvf.izmk.misc;
 
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
-import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.Pair;
+import ovo.xsvf.izmk.IZMK;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.ClassFileTransformer;
@@ -17,11 +16,15 @@ import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 import java.util.HashMap;
 
-public class ClassUtil implements Opcodes, Constants {
+public class ClassUtil implements Opcodes {
     private static final HashMap<Class<?>, byte[]> classMap = new HashMap<>();
     private static final HashMap<Class<?>, byte[]> modifiedClasses = new HashMap<>();
     private static final HashMap<Pair<String,String>, Method> cachedMethods = new HashMap<>();
-    @Getter private static Instrumentation ins;
+    private static Instrumentation instrumentation;
+
+    public static Instrumentation getInstrumentation() {
+        return instrumentation;
+    }
 
     public static byte[] getClassBytes(Class<?> clazz) {
         retransformClass(clazz);
@@ -30,9 +33,9 @@ public class ClassUtil implements Opcodes, Constants {
 
     public static void retransformClass(Class<?> clazz) {
         try {
-            ins.retransformClasses(clazz);
+            instrumentation.retransformClasses(clazz);
         } catch (Exception e) {
-            logger.error(e);
+            IZMK.INSTANCE.getLogger().error(e);
             throw new RuntimeException(e);
         }
     }
@@ -42,9 +45,9 @@ public class ClassUtil implements Opcodes, Constants {
             if (cache) {
                 modifiedClasses.put(clazz, getClassBytes(clazz));
             }
-            ins.redefineClasses(new ClassDefinition(clazz, bytes));
+            instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
         } catch (Exception e) {
-            logger.error(e);
+            IZMK.INSTANCE.getLogger().error(e);
             throw new RuntimeException(e);
         }
     }
@@ -74,15 +77,15 @@ public class ClassUtil implements Opcodes, Constants {
     public static void selfDestruct() {
         modifiedClasses.forEach((clazz, bytes) -> {
             try {
-                ins.redefineClasses(new ClassDefinition(clazz, bytes));
-                IZMK.logger.info("Restored class %s", clazz);
+                instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
+                IZMK.INSTANCE.getLogger().info("Restored class %s", clazz);
             } catch (ClassNotFoundException | UnmodifiableClassException ignored) {}
         });
         System.gc();
     }
 
     public static void init(@NotNull Instrumentation inst) {
-        ins = inst;
+        instrumentation = inst;
         inst.addTransformer(new Transformer(), true);
     }
 

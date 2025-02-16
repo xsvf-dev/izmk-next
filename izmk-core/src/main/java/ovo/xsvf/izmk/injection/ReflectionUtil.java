@@ -1,13 +1,13 @@
 package ovo.xsvf.izmk.injection;
 
 import org.objectweb.asm.Type;
-import ovo.xsvf.izmk.misc.Constants;
+import ovo.xsvf.izmk.IZMK;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-public class ReflectionUtil implements Constants {
+public class ReflectionUtil {
     private static final HashMap<String, Field> cachedFields = new HashMap<>();
     private static final HashMap<String, Class<?>> cachedClasses = new HashMap<>();
     private static final Unsafe unsafe;
@@ -18,7 +18,7 @@ public class ReflectionUtil implements Constants {
             unsafeField.setAccessible(true);
             unsafe = (Unsafe) unsafeField.get(null);
         } catch (Exception ex) {
-            logger.error("Failed to obtain Unsafe instance: %s", ex);
+            IZMK.INSTANCE.getLogger().error("Failed to obtain Unsafe instance: %s", ex);
             throw new RuntimeException("Failed to obtain Unsafe instance", ex);
         }
     }
@@ -39,9 +39,9 @@ public class ReflectionUtil implements Constants {
             privField = clazz.getDeclaredField(field);
             privField.setAccessible(true);
             cachedFields.put(key, privField);
-            logger.debug("Cached field: %s", key);
+            IZMK.INSTANCE.getLogger().debug("Cached field: %s", key);
         } catch (NoSuchFieldException | SecurityException e) {
-            logger.error("Error occurred while finding or accessing field %s in class %s: %s", e, field, clazz.getName());
+            IZMK.INSTANCE.getLogger().error("Error occurred while finding or accessing field %s in class %s: %s", e, field, clazz.getName());
             throw e;
         }
 
@@ -54,7 +54,7 @@ public class ReflectionUtil implements Constants {
             Field privField = getField(clazz, field);
             return privField.get(instance);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Error occurred while accessing field %s in class %s: %s", e, field, className);
+            IZMK.INSTANCE.getLogger().error("Error occurred while accessing field %s in class %s: %s", e, field, className);
             throw new RuntimeException("Failed to access field " + field + " in class " + className, e);
         }
     }
@@ -65,7 +65,7 @@ public class ReflectionUtil implements Constants {
             Field privField = getField(clazz, field);
             privField.set(instance, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Error occurred while setting field %s in class %s: %s", e, field, className);
+            IZMK.INSTANCE.getLogger().error("Error occurred while setting field %s in class %s: %s", e, field, className);
             throw new RuntimeException("Failed to set field " + field + " in class " + className, e);
         }
     }
@@ -76,7 +76,7 @@ public class ReflectionUtil implements Constants {
             Field privField = getField(clazz, field);
             privField.set(null, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Error occurred while setting static field %s in class %s: %s", e, field, className);
+            IZMK.INSTANCE.getLogger().error("Error occurred while setting static field %s in class %s: %s", e, field, className);
             throw new RuntimeException("Failed to set static field " + field + " in class " + className, e);
         }
     }
@@ -87,7 +87,7 @@ public class ReflectionUtil implements Constants {
             Field privField = getField(clazz, field);
             unsafe.putObject(instance, unsafe.objectFieldOffset(privField), value);
         } catch (NoSuchFieldException e) {
-            logger.error("Failed to map final field %s in class %s: %s", e, field, clazz.getName());
+            IZMK.INSTANCE.getLogger().error("Failed to map final field %s in class %s: %s", e, field, clazz.getName());
             throw new RuntimeException("Failed to map final field " + field + " in class " + clazz.getName(), e);
         }
     }
@@ -98,7 +98,7 @@ public class ReflectionUtil implements Constants {
             Field privField = getField(clazz, field);
             unsafe.putObject(unsafe.staticFieldBase(privField), unsafe.staticFieldOffset(privField), value);
         } catch (NoSuchFieldException e) {
-            logger.error("Failed to map final static field %s in class %s: %s", e, field, clazz.getName());
+            IZMK.INSTANCE.getLogger().error("Failed to map final static field %s in class %s: %s", e, field, clazz.getName());
             throw new RuntimeException("Failed to map final static field " + field + " in class " + clazz.getName(), e);
         }
     }
@@ -111,10 +111,10 @@ public class ReflectionUtil implements Constants {
         try {
             Class<?> clazz = Class.forName(className.replace("/", "."));
             cachedClasses.put(className, clazz);
-            logger.debug("Cached class: %s", className);
+            IZMK.INSTANCE.getLogger().debug("Cached class: %s", className);
             return clazz;
         } catch (ClassNotFoundException e) {
-            logger.error("Failed to find class %s: %s", e, className);
+            IZMK.INSTANCE.getLogger().error("Failed to find class %s: %s", e, className);
             throw new RuntimeException("Failed to find class " + className, e);
         }
     }

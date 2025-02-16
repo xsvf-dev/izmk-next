@@ -1,19 +1,10 @@
-package ovo.xsvf.izmk.event.impl.events;
+package ovo.xsvf.izmk.event.impl
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import net.minecraft.client.gui.GuiGraphics;
-import ovo.xsvf.izmk.event.impl.Event;
+import net.minecraft.client.gui.GuiGraphics
+import ovo.xsvf.izmk.event.Event
 
 /**
  * @author LangYa466
  * @since 2025/2/16
  */
-@AllArgsConstructor
-@Getter
-@Setter
-public class Render2DEvent implements Event {
-    private final GuiGraphics graphics;
-    private final float partialTick;
-}
+data class Render2DEvent(val graphics: GuiGraphics?, val partialTick: Float) : Event

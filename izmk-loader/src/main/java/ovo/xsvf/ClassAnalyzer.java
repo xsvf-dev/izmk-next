@@ -4,11 +4,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import ovo.xsvf.logging.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 public class ClassAnalyzer {
@@ -23,76 +20,95 @@ public class ClassAnalyzer {
     }
 
     public List<Class<?>> loadClasses(List<byte[]> classBytes) {
-        LinkedList<String> previous = new LinkedList<>();
-        LinkedList<String> classes = new LinkedList<>();
+        // Step 1: Populate classMap with filtered classes
         classBytes.forEach(it -> {
             ClassNode node = ASMUtil.node(it);
-            if ((node.access & Opcodes.ACC_MODULE) != 0) {
+            if ((node.access & Opcodes.ACC_MODULE) != 0 || node.name.startsWith("kotlin/")) {
                 return;
             }
             String name = node.name;
             classMap.put(name, it);
-            classes.add(name);
         });
 
-        do {
-            previous.clear();
-            previous.addAll(classes);
-            for (int i = 0; i < classes.size(); i++) {
-                List<String> deps = resolveDeps(classes.get(i));
-                final int finalI = i; AtomicReference<Integer> size = new AtomicReference<>(0);
-                deps.forEach(dep -> {
-                    if (classMap.containsKey(dep)) {
-                        classes.add(finalI, dep);
-                        size.getAndSet(size.get() + 1);
-                    }
-                });
-                i += size.get();
-            }
-            List<String> distinctList = distinct(classes);
-            classes.clear();
-            classes.addAll(distinctList);
-        } while (!previous.equals(classes));
+        // Step 2: Build dependency graph and perform topological sort
+        Map<String, List<String>> adjacency = new HashMap<>();
+        Map<String, Integer> inDegree = new ConcurrentHashMap<>();
 
-        final List<Class<?>> newClasses = new ArrayList<>();
-        classes.forEach(className -> {
+        // Initialize adjacency list and in-degree map
+        classMap.keySet().forEach(className -> {
+            adjacency.put(className, new ArrayList<>());
+            inDegree.put(className, 0);
+        });
+
+        // Populate adjacency and in-degree based on dependencies
+        classMap.forEach((className, bytes) -> {
+            ClassNode node = ASMUtil.node(bytes);
+            List<String> deps = resolveDeps(node);
+            deps.forEach(dep -> {
+                if (classMap.containsKey(dep)) {
+                    adjacency.get(dep).add(className); // Edge from dep to className
+                    inDegree.put(className, inDegree.get(className) + 1);
+                }
+            });
+        });
+
+        // Kahn's algorithm for topological sorting
+        Queue<String> queue = new LinkedList<>();
+        inDegree.forEach((className, degree) -> {
+            if (degree == 0) {
+                queue.offer(className);
+            }
+        });
+
+        List<String> sortedClasses = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            String current = queue.poll();
+            sortedClasses.add(current);
+            for (String dependent : adjacency.get(current)) {
+                int updatedDegree = inDegree.get(dependent) - 1;
+                inDegree.put(dependent, updatedDegree);
+                if (updatedDegree == 0) {
+                    queue.offer(dependent);
+                }
+            }
+        }
+
+        // Check for cycles
+        if (sortedClasses.size() != classMap.size()) {
+            logger.error("Circular dependency detected among classes.");
+        }
+
+        // Step 3: Load classes in topological order
+        List<Class<?>> newClasses = new ArrayList<>();
+        sortedClasses.forEach(className -> {
             try {
+                String dottedName = className.replace("/", ".");
                 try {
-                    Class.forName(className.replace("/", "."), false,
-                            Thread.currentThread().getContextClassLoader());
+                    Class.forName(dottedName, false, Thread.currentThread().getContextClassLoader());
                 } catch (ClassNotFoundException e) {
-                    newClasses.add(defineMethod.apply(className, classMap.get(className)));
+                    Class<?> clazz = defineMethod.apply(className, classMap.get(className));
+                    newClasses.add(clazz);
                 }
             } catch (Exception e) {
-                logger.error(e);
+                logger.error("Failed to load class: " + className, e);
             }
         });
+
         return newClasses;
     }
 
     private List<String> resolveDeps(ClassNode node) {
-        if (!depCache.containsKey(node)) {
+        return depCache.computeIfAbsent(node, k -> {
             List<String> deps = new ArrayList<>();
-            if (node.interfaces != null) deps.addAll(node.interfaces);
             if (node.superName != null) deps.add(node.superName);
+            if (node.interfaces != null) deps.addAll(node.interfaces);
             if (node.visibleAnnotations != null) {
-                node.visibleAnnotations.forEach(it -> deps.add(ASMUtil.fromDesc(it.desc)));
+                node.visibleAnnotations.forEach(ann -> deps.add(ASMUtil.fromDesc(ann.desc)));
             }
             if (node.invisibleAnnotations != null) {
-                node.invisibleAnnotations.forEach(it -> deps.add(ASMUtil.fromDesc(it.desc)));
+                node.invisibleAnnotations.forEach(ann -> deps.add(ASMUtil.fromDesc(ann.desc)));
             }
-            depCache.put(node, deps);
             return deps;
-        } else return depCache.get(node);
-    }
-
-    private List<String> resolveDeps(String clz) {
-        return resolveDeps(ASMUtil.node(classMap.get(clz)));
-    }
-
-    private <T> List<T> distinct(List<T> list) {
-        List<T> list2 = new ArrayList<>();
-        list.forEach(it -> {if (!list2.contains(it)) list2.add(it);});
-        return list2;
+        });
     }
 }

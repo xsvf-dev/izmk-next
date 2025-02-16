@@ -1,3 +1,6 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
 subprojects {
     // mirror repositories to speed up builds
     repositories {
@@ -57,4 +60,13 @@ tasks.register('runClient', JavaExec) {
 
     standardOutput = System.out
     errorOutput = System.err
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+kotlin {
+    jvmToolchain(8)
 }
