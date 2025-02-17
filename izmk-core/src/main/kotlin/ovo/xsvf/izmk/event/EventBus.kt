@@ -1,10 +1,16 @@
 package ovo.xsvf.izmk.event
 
+import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.event.ServerChatEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
+import ovo.xsvf.izmk.command.CommandManager
 import ovo.xsvf.izmk.event.annotations.EventPriority
 import ovo.xsvf.izmk.event.annotations.EventTarget
+import ovo.xsvf.izmk.event.impl.ChatMessageEvent
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+
 
 /**
  * @author LangYa466
@@ -53,5 +59,19 @@ object EventBus {
             ?.sortedBy { it.priority }
             ?.forEach { it.invoke(event) }
         return event
+    }
+
+    init {
+        MinecraftForge.EVENT_BUS.register(this)
+        register(CommandManager)
+    }
+
+    @SubscribeEvent
+    fun onChatMessage(event: ServerChatEvent) {
+        ChatMessageEvent(event.message).apply {
+            call(this)
+            event.message = message
+            event.isCanceled = isCancelled
+        }
     }
 }

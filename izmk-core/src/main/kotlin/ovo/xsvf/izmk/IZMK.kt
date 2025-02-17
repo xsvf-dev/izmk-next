@@ -28,4 +28,8 @@ object IZMK {
     fun shutdown() {
         ConfigManager.shutdown()
     }
+
+    fun isNull(): Boolean {
+        return mc?.player == null
+    }
 }
