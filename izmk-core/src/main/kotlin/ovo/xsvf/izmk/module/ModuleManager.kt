@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.module
 
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.module.impl.Test
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
 

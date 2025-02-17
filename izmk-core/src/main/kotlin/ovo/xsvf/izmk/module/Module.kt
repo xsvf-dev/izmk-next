@@ -10,7 +10,7 @@ import ovo.xsvf.izmk.event.EventBus
 abstract class Module(val name: String, val description: String = "") {
     var enabled = false
         set(value) {
-            if (enabled) EventBus.register(this)
+            if (value) EventBus.register(this)
             else EventBus.unregister(this)
             field = value
         }
