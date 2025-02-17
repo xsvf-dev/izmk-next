@@ -10,7 +10,8 @@ import java.lang.reflect.Modifier
  * @since 2025/2/16
  */
 object ModuleManager {
-    private val modulesMap: MutableMap<String, Module> = HashMap()
+    @JvmStatic
+    val modulesMap: MutableMap<String, Module> = HashMap()
 
     @Throws(Throwable::class)
     fun init(classes: Array<Class<*>>) {

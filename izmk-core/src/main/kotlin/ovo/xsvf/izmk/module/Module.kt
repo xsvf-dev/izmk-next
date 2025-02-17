@@ -16,6 +16,8 @@ abstract class Module(val name: String, val description: String = "") {
         }
     protected val mc: Minecraft = Minecraft.getInstance()
 
+    var keyCode = -1;
+
     fun toggle() {
         this.enabled = !enabled
     }

@@ -24,4 +24,9 @@ public class MixinMinecraft {
 
         EventBus.INSTANCE.call(new TickEvent());
     }
+
+    @Inject(method = "destroy",desc = "()V")
+    public static void destroy(Minecraft minecraft, CallbackInfo callbackInfo) throws Throwable {
+        IZMK.INSTANCE.shutdown();
+    }
 }
