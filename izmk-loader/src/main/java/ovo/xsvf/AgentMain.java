@@ -6,19 +6,23 @@ import ovo.xsvf.logging.LogServer;
 import ovo.xsvf.logging.Logger;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class AgentMain {
     private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
 
-    public static void agentmain(String agentArgs, Instrumentation inst) throws Exception {
+    public static void agentmain(String agentArgs, Instrumentation inst) {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
         String dll = jsonObject.get("dll").getAsString();
         String file = jsonObject.get("file").getAsString();
         int port = jsonObject.get("port").getAsInt();
         boolean debug = jsonObject.get("debug").getAsBoolean();
-
-        Logger logger = Logger.of("Agent", port);
-
+        Logger logger = Logger.Companion.of("Agent", port);
         System.load(dll);
 
         ClassLoader classLoader = null;
@@ -33,15 +37,32 @@ public class AgentMain {
         final ClassLoader finalClassLoader = classLoader;
 
         logger.debug("loading class...");
-        System.out.println(finalClassLoader.getClass().getName());
-        Thread.currentThread().setContextClassLoader(finalClassLoader);
+        try {
+            Class<?> clazz = Class.forName("net.minecraftforge.securemodules.SecureModuleClassLoader", true, finalClassLoader);
+            Field loaders = clazz.getDeclaredField("packageToParentLoader");
+            loaders.setAccessible(true);
+            Map<String, ClassLoader> packageToParentLoader = (Map<String, ClassLoader>) loaders.get(finalClassLoader);
+            Set<String> packages = new HashSet<>();
+            ClassLoader bmw = new BMWClassLoader(Paths.get(file),
+                    packages::add, (name, b) -> defineClass(name, finalClassLoader, b));
+            packages.forEach(pkg -> {
+                logger.debug("adding package %s to parent loader", pkg);
+                packageToParentLoader.put(pkg, bmw);
+            });
+        } catch (NoSuchFieldException | ClassNotFoundException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
 
-        for (Class<?> clazz : new ClassAnalyzer((name, b) -> defineClass(name, finalClassLoader, b), logger)
-                .loadClasses(CoreFileProvider.getBinaryFiles(file))) {
-            if (clazz.getName().equals("ovo.xsvf.izmk.Entry")) {
-                clazz.getMethod("entry", Instrumentation.class, int.class, String.class)
-                        .invoke(null, inst, port, file);
-            }
+        Thread.currentThread().setContextClassLoader(finalClassLoader);
+        try {
+            Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)
+                    .getMethod("entry", Instrumentation.class, int.class, String.class)
+                    .invoke(null, inst, port, file);
+            logger.debug("Entry.entry() called");
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            logger.error("Entry class or method not found", e);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

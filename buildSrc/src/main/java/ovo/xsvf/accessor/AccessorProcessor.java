@@ -15,6 +15,7 @@ import ovo.xsvf.JarClassLoader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ public class AccessorProcessor implements Opcodes {
 
     private final @NotNull File inputJarFile;
     private final @NotNull File outputFile;
+    private final @NotNull List<Path> libraryJars;
     private final @NotNull Consumer<String> log;
     private final @NotNull Integer readFlags;
     private final @NotNull Integer writeFlags;
@@ -184,7 +186,7 @@ public class AccessorProcessor implements Opcodes {
                 }
             }
         }
-        classLoader = new JarClassLoader(inputJarFile.toPath(), this.getClass().getClassLoader(), log);
+        classLoader = new JarClassLoader(libraryJars, this.getClass().getClassLoader(), log);
     }
 
     private ClassNode node(byte[] bytes) {

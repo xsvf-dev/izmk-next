@@ -20,12 +20,12 @@ import java.util.function.Predicate;
 
 // OMG, IT WORKS!!!
 public class MixinLoader implements IMixinLoader {
-    public final static MixinLoader instance = new MixinLoader();
+    public final static MixinLoader INSTANCE = new MixinLoader();
 
-    public static void loadMixins(Class<?>... classes) throws Exception {
+    public static void loadMixins(List<Class<?>> classes) throws Exception {
         for (Class<?> clazz : classes) {
             if (!IZMK.INSTANCE.getExcludedLoading().contains(clazz) && clazz.isAnnotationPresent(Mixin.class)) {
-                instance.loadMixin(clazz);
+                INSTANCE.loadMixin(clazz);
             }
         }
         IZMK.INSTANCE.setRunHeypixel(true);
@@ -132,15 +132,15 @@ public class MixinLoader implements IMixinLoader {
 
         // There are no local variables stored, so we don't need to push them onto the stack
 
-        // STACK: [<instance>, args...]
+        // STACK: [<INSTANCE>, args...]
         insnList.add(new InsnNode(ACONST_NULL));
-        // STACK: [<instance>, args..., null]
+        // STACK: [<INSTANCE>, args..., null]
         insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(CallbackInfo.class), "create", "(" + Type.getDescriptor(Object.class) + ")" + Type.getDescriptor(CallbackInfo.class), false));
-        // STACK: [<instance>, args..., CallbackInfo]
+        // STACK: [<INSTANCE>, args..., CallbackInfo]
         insnList.add(new InsnNode(DUP));
-        // STACK: [<instance>, args..., CallbackInfo, CallbackInfo]
+        // STACK: [<INSTANCE>, args..., CallbackInfo, CallbackInfo]
         insnList.add(new VarInsnNode(ASTORE, callbackIndex));
-        // STACK: [<instance>, args..., CallbackInfo]
+        // STACK: [<INSTANCE>, args..., CallbackInfo]
         insnList.add(new MethodInsnNode(INVOKESTATIC, injectOwner, injectName, injectDesc, false));
         // STACK: []
         insnList.add(new VarInsnNode(ALOAD, callbackIndex));
@@ -197,16 +197,16 @@ public class MixinLoader implements IMixinLoader {
 
             if (!Modifier.isStatic(method.access)) {
                 insnList.add(new VarInsnNode(ALOAD, index++)); // 0
-                // STACK: [CallbackInfo, <instance>]
+                // STACK: [CallbackInfo, <INSTANCE>]
                 insnList.add(new InsnNode(SWAP));
-                // STACK: [<instance>, CallbackInfo]
+                // STACK: [<INSTANCE>, CallbackInfo]
             }
 
             for (Type type : Type.getArgumentTypes(method.desc)) {
                 insnList.add(new VarInsnNode(type.getOpcode(ILOAD), index++));
-                // STACK: [<instance>, CallbackInfo, arg]
+                // STACK: [<INSTANCE>, CallbackInfo, arg]
                 index += swap(type, insnList) ? 1 : 0;
-                // STACK: [<instance>, arg, CallbackInfo]
+                // STACK: [<INSTANCE>, arg, CallbackInfo]
             }
 
             // pass the params with @Local to the inject method
@@ -222,11 +222,11 @@ public class MixinLoader implements IMixinLoader {
                 }
             }
 
-            // STACK: [<instance>, args..., CallbackInfo]
+            // STACK: [<INSTANCE>, args..., CallbackInfo]
             insnList.add(new InsnNode(DUP));
-            // STACK: [<instance>, args..., CallbackInfo, CallbackInfo]
+            // STACK: [<INSTANCE>, args..., CallbackInfo, CallbackInfo]
             insnList.add(new VarInsnNode(ASTORE, callbackIndex));
-            // STACK: [<instance>, args..., CallbackInfo]
+            // STACK: [<INSTANCE>, args..., CallbackInfo]
             insnList.add(new MethodInsnNode(INVOKESTATIC, injectOwner, injectName, injectDesc, false));
             // STACK: []
             insnList.add(new VarInsnNode(ALOAD, callbackIndex));
@@ -282,7 +282,7 @@ public class MixinLoader implements IMixinLoader {
             // STACK: (before) [margs...] (after) [<ret_value>]
             if (!Modifier.isStatic(method.access)) {
                 insnList.add(new VarInsnNode(ALOAD, index++)); // 0
-                // STACK: (before) [margs..., <instance>] (after) [<ret_value>, <instance>]
+                // STACK: (before) [margs..., <INSTANCE>] (after) [<ret_value>, <INSTANCE>]
             }
 
             for (Type type : Type.getArgumentTypes(method.desc)) {
@@ -352,14 +352,14 @@ public class MixinLoader implements IMixinLoader {
         int index = 0;
         if (!Modifier.isStatic(method.access)) {
             insnList.add(new VarInsnNode(ALOAD, index++)); // 0
-            // STACK: [<instance>]
+            // STACK: [<INSTANCE>]
         }
 
         for (Type type : Type.getArgumentTypes(method.desc)) {
             insnList.add(new VarInsnNode(type.getOpcode(ILOAD), index++));
-            // STACK: [<instance>, arg]
+            // STACK: [<INSTANCE>, arg]
         }
-        // STACK: [<instance>, args...]
+        // STACK: [<INSTANCE>, args...]
         insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(inject.getDeclaringClass()), inject.getName(), Type.getMethodDescriptor(inject), false));
         // STACK: [<result>]
         if (Type.getReturnType(method.desc) == Type.VOID_TYPE) {
@@ -400,7 +400,7 @@ public class MixinLoader implements IMixinLoader {
 
         for (AbstractInsnNode insnNode : toWrap) {
             InsnList insnList = new InsnList();
-            // STACK: [<instance>, margs...]
+            // STACK: [<INSTANCE>, margs...]
             boolean staticCall; int helperIndex = method.maxLocals; method.maxLocals += 1;
             if (toWrap.getFirst().getOpcode() == INVOKESTATIC) {
                 staticCall = true;
@@ -451,12 +451,12 @@ public class MixinLoader implements IMixinLoader {
                 insnList.add(new InsnNode(SWAP));
                 index++;
             }
-            // STACK: [<instance>, Invocation]
+            // STACK: [<INSTANCE>, Invocation]
             for (Type type : Type.getArgumentTypes(method.desc)) {
                 insnList.add(new VarInsnNode(type.getOpcode(ILOAD), index++));
                 index += swap(type, insnList) ? 1 : 0;
             }
-            // STACK: [<instance>, args..., Invocation]
+            // STACK: [<INSTANCE>, args..., Invocation]
             // pass the params with @Local to the inject method
             for (Parameter param : inject.getParameters()) {
                 if (param.isAnnotationPresent(Local.class)) {
@@ -468,12 +468,12 @@ public class MixinLoader implements IMixinLoader {
 
                     Type type = Type.getType(param.getType());
                     insnList.add(new VarInsnNode(type.getOpcode(ILOAD), local.value()));
-                    // STACK: [<instance>, args..., Invocation, local]
+                    // STACK: [<INSTANCE>, args..., Invocation, local]
                     swap(type, insnList);
-                    // STACK: [<instance>, args..., local, Invocation]
+                    // STACK: [<INSTANCE>, args..., local, Invocation]
                 }
             }
-            // STACK: [<instance>, args..., locals..., Invocation]
+            // STACK: [<INSTANCE>, args..., locals..., Invocation]
             insnList.add(new MethodInsnNode(INVOKESTATIC, injectOwner, injectName, injectDesc, false));
             // STACK: [<result>]
 
@@ -645,7 +645,7 @@ public class MixinLoader implements IMixinLoader {
                             case TAIL -> injectTail(method, injectMethod);
                             case BEFORE_INVOKE, AFTER_INVOKE -> {
                                 if (at.method().isEmpty() || at.desc().isEmpty())
-                                    throw new IllegalArgumentException("Relocate annotation in method " + injectMethod.getName() + " in class " + mixinClass.getName() + " is missing method or desc");
+                                    throw new IllegalArgumentException("At annotation in method " + injectMethod.getName() + " in class " + mixinClass.getName() + " is missing method or desc");
                                 injectMethod(method, injectMethod, Pair.of(at.method(), at.desc()), at.value() == At.Type.BEFORE_INVOKE);
                             }
                         }

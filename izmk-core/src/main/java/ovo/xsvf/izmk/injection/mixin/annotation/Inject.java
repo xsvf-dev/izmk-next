@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  *     <br/>
  *     The method should have {@link ovo.xsvf.izmk.injection.mixin.CallbackInfo} as its last parameter.
  *     <br/>
- *     If the target method is a non-static method, the inject method should have a instance of the target class as its first parameter.
+ *     If the target method is a non-static method, the inject method should have a INSTANCE of the target class as its first parameter.
  * </p>
  * <b> Note: </b> The method should be public and static.
  */

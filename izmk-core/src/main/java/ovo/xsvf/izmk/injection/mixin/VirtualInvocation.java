@@ -21,7 +21,7 @@ public class VirtualInvocation implements Invocation {
     }
 
     /**
-     * Factory method to create a new virtual method invocation instance.
+     * Factory method to create a new virtual method invocation INSTANCE.
      * <p>
      *     <b>Note:</b> The owner, name and desc should be already remapped.
      * </p>
@@ -29,7 +29,7 @@ public class VirtualInvocation implements Invocation {
      * @param owner the owner class of the method
      * @param name the name of the method
      * @param desc the descriptor of the method
-     * @return a new virtual method invocation instance
+     * @return a new virtual method invocation INSTANCE
      */
     public static VirtualInvocation create(@NotNull Object methodInstance, MethodHelper helper, String owner, String name, String desc) {
         return new VirtualInvocation(methodInstance, helper, owner, name, desc);

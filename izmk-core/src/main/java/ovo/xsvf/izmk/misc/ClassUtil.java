@@ -78,7 +78,7 @@ public class ClassUtil implements Opcodes {
         modifiedClasses.forEach((clazz, bytes) -> {
             try {
                 instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
-                IZMK.INSTANCE.getLogger().info("Restored class %s", clazz);
+                IZMK.INSTANCE.getLogger().info("Restored class {}", clazz);
             } catch (ClassNotFoundException | UnmodifiableClassException ignored) {}
         });
         System.gc();

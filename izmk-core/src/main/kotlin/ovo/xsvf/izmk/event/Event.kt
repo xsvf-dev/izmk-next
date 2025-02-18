@@ -1,7 +1,7 @@
 package ovo.xsvf.izmk.event
 
-/**
- * @author LangYa466
- * @since 2025/2/16
- */
-interface Event 
+open class Event
+
+open class CancellableEvent : Event() {
+    var isCancelled: Boolean = false
+}

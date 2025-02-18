@@ -50,6 +50,7 @@ tasks.register('merge', MergeTask) {
     core = project(':izmk-core').tasks.shadowJar.archiveFile.get().asFile
     output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/merged-loader.jar")
 }
+
 repositories {
     mavenCentral()
 }

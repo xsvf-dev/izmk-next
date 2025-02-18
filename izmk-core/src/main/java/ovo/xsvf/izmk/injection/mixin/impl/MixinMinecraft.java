@@ -1,9 +1,9 @@
-package ovo.xsvf.izmk.injection.mixin.impl.special;
+package ovo.xsvf.izmk.injection.mixin.impl;
 
 import net.minecraft.client.Minecraft;
 import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.izmk.event.EventBus;
-import ovo.xsvf.izmk.event.impl.TickEvent;
+import ovo.xsvf.izmk.event.TickEvent;
 import ovo.xsvf.izmk.injection.mixin.CallbackInfo;
 import ovo.xsvf.izmk.injection.mixin.annotation.Inject;
 import ovo.xsvf.izmk.injection.mixin.annotation.Mixin;
@@ -17,12 +17,13 @@ public class MixinMinecraft {
 
     @Inject(method = "tick", desc = "()V")
     public static void tick(Minecraft minecraft, CallbackInfo callbackInfo) throws Throwable {
-        if (initialized) return;
-        IZMK.INSTANCE.setMc(Minecraft.getInstance());
-        IZMK.INSTANCE.init();
-        initialized = true;
+        if (!initialized) {
+            IZMK.INSTANCE.setMc(Minecraft.getInstance());
+            IZMK.INSTANCE.init();
+            initialized = true;
+        }
 
-        EventBus.INSTANCE.call(new TickEvent());
+        EventBus.INSTANCE.post(new TickEvent());
     }
 
     @Inject(method = "destroy",desc = "()V")

@@ -1,77 +1,17 @@
 package ovo.xsvf.izmk.event
 
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.ServerChatEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import ovo.xsvf.izmk.command.CommandManager
-import ovo.xsvf.izmk.event.annotations.EventPriority
-import ovo.xsvf.izmk.event.annotations.EventTarget
-import ovo.xsvf.izmk.event.impl.ChatMessageEvent
-import java.lang.reflect.Method
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
-
-
-/**
- * @author LangYa466
- * @since 2025/2/16
- */
 object EventBus {
-    private val eventMethods = ConcurrentHashMap<Class<out Event>, MutableList<MethodWrapper>>()
+    private val eventMap = mutableListOf<EventHandler>()
 
-    /** 注册事件监听对象 */
-    fun register(vararg objs: Any) = objs.forEach(::register)
-
-    private fun register(obj: Any) {
-        obj.javaClass.declaredMethods
-            .filter(::isValidEventMethod)
-            .forEach { registerMethod(obj, it) }
+    fun register(handler: EventHandler) {
+        eventMap.add(handler)
     }
 
-    private fun isValidEventMethod(method: Method): Boolean {
-        return method.isAnnotationPresent(EventTarget::class.java) && method.parameterCount == 1
+    fun unregister(handler: EventHandler) {
+        eventMap.remove(handler)
     }
 
-    private fun registerMethod(obj: Any, method: Method) {
-        val eventClass = method.parameterTypes[0] as Class<out Event>
-        val priority = method.getAnnotation(EventPriority::class.java)?.value ?: 10
-        eventMethods.getOrPut(eventClass) { CopyOnWriteArrayList() }
-            .add(MethodWrapper(obj, method, priority))
-    }
-
-    /** 取消注册事件监听对象 */
-    fun unregister(vararg objs: Any) = objs.forEach(::unregister)
-
-    private fun unregister(obj: Any) {
-        obj.javaClass.declaredMethods
-            .filter(::isValidEventMethod)
-            .forEach { unregisterMethod(obj, it) }
-    }
-
-    private fun unregisterMethod(obj: Any, method: Method) {
-        val eventClass = method.parameterTypes[0] as Class<out Event>
-        eventMethods[eventClass]?.removeIf { it.matches(obj, method) }
-    }
-
-    /** 调用事件 */
-    fun call(event: Event): Event {
-        eventMethods[event.javaClass]
-            ?.sortedBy { it.priority }
-            ?.forEach { it.invoke(event) }
-        return event
-    }
-
-    init {
-        MinecraftForge.EVENT_BUS.register(this)
-        register(CommandManager)
-    }
-
-    @SubscribeEvent
-    fun onChatMessage(event: ServerChatEvent) {
-        ChatMessageEvent(event.message).apply {
-            call(this)
-            event.message = message
-            event.isCanceled = isCancelled
-        }
+    fun post(event: Event) {
+        eventMap.forEach { it.handle(event) }
     }
 }
