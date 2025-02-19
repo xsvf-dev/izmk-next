@@ -3,6 +3,8 @@ package ovo.xsvf.izmk.graphics
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.opengl.GL46
+import ovo.xsvf.izmk.event.EventBus
+import ovo.xsvf.izmk.event.Render2DEvent
 
 object GRenderSystem{
     private val poseStack = PoseStack()
@@ -10,7 +12,7 @@ object GRenderSystem{
     fun onRender2D(guiGraphics: GuiGraphics?, partialTick: Float) {
         // renderPre();
         poseStack.pushPose()
-//        ovo.xsvf.izmk.event.EventBus.post(Render2DEvent(guiGraphics, partialTick))
+        EventBus.post(Render2DEvent(guiGraphics, partialTick))
         poseStack.popPose()
 
         // renderPost();

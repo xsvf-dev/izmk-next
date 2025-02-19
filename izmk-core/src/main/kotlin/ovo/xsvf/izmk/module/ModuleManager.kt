@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.module
 
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.module.impl.Test
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -11,6 +12,8 @@ object ModuleManager {
     val modulesMap: MutableMap<String, Module> = HashMap()
 
     fun init(classes: Array<Class<*>>) {
+        addModule(Test())
+        if (true) return
         for (clazz in classes) {
             val name = clazz.name ?: "null"
             val superclass = clazz.superclass ?: "null"
@@ -35,6 +38,7 @@ object ModuleManager {
                 }
             }
         }
+        IZMK.logger.info("Module map size ${modulesMap.size}")
     }
 
     private fun addModule(module: Module) {

@@ -1,17 +1,34 @@
 package ovo.xsvf.izmk.event
 
-object EventBus {
-    private val eventMap = mutableListOf<EventHandler>()
+import java.util.concurrent.CopyOnWriteArraySet
 
-    fun register(handler: EventHandler) {
-        eventMap.add(handler)
+object EventBus {
+    private val registeredHandlers = CopyOnWriteArraySet<Any>()
+
+    fun register(listener: Any) {
+        registeredHandlers.add(listener)
     }
 
-    fun unregister(handler: EventHandler) {
-        eventMap.remove(handler)
+    fun unregister(listener: Any) {
+        registeredHandlers.remove(listener)
     }
 
     fun post(event: Event) {
-        eventMap.forEach { it.handle(event) }
+        val eventType = event::class.java
+        for (listener in registeredHandlers) {
+            for (method in listener::class.java.declaredMethods) {
+                if (method.isAnnotationPresent(EventListener::class.java)) {
+                    val parameterTypes = method.parameterTypes
+                    if (parameterTypes.size == 1 && parameterTypes[0].isAssignableFrom(eventType)) {
+                        try {
+                            method.isAccessible = true
+                            method.invoke(listener, event)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+        }
     }
 }

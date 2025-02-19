@@ -1,7 +1,7 @@
 package ovo.xsvf.izmk.module.impl
 
-import ovo.xsvf.izmk.IZMK
-import ovo.xsvf.izmk.event.TickEvent
+import ovo.xsvf.izmk.event.EventListener
+import ovo.xsvf.izmk.event.Render2DEvent
 import ovo.xsvf.izmk.module.Module
 
 /**
@@ -10,11 +10,11 @@ import ovo.xsvf.izmk.module.Module
  */
 class Test : Module("Test") {
     init {
-        println("Test module loaded")
         enabled = true
     }
 
-    override fun onTick(event: TickEvent) {
-        IZMK.logger.info("tick event")
+    @EventListener
+    fun onRender2D(event: Render2DEvent) {
+        event.guiGraphics?.drawString(mc.font, "Test",5,5,-1)
     }
 }

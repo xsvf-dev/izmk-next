@@ -46,7 +46,7 @@ public class AgentMain {
             ClassLoader bmw = new BMWClassLoader(Paths.get(file),
                     packages::add, (name, b) -> defineClass(name, finalClassLoader, b));
             packages.forEach(pkg -> {
-                logger.debug("adding package %s to parent loader", pkg);
+                logger.debug("adding package {} to parent loader", pkg);
                 packageToParentLoader.put(pkg, bmw);
             });
         } catch (NoSuchFieldException | ClassNotFoundException | IllegalAccessException e) {

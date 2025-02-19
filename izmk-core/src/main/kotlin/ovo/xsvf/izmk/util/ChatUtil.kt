@@ -7,6 +7,6 @@ import ovo.xsvf.izmk.IZMK.mc
 object ChatUtil {
     fun addMessageWithClient(message: String) {
         if (isNull()) return
-        mc?.player?.sendSystemMessage(Component.literal(message))
+        mc.player?.sendSystemMessage(Component.literal(message))
     }
 }
