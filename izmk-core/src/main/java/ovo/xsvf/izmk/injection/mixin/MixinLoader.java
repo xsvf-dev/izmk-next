@@ -587,13 +587,14 @@ public class MixinLoader implements IMixinLoader {
         Map<Pair<String, String>, List<Method>> injectMap = new HashMap<>();
 
         for (Method method : mixinClass.getDeclaredMethods()) {
+            // private也没事
+            method.setAccessible(true);
             if (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Overwrite.class) ||
                     method.isAnnotationPresent(Transform.class) || method.isAnnotationPresent(WrapInvoke.class) ||
                     method.isAnnotationPresent(ModifyLocals.class)) {
                 if (!Modifier.isStatic(method.getModifiers()))
                     throw new IllegalArgumentException("Mixin method " + method.getName() + " in class " + mixinClass.getName() + " is not static");
-                if (Modifier.isPrivate(method.getModifiers()))
-                    throw new IllegalArgumentException("Mixin method " + method.getName() + " in class " + mixinClass.getName() + " is private");
+                // if (Modifier.isPrivate(method.getModifiers())) throw new IllegalArgumentException("Mixin method " + method.getName() + " in class " + mixinClass.getName() + " is private");
                 Class<?>[] parameterTypes = method.getParameterTypes();
                 String name; String desc;
                 if (method.isAnnotationPresent(Inject.class)) {

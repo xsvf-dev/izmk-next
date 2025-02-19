@@ -4,6 +4,7 @@ import ovo.xsvf.logging.LogServer;
 import ovo.xsvf.logging.Logger;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class Launcher {
     private static final Logger logger;
@@ -19,10 +20,13 @@ public class Launcher {
     public static void main(String[] args) throws Exception {
         cn.langya.Logger.setLogFilePath("izmk.0721.log");
 
+        // 中文
+        System.setOut(new java.io.PrintStream(System.out, true, StandardCharsets.UTF_8));
+
         printLogo();
 
         if (!JNAUtil.tryEnableAnsiSupport()) {
-            System.out.println("无法启用彩色输出。");
+            cn.langya.Logger.error("无法启用彩色输出。");
         } else {
             cn.langya.Logger.setHasColorInfo(true);
         }

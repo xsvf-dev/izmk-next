@@ -8,16 +8,16 @@ import ovo.xsvf.izmk.IZMK.mc
 import ovo.xsvf.izmk.config.impl.ModuleConfig
 import java.io.File
 import java.nio.charset.StandardCharsets
+import java.util.Base64
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 object ConfigManager {
     private val configs = CopyOnWriteArrayList<Config>()
     private val dir = File(mc.gameDirectory, "IZMK")
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private val executor: ExecutorService = Executors.newCachedThreadPool()
+    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
     private var isFirst = false
 
     fun init() {
@@ -32,11 +32,14 @@ object ConfigManager {
     private fun loadConfig(name: String) {
         if (executor.isShutdown || executor.isTerminated) return
         executor.execute {
-            val file = File(dir, "$name.json")
+            val file = File(dir, "$name.izmk")
             if (file.exists()) {
                 val json = runCatching {
-                    Gson().fromJson(file.readText(), JsonObject::class.java)
+                    val base64Text = file.readText(StandardCharsets.UTF_8)
+                    val decodedJson = String(Base64.getDecoder().decode(base64Text), StandardCharsets.UTF_8)
+                    Gson().fromJson(decodedJson, JsonObject::class.java)
                 }.getOrNull()
+
                 configs.find { it.name == name }?.loadConfig(json ?: JsonObject())
                 logConfigAction(name, "Loaded client config")
             } else {
@@ -52,22 +55,17 @@ object ConfigManager {
             return
         }
 
-        val future = executor.submit {
-            val file = File(dir, "$name.json")
+        executor.execute {
+            val file = File(dir, "$name.izmk")
             if (!file.exists()) file.createNewFile()
 
             configs.find { it.name == name }?.let {
-                file.outputStream().use { stream ->
-                    stream.write(gson.toJson(it.saveConfig()).toByteArray(StandardCharsets.UTF_8))
-                }
+                val jsonData = gson.toJson(it.saveConfig())
+                val base64Data = Base64.getEncoder().encodeToString(jsonData.toByteArray(StandardCharsets.UTF_8))
+
+                file.writeText(base64Data, StandardCharsets.UTF_8)
                 logConfigAction(name, "Saved client config")
             } ?: IZMK.logger.error("Failed to save config: $name")
-        }
-
-        try {
-            future.get()
-        } catch (e: Exception) {
-            IZMK.logger.error("Failed to execute saveConfig for $name: ${e.message}")
         }
     }
 
@@ -83,7 +81,7 @@ object ConfigManager {
         }
     }
 
-    fun saveAllConfig() {
+    private fun saveAllConfig() {
         if (executor.isShutdown || executor.isTerminated) {
             IZMK.logger.warn("Attempted to save all configs but executor is shut down!")
             return
@@ -102,14 +100,11 @@ object ConfigManager {
     fun shutdown() {
         saveAllConfig()
 
-        executor.shutdown()
         try {
-            if (!executor.awaitTermination(3, TimeUnit.SECONDS)) {
-                IZMK.logger.warn("Forcefully shutting down executor...")
-                executor.shutdownNow()
-            }
-        } catch (e: InterruptedException) {
+            Thread.sleep(500) // 让配置(子弹)飞一会
             executor.shutdownNow()
+        } catch (e: InterruptedException) {
+            Thread.currentThread().interrupt()
         }
     }
 }

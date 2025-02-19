@@ -25,9 +25,9 @@ public class LogServer {
         new Thread(() -> {
             try {
                 while (!serverSocket.isClosed()) {
-                    System.out.println("等待客户端连接...");
+                    cn.langya.Logger.info("等待客户端连接...");
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println("新客户端接入: " + clientSocket.getRemoteSocketAddress());
+                    cn.langya.Logger.info("新客户端接入: " + clientSocket.getRemoteSocketAddress());
 
                     ClientHandler clientHandler = new ClientHandler(clientSocket);
                     clientHandlers.add(clientHandler);
@@ -35,7 +35,7 @@ public class LogServer {
                 }
             } catch (IOException e) {
                 if (!serverSocket.isClosed()) {
-                    System.err.println("服务器异常: " + e.getMessage());
+                    cn.langya.Logger.error("服务器异常: " + e.getMessage());
                 }
             }
         }, "LogServer-Acceptor").start();
@@ -55,12 +55,12 @@ public class LogServer {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            System.err.println("关闭服务器时异常: " + e.getMessage());
+            cn.langya.Logger.error("关闭服务器时异常: " + e.getMessage());
         }
 
         clientHandlers.forEach(ClientHandler::close);
         clientHandlers.clear();
-        System.out.println("服务器已关闭");
+        cn.langya.Logger.warn("服务器已关闭");
     }
 
     /**
@@ -86,10 +86,10 @@ public class LogServer {
                     processMessage(receivedLine);
                 }
             } catch (IOException e) {
-                System.err.println("客户端通信异常: " + e.getMessage());
+                cn.langya.Logger.error("客户端通信异常: " + e.getMessage());
             } finally {
                 clientHandlers.remove(this);
-                System.out.println("客户端断开: " + clientName);
+                cn.langya.Logger.info("客户端断开: " + clientName);
             }
         }
 
@@ -114,14 +114,14 @@ public class LogServer {
                         handleLogMessage(messageObj);
                         break;
                     default:
-                        System.err.println("未知消息类型: " + messageType);
+                        cn.langya.Logger.error("未知消息类型: " + messageType);
                 }
             } catch (IllegalArgumentException e) {
-                System.err.println("Base64解码失败: " + e.getMessage());
+                cn.langya.Logger.error("Base64解码失败: " + e.getMessage());
             } catch (JsonSyntaxException e) {
-                System.err.println("JSON解析失败: " + e.getMessage());
+                cn.langya.Logger.error("JSON解析失败: " + e.getMessage());
             } catch (Exception e) {
-                System.err.println("消息处理异常: " + e.getMessage());
+                cn.langya.Logger.error("消息处理异常: " + e.getMessage());
             }
         }
 
@@ -130,7 +130,7 @@ public class LogServer {
          */
         private void handleInitMessage(JsonObject initMessage) {
             clientName = initMessage.get("name").getAsString();
-            System.out.println("客户端初始化完成: " + clientName);
+            cn.langya.Logger.info("客户端初始化完成: " + clientName);
         }
 
         /**
@@ -162,7 +162,7 @@ public class LogServer {
                     cn.langya.Logger.error(formattedMessage);
                     break;
                 default:
-                    System.err.println("未知日志等级: " + level + " - " + formattedMessage);
+                    cn.langya.Logger.warn("未知日志等级: " + level + " - " + formattedMessage);
             }
         }
 
@@ -175,7 +175,7 @@ public class LogServer {
                     clientSocket.close();
                 }
             } catch (IOException e) {
-                System.err.println("关闭客户端连接时异常: " + e.getMessage());
+                cn.langya.Logger.error("关闭客户端连接时异常: " + e.getMessage());
             }
         }
     }

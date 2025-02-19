@@ -1,9 +1,14 @@
 package ovo.xsvf.izmk.event
 
+import ovo.xsvf.izmk.command.CommandManager
 import java.util.concurrent.CopyOnWriteArraySet
 
 object EventBus {
     private val registeredHandlers = CopyOnWriteArraySet<Any>()
+
+    init {
+        register(CommandManager)
+    }
 
     fun register(listener: Any) {
         registeredHandlers.add(listener)

@@ -10,23 +10,28 @@ import java.util.*
 /**
  * @author xsvf, LangYa466
  */
-class Logger private constructor(private val writer: BufferedWriter, name: String) {
+class Logger private constructor(private val writer: BufferedWriter, private val socket: Socket, private val name: String) {
     companion object {
         fun of(name: String, port: Int): Logger {
             val socket = Socket("localhost", port)
-            val logger = Logger(BufferedWriter(OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8)), name)
+            val writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8))
+            val logger = Logger(writer, socket, name)
+
             logger.sendJson(
                 JsonObject().apply {
                     addProperty("type", "init")
                     addProperty("name", name)
                 }
             )
+
             return logger
         }
     }
 
     private fun sendJson(jsonObject: JsonObject) {
-        writer.write(Base64.getEncoder().encodeToString(jsonObject.toString().toByteArray(StandardCharsets.UTF_8)) + "\n")
+        val base64 = Base64.getEncoder().encodeToString(jsonObject.toString().toByteArray(StandardCharsets.UTF_8))
+        writer.write(base64)
+        writer.newLine() // 确保每条消息完整
         writer.flush()
     }
 
@@ -40,16 +45,16 @@ class Logger private constructor(private val writer: BufferedWriter, name: Strin
         )
     }
 
-    fun debug(message: String, vararg args: Any) = log(Level.DEBUG, message.format2(args))
+    fun debug(message: String, vararg args: Any) = log(Level.DEBUG, message.format2(*args))
 
-    fun info(message: String, vararg args: Any) = log(Level.INFO, message.format2(args))
+    fun info(message: String, vararg args: Any) = log(Level.INFO, message.format2(*args))
 
-    fun warn(message: String, vararg args: Any) = log(Level.WARN, message.format2(args))
+    fun warn(message: String, vararg args: Any) = log(Level.WARN, message.format2(*args))
 
-    fun error(message: String, vararg args: Any) = log(Level.ERROR, message.format2(args))
+    fun error(message: String, vararg args: Any) = log(Level.ERROR, message.format2(*args))
 
     fun error(msg: String, throwable: Throwable, vararg args: Any) {
-        error(buildErrorMessage(msg.format2(args), throwable))
+        error(buildErrorMessage(msg.format2(*args), throwable))
     }
 
     fun error(throwable: Throwable) {
@@ -59,18 +64,25 @@ class Logger private constructor(private val writer: BufferedWriter, name: Strin
     private fun buildErrorMessage(msg: String, throwable: Throwable): String {
         return buildString {
             appendLine(msg)
-            appendLine("    Exception: ${throwable::class.simpleName}: ${throwable.message ?: ""}")
+            append("    Exception: ${throwable::class.simpleName}")
+            throwable.message?.let { append(": $it") }
+            appendLine()
             throwable.cause?.let { appendLine("    Cause: ${it.message ?: it::class.simpleName}") }
             appendLine("    Stack Trace:")
             append(throwable.stackTraceToString().prependIndent("    "))
         }
     }
 
-    private fun String.format2(vararg args: Any) : String {
-        args.forEach {
-            this.replaceFirst("{}", it.toString())
+    private fun String.format2(vararg args: Any): String {
+        var index = 0
+        return this.replace(Regex("\\{}")) {
+            if (index < args.size) args[index++].toString() else "{}"
         }
-        return this
+    }
+
+    fun close() {
+        writer.close()
+        socket.close()
     }
 
     object Level {

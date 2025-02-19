@@ -2,6 +2,8 @@ package ovo.xsvf.izmk.command
 
 import ovo.xsvf.izmk.command.impl.BindCommand
 import ovo.xsvf.izmk.command.impl.ToggleCommand
+import ovo.xsvf.izmk.event.EventListener
+import ovo.xsvf.izmk.event.SendMessageEvent
 
 object CommandManager {
     private val commands = listOf(
@@ -15,10 +17,10 @@ object CommandManager {
             ?.apply { run(args.toTypedArray()) } != null
     }
 
-//    @EventTarget
-//    fun onChat(event: ChatMessageEvent) {
-//        event.message.string.takeIf { it.startsWith(".") && runCommand(it) }?.let {
-//            event.isCancelled = true
-//        }
-//    }
+    @EventListener
+    fun onChat(event: SendMessageEvent) {
+        event.component.string.takeIf { it.startsWith(".") && runCommand(it) }?.let {
+            event.isCancelled = true
+        }
+    }
 }
