@@ -25,18 +25,13 @@ public class LogServer {
         new Thread(() -> {
             try {
                 while (!serverSocket.isClosed()) {
-                    cn.langya.Logger.info("等待客户端连接...");
                     Socket clientSocket = serverSocket.accept();
-                    cn.langya.Logger.info("新客户端接入: " + clientSocket.getRemoteSocketAddress());
 
                     ClientHandler clientHandler = new ClientHandler(clientSocket);
                     clientHandlers.add(clientHandler);
                     new Thread(clientHandler, "ClientHandler-" + clientSocket.getPort()).start();
                 }
-            } catch (IOException e) {
-                if (!serverSocket.isClosed()) {
-                    cn.langya.Logger.error("服务器异常: " + e.getMessage());
-                }
+            } catch (IOException ignored) {
             }
         }, "LogServer-Acceptor").start();
     }
@@ -55,12 +50,11 @@ public class LogServer {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            cn.langya.Logger.error("关闭服务器时异常: " + e.getMessage());
+            cn.langya.Logger.error("Failed to close server socket: " + e.getMessage());
         }
 
         clientHandlers.forEach(ClientHandler::close);
         clientHandlers.clear();
-        cn.langya.Logger.warn("服务器已关闭");
     }
 
     /**
@@ -86,10 +80,10 @@ public class LogServer {
                     processMessage(receivedLine);
                 }
             } catch (IOException e) {
-                cn.langya.Logger.error("客户端通信异常: " + e.getMessage());
+                cn.langya.Logger.error("Error occurred while handling client message: " + e.getMessage());
             } finally {
                 clientHandlers.remove(this);
-                cn.langya.Logger.info("客户端断开: " + clientName);
+                cn.langya.Logger.info("Client connection closed: " + clientName);
             }
         }
 
@@ -114,14 +108,14 @@ public class LogServer {
                         handleLogMessage(messageObj);
                         break;
                     default:
-                        cn.langya.Logger.error("未知消息类型: " + messageType);
+                        cn.langya.Logger.error("Unknown message type: " + messageType);
                 }
             } catch (IllegalArgumentException e) {
-                cn.langya.Logger.error("Base64解码失败: " + e.getMessage());
+                cn.langya.Logger.error("Failed to decode message: " + e.getMessage());
             } catch (JsonSyntaxException e) {
-                cn.langya.Logger.error("JSON解析失败: " + e.getMessage());
+                cn.langya.Logger.error("Failed to parse JSON message: " + e.getMessage());
             } catch (Exception e) {
-                cn.langya.Logger.error("消息处理异常: " + e.getMessage());
+                cn.langya.Logger.error("Failed to process message: " + e.getMessage());
             }
         }
 
@@ -130,7 +124,6 @@ public class LogServer {
          */
         private void handleInitMessage(JsonObject initMessage) {
             clientName = initMessage.get("name").getAsString();
-            cn.langya.Logger.info("客户端初始化完成: " + clientName);
         }
 
         /**
@@ -162,7 +155,7 @@ public class LogServer {
                     cn.langya.Logger.error(formattedMessage);
                     break;
                 default:
-                    cn.langya.Logger.warn("未知日志等级: " + level + " - " + formattedMessage);
+                    cn.langya.Logger.warn("Unknown log level: " + level + " - " + formattedMessage);
             }
         }
 
@@ -175,7 +168,7 @@ public class LogServer {
                     clientSocket.close();
                 }
             } catch (IOException e) {
-                cn.langya.Logger.error("关闭客户端连接时异常: " + e.getMessage());
+                cn.langya.Logger.error("Error occurred while closing client socket: " + e.getMessage());
             }
         }
     }
