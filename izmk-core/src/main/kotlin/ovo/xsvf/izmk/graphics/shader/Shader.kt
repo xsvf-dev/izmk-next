@@ -53,7 +53,9 @@ open class Shader(
     }
 
     private fun createShader(path: String, shaderType: Int): Int {
-        val srcString = javaClass.getResourceAsStream(path)!!.use { it.readText() }
+        val srcString = javaClass.getResourceAsStream(path)?.use { it.readText() } ?: run {
+            throw IllegalArgumentException("Shader source not found: $path")
+        }
         val id = glCreateShader(shaderType)
 
         glShaderSource(id, srcString)
