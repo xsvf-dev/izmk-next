@@ -6,20 +6,22 @@ import ovo.xsvf.izmk.event.EventListener
 import ovo.xsvf.izmk.event.SendMessageEvent
 
 object CommandManager {
-    private val commands = listOf(
-        BindCommand(),
-        ToggleCommand()
-    )
+    private val commands by lazy {
+        listOf(BindCommand(), ToggleCommand())
+    }
 
     private fun runCommand(message: String): Boolean {
         val args = message.split(' ')
-        return commands.find { it.name == args[0].removePrefix(".") }
-            ?.apply { run(args.toTypedArray()) } != null
+        val commandName = args[0].removePrefix(".")
+        return commands.firstOrNull { it.name == commandName }?.let {
+            it.run(args.toTypedArray())
+            true
+        } ?: false
     }
 
     @EventListener
     fun onChat(event: SendMessageEvent) {
-        event.component.string.takeIf { it.startsWith(".") && runCommand(it) }?.let {
+        if (event.component.string.startsWith(".") && runCommand(event.component.string)) {
             event.isCancelled = true
         }
     }
