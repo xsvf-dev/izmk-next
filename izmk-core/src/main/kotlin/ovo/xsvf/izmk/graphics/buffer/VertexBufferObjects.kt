@@ -67,7 +67,7 @@ object VertexBufferObjects {
             for (i in 0..seg) {
                 val angle = (i * segAngle + angleRange.first).toRadians()
                 val unRounded = Vec2f(sin(angle), -cos(angle)).times(radius).plus(center)
-                vertex(MathUtils.round(unRounded.x, 8), MathUtils.round(unRounded.y, 8), color)
+                vertex(MathUtil.round(unRounded.x, 8), MathUtil.round(unRounded.y, 8), color)
             }
         }
 

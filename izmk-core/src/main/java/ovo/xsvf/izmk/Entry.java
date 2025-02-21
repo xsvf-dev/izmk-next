@@ -5,7 +5,7 @@ import ovo.xsvf.izmk.injection.mixin.impl.MixinChatComponent;
 import ovo.xsvf.izmk.injection.mixin.impl.MixinGui;
 import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft;
 import ovo.xsvf.izmk.misc.ClassUtil;
-import ovo.xsvf.izmk.util.ResourceUtil;
+import ovo.xsvf.izmk.util.resources.ResourceUtil;
 import ovo.xsvf.logging.Logger;
 
 import java.lang.instrument.Instrumentation;

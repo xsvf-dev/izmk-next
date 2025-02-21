@@ -221,11 +221,11 @@ enum class Easing {
             max > min -> inc(x)
             else -> opposite.inc(x)
         }
-        return MathUtils.lerp(min, max, delta)
+        return MathUtil.lerp(min, max, delta)
     }
 
     fun incOrDec(x: Float, min: Float, max: Float): Float {
-        return MathUtils.lerp(min, max, inc(x))
+        return MathUtil.lerp(min, max, inc(x))
     }
 
     @Suppress("NAME_SHADOWING")
@@ -247,7 +247,7 @@ enum class Easing {
             return max
         }
 
-        return MathUtils.lerp(min, max, inc0(x))
+        return MathUtil.lerp(min, max, inc0(x))
     }
 
     fun inc(x: Float, max: Float): Float {
@@ -293,7 +293,7 @@ enum class Easing {
             return min
         }
 
-        return MathUtils.lerp(min, max, dec0(x))
+        return MathUtil.lerp(min, max, dec0(x))
     }
 
     fun dec(x: Float, max: Float): Float {

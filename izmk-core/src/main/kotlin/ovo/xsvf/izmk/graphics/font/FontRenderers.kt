@@ -2,8 +2,9 @@ package ovo.xsvf.izmk.graphics.font
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.graphics.color.ColorRGB
-import ovo.xsvf.izmk.util.ResourceUtil
+import ovo.xsvf.izmk.util.resources.ResourceUtil
 import java.awt.Font
+import kotlin.io.path.Path
 
 object FontRenderers {
 
@@ -15,7 +16,7 @@ object FontRenderers {
     // Comfortaa
     private val enFont = FontAdapter(Font.createFont(
         Font.TRUETYPE_FONT,
-        ResourceUtil.getAsStream("${IZMK.ASSETS_DIRECTORY}/font/font.ttf")
+        ResourceUtil.getAsStream(Path("${IZMK.ASSETS_DIRECTORY}/font/font.ttf"))
     ).deriveFont(Font.PLAIN, FONT_SIZE * 2f))
 
     private val default = FontRenderer(enFont)

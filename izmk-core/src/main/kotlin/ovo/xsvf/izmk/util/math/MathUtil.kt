@@ -3,7 +3,7 @@ package ovo.xsvf.izmk.util.math
 
 import kotlin.math.*
 
-object MathUtils {
+object MathUtil {
     fun round(value: Float, places: Int): Float {
         val scale = 10.0f.pow(places)
         return round(value * scale) / scale
