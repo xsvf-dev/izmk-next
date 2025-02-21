@@ -1,7 +1,6 @@
 package ovo.xsvf.izmk.graphics.utils
 
 import ovo.xsvf.izmk.graphics.buffer.ElementBufferObject
-import ovo.xsvf.izmk.graphics.texture.CategoryIcons
 import org.lwjgl.opengl.GL45.*
 
 object RenderUtils {
@@ -12,7 +11,6 @@ object RenderUtils {
         // Init RenderUtils2D and RenderUtils3D
         RenderUtils2D
         RenderUtils3D
-        CategoryIcons
 
         initRectEbo()
     }

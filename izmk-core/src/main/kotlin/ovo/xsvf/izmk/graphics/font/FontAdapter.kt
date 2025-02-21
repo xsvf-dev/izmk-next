@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.graphics.font
 
+import ovo.xsvf.izmk.graphics.font.FontRenderers.fontMode
 import ovo.xsvf.izmk.graphics.font.general.FontChunks
 import ovo.xsvf.izmk.graphics.font.general.GlyphChunk
 import ovo.xsvf.izmk.graphics.font.sparse.SparseFontGlyph
@@ -9,9 +10,7 @@ class FontAdapter(
     font: Font
 ) {
     val general = FontChunks(font)
-    val sparse = SparseFontGlyph(font, 12f)
-
-    private val fontMode = FontMode.GENERAL
+    val sparse = SparseFontGlyph(font, FontRenderers.DRAW_FONT_SIZE)
 
     fun getHeight(): Float = when (fontMode) {
         FontMode.GENERAL -> {

@@ -1,10 +1,10 @@
 package ovo.xsvf.izmk.graphics.texture
 
-import dev.exceptionteam.sakura.utils.memory.createDirectByteBuffer
-import dev.exceptionteam.sakura.utils.resources.Resource
-import dev.exceptionteam.sakura.utils.timing.TimerUtils
+import ovo.xsvf.izmk.util.resources.Resource
+import ovo.xsvf.izmk.util.timing.TimerUtils
 import org.lwjgl.opengl.GL45.*
 import org.lwjgl.stb.STBImage
+import ovo.xsvf.izmk.util.memory.createDirectByteBuffer
 import java.nio.ByteBuffer
 
 object ImageFileUtils {

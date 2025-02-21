@@ -1,12 +1,11 @@
 package ovo.xsvf.izmk.graphics.shader
 
-import dev.exceptionteam.sakura.Sakura
 import ovo.xsvf.izmk.graphics.GlHelper
 import ovo.xsvf.izmk.graphics.GlObject
-import ovo.xsvf.izmk.graphics.shader.impl.*
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL45.*
+import ovo.xsvf.izmk.IZMK
 import java.io.InputStream
 import java.io.StringWriter
 import java.nio.FloatBuffer
@@ -37,7 +36,7 @@ open class Shader(
         glLinkProgram(id)
         val linked = glGetProgrami(id, GL_LINK_STATUS)
         if (linked == 0) {
-            Sakura.logger.error(glGetProgramInfoLog(id, 1024))
+            IZMK.logger.error(glGetProgramInfoLog(id, 1024))
             glDeleteProgram(id)
             throw ShaderCompileException(
                 "Failed to link shader: $vertShaderPath, $fragShaderPath" + geomShaderPath?.let { ", $geomShaderPath" }
@@ -62,7 +61,7 @@ open class Shader(
 
         val compiled = glGetShaderi(id, GL_COMPILE_STATUS)
         if (compiled == 0) {
-            Sakura.logger.error("$path\n" + glGetShaderInfoLog(id, 1024))
+            IZMK.logger.error("$path\n" + glGetShaderInfoLog(id, 1024))
             glDeleteShader(id)
             throw ShaderCompileException("Failed to compile shader: $path")
         }

@@ -1,13 +1,13 @@
 package ovo.xsvf.izmk.graphics.shader.impl
 
-import dev.exceptionteam.sakura.Sakura
 import ovo.xsvf.izmk.graphics.matrix.MatrixStack
 import ovo.xsvf.izmk.graphics.shader.Shader
 import org.lwjgl.opengl.GL45
+import ovo.xsvf.izmk.IZMK
 
 object PosTexShader2D: Shader(
-    "${Sakura.ASSETS_DIRECTORY}/shader/general/PosTex2D.vert",
-    "${Sakura.ASSETS_DIRECTORY}/shader/general/PosTex2D.frag",
+    "${IZMK.ASSETS_DIRECTORY}/shader/general/PosTex2D.vert",
+    "${IZMK.ASSETS_DIRECTORY}/shader/general/PosTex2D.frag",
 ) {
 
     private val matrixLocation = GL45.glGetUniformLocation(id, "MVPMatrix")

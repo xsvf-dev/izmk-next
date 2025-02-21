@@ -1,6 +1,5 @@
 package ovo.xsvf.izmk.graphics.font
 
-import dev.exceptionteam.sakura.features.modules.impl.client.CustomFont
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.buffer.drawArrays
 import ovo.xsvf.izmk.graphics.color.ColorRGB
@@ -8,10 +7,12 @@ import ovo.xsvf.izmk.graphics.font.general.GlyphChunk
 import ovo.xsvf.izmk.graphics.shader.impl.FontShader
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import org.lwjgl.opengl.GL45.*
+import ovo.xsvf.izmk.graphics.font.FontRenderers.fontMode
 
 class FontRenderer(
     private val font: FontAdapter
 ) {
+       
     fun drawString(
         text: String, x: Float, y: Float,
         color0: ColorRGB,
@@ -22,12 +23,12 @@ class FontRenderer(
         var continueIndex = -1
         var color = color0
 
-        val scale = scale0 / 40f * CustomFont.fontSize
+        val scale = scale0 / 40f * FONT_SIZE
 
         var width = 0f
 
-        when (CustomFont.fontMode) {
-            CustomFont.FontMode.GENERAL -> {
+        when (fontMode) {
+            FontMode.GENERAL -> {
                 text.forEachIndexed { index, ch ->
                     if (index == continueIndex) {
                         continueIndex = -1
@@ -48,7 +49,7 @@ class FontRenderer(
                 }
             }
 
-            CustomFont.FontMode.SPARSE -> {
+            FontMode.SPARSE -> {
                 font.sparse.tex.bind()
                 FontShader.textureUnit = font.sparse.tex.handle
 
@@ -107,7 +108,7 @@ class FontRenderer(
         var width = 0f
         var shouldContinue = false
 
-        val scale = scale0 / 40f * CustomFont.fontSize
+        val scale = scale0 / 40f * FONT_SIZE
 
         for (i in 0 until text.length) {
             if (shouldContinue) {
@@ -199,13 +200,15 @@ class FontRenderer(
     }
 
     fun getHeight(scale: Float = 1f): Float {
-        return font.getHeight() * scale / 40f * CustomFont.fontSize
+        return font.getHeight() * scale / 40f * FONT_SIZE
     }
 
     private fun getColor(ch: Char): ColorRGB =
         ci[ch]?.let { return ColorRGB(it) } ?: ColorRGB.WHITE
 
     companion object {
+        private const val FONT_SIZE = 12f
+        
         val ci: MutableMap<Char, Int> = mutableMapOf<Char, Int>().also {
             it['0'] = 0x000000FF.toInt()
             it['1'] = 0x0000AAFF.toInt()

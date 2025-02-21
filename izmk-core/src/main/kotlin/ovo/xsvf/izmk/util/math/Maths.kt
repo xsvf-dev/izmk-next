@@ -4,6 +4,8 @@ package ovo.xsvf.izmk.util.math
 import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.pow
+import kotlin.math.round
 
 const val PI_FLOAT = 3.14159265358979323846f
 

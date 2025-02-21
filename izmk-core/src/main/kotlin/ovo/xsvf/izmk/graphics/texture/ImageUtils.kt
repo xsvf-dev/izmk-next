@@ -1,10 +1,10 @@
 package ovo.xsvf.izmk.graphics.texture
 
 import ovo.xsvf.izmk.graphics.RenderSystem
-import dev.exceptionteam.sakura.utils.memory.createDirectByteBuffer
-import dev.exceptionteam.sakura.utils.timing.TimerUtils
+import ovo.xsvf.izmk.util.timing.TimerUtils
 import org.lwjgl.opengl.ARBSparseTexture.*
 import org.lwjgl.opengl.GL45.*
+import ovo.xsvf.izmk.util.memory.createDirectByteBuffer
 import java.awt.image.BufferedImage
 import java.nio.IntBuffer
 

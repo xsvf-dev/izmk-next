@@ -1,14 +1,9 @@
 package ovo.xsvf.izmk.graphics.utils
 
-import dev.exceptionteam.sakura.events.NonNullContext
-import dev.exceptionteam.sakura.events.impl.Render3DEvent
-import dev.exceptionteam.sakura.events.impl.WindowResizeEvent
-import dev.exceptionteam.sakura.events.listener
 import ovo.xsvf.izmk.graphics.GlHelper
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.buffer.drawArrays
 import ovo.xsvf.izmk.graphics.color.ColorRGB
-import ovo.xsvf.izmk.graphics.matrix.MatrixStack
 import ovo.xsvf.izmk.util.math.vectors.Vec3f
 import net.minecraft.client.Minecraft
 import net.minecraft.world.phys.AABB
@@ -28,21 +23,24 @@ object RenderUtils3D {
 
         glGetIntegerv(GL_VIEWPORT, viewport)
 
-        listener<Render3DEvent>(alwaysListening = true, priority = Int.MIN_VALUE) {
-            lastMvpMatrix = Matrix4f(MatrixStack.peek().mvpMatrix)
-            lastPosMatrix = Matrix4f(MatrixStack.peek().positionMatrix)
-        }
-
-        listener<WindowResizeEvent>(alwaysListening = true) {
-            glGetIntegerv(GL_VIEWPORT, viewport)
-        }
+        // FIXME: EventBus hasn't finished yet
+//        listener<Render3DEvent>(alwaysListening = true, priority = Int.MIN_VALUE) {
+//            lastMvpMatrix = Matrix4f(MatrixStack.peek().mvpMatrix)
+//            lastPosMatrix = Matrix4f(MatrixStack.peek().positionMatrix)
+//        }
+//
+//        listener<WindowResizeEvent>(alwaysListening = true) {
+//            glGetIntegerv(GL_VIEWPORT, viewport)
+//        }
 
     }
 
     /**
      * Convert a vector in world space to screen space.
      */
-    fun NonNullContext.worldSpaceToScreenSpace(pos: Vec3f): Vec3f {
+    fun worldSpaceToScreenSpace(pos: Vec3f): Vec3f {
+        val mc = Minecraft.getInstance()
+
         val camera = mc.gameRenderer.mainCamera
         val displayHeight = mc.window.height
 

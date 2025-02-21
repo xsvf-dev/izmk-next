@@ -60,7 +60,7 @@ object RenderSystem {
         postRender()
     }
 
-    fun onRender3d() {
+    fun onRender3d(guiGraphics: GuiGraphics, partialTick: Float) {
         preRender()
 
         GlHelper.depth = false
@@ -76,15 +76,13 @@ object RenderSystem {
             multiply(Axis.YP.rotationDegrees(camera.yRot + 180.0f))
 
             updateMvpMatrix(projection.mul(modelView))
-            Render3DEvent().post()
+            Render3DEvent(guiGraphics, partialTick).post()
         }
 
         postRender()
     }
 
     fun preRender() {
-        preAttrib()
-        GlHelper.syncWithMinecraft()
         GlHelper.reset()
         VertexBufferObjects.sync()
         GlHelper.blend = true
@@ -94,28 +92,7 @@ object RenderSystem {
         GlHelper.blend = true
         GlHelper.depth = true
         GlHelper.cull = true
-        postAttrib()
         GlHelper.syncWithMinecraft()
-    }
-
-    /* Attrib */
-    private var vaoLast = -1
-    private var vboLast = -1
-    private var eboLast = -1
-    private var lastShader = -1
-
-    private fun preAttrib() {
-        vaoLast = glGetInteger(GL_VERTEX_ARRAY_BINDING)
-        vboLast = glGetInteger(GL_ARRAY_BUFFER_BINDING)
-        eboLast = glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING)
-        lastShader = glGetInteger(GL_CURRENT_PROGRAM)
-    }
-
-    private fun postAttrib() {
-        glBindVertexArray(vaoLast)
-        glBindBuffer(GL_ARRAY_BUFFER, vboLast)
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboLast)
-        glUseProgram(lastShader)
     }
 
 }
