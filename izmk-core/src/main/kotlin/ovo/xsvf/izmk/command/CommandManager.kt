@@ -3,7 +3,7 @@ package ovo.xsvf.izmk.command
 import ovo.xsvf.izmk.command.impl.BindCommand
 import ovo.xsvf.izmk.command.impl.ToggleCommand
 import ovo.xsvf.izmk.event.EventListener
-import ovo.xsvf.izmk.event.SendMessageEvent
+import ovo.xsvf.izmk.event.impl.SendMessageEvent
 
 object CommandManager {
     private val commands = listOf(

@@ -13,6 +13,7 @@ subprojects {
         maven { url "https://maven.aliyun.com/repository/google" }
         maven { url "https://maven.aliyun.com/repository/jcenter" }
         maven { url "https://maven.aliyun.com/repository/apache-snapshots" }
+        maven { url 'https://maven.luna5ama.dev/'}
         maven { url 'https://jitpack.io' }
     }
 
@@ -63,9 +64,12 @@ tasks.register('runClient', JavaExec) {
 }
 repositories {
     mavenCentral()
+    maven { url 'https://maven.luna5ama.dev/'}
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "dev.luna5ama:kmogus-core:1.1-SNAPSHOT"
+    implementation "dev.luna5ama:kmogus-struct-api:1.1-SNAPSHOT"
 }
 kotlin {
     jvmToolchain(8)

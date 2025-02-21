@@ -1,0 +1,20 @@
+package ovo.xsvf.izmk.graphics.shader.impl
+
+import dev.exceptionteam.sakura.Sakura
+import ovo.xsvf.izmk.graphics.matrix.MatrixStack
+import ovo.xsvf.izmk.graphics.shader.Shader
+import org.lwjgl.opengl.GL45
+
+object PosTexShader2D: Shader(
+    "${Sakura.ASSETS_DIRECTORY}/shader/general/PosTex2D.vert",
+    "${Sakura.ASSETS_DIRECTORY}/shader/general/PosTex2D.frag",
+) {
+
+    private val matrixLocation = GL45.glGetUniformLocation(id, "MVPMatrix")
+    private val samplerLocation = GL45.glGetUniformLocation(id, "u_Texture")
+
+    override fun default() {
+        set(matrixLocation, MatrixStack.peek().mvpMatrix)
+        set(samplerLocation, 0)
+    }
+}

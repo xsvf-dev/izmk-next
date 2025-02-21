@@ -1,7 +1,7 @@
 package ovo.xsvf.izmk.module.impl
 
 import ovo.xsvf.izmk.event.EventListener
-import ovo.xsvf.izmk.event.Render2DEvent
+import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.module.Module
 
 /**
@@ -15,6 +15,6 @@ class Test : Module("Test") {
 
     @EventListener
     fun onRender2D(event: Render2DEvent) {
-        event.guiGraphics?.drawString(mc.font, "Test",5,5,-1)
+        event.guiGraphics.drawString(mc.font, "Test",5,5,-1)
     }
 }
