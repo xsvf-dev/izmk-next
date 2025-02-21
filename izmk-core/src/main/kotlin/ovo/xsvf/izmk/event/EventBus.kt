@@ -2,7 +2,6 @@ package ovo.xsvf.izmk.event
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.command.CommandManager
-import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArraySet
 
 object EventBus {
@@ -38,7 +37,7 @@ object EventBus {
                 method.isAccessible = true
                 method.invoke(listener, event)
             } catch (e: Exception) {
-                IZMK.logger.error(e)
+                IZMK.logger.error("Error while handling event ${event.javaClass.simpleName}", e)
             }
         }
     }

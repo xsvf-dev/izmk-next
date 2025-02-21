@@ -2,6 +2,7 @@ package ovo.xsvf.izmk.injection.mixin.impl;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.izmk.graphics.GRenderSystem;
 import ovo.xsvf.izmk.injection.mixin.CallbackInfo;
 import ovo.xsvf.izmk.injection.mixin.annotation.*;
@@ -11,6 +12,7 @@ public class MixinGui {
 
     @Inject(method = "render", desc = "(Lnet/minecraft/client/gui/GuiGraphics;F)V")
     public static void renderGui(GuiGraphics pGuiGraphics, float pPartialTick, CallbackInfo callbackInfo) {
+        IZMK.logger.info("MixinGui.renderGui called");
         GRenderSystem.INSTANCE.onRender2D(pGuiGraphics, pPartialTick);
         /*
         GlStateManager._enableBlend();
