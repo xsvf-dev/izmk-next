@@ -10,10 +10,12 @@ import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft
 import ovo.xsvf.izmk.misc.ClassUtil
 import ovo.xsvf.izmk.module.ModuleManager
 import ovo.xsvf.logging.Logger
+import kotlin.properties.Delegates
 
 object IZMK {
     lateinit var logger: Logger
     lateinit var mc: Minecraft
+    var Obfuscated by Delegates.notNull<Boolean>()
     var runHeypixel: Boolean = false
 
     const val ASSETS_DIRECTORY = "/assets/izmk/"

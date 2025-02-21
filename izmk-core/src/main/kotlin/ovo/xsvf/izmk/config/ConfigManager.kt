@@ -8,7 +8,7 @@ import ovo.xsvf.izmk.IZMK.mc
 import ovo.xsvf.izmk.config.impl.ModuleConfig
 import java.io.File
 import java.nio.charset.StandardCharsets
-import java.util.Base64
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -22,26 +22,30 @@ object ConfigManager {
 
     fun init() {
         if (!dir.exists()) {
-            dir.mkdir()
+            dir.mkdirs()
             isFirst = true
         }
         configs.add(ModuleConfig())
         loadAllConfig()
     }
 
+    @Synchronized
     private fun loadConfig(name: String) {
-        if (executor.isShutdown || executor.isTerminated) return
+        if (executor.isShutdown) return
+
         executor.execute {
             val file = File(dir, "$name.izmk")
             if (file.exists()) {
-                val json = runCatching {
+                runCatching {
                     val base64Text = file.readText(StandardCharsets.UTF_8)
                     val decodedJson = String(Base64.getDecoder().decode(base64Text), StandardCharsets.UTF_8)
-                    Gson().fromJson(decodedJson, JsonObject::class.java)
-                }.getOrNull()
-
-                configs.find { it.name == name }?.loadConfig(json ?: JsonObject())
-                logConfigAction(name, "Loaded client config")
+                    gson.fromJson(decodedJson, JsonObject::class.java)
+                }.onSuccess { json ->
+                    configs.find { it.name == name }?.loadConfig(json ?: JsonObject())
+                    logConfigAction(name, "Loaded successfully")
+                }.onFailure {
+                    IZMK.logger.error("Failed to load config $name: ${it.message}")
+                }
             } else {
                 IZMK.logger.warn("Config $name doesn't exist, creating a new one...")
                 saveConfig(name)
@@ -49,47 +53,52 @@ object ConfigManager {
         }
     }
 
+    @Synchronized
     private fun saveConfig(name: String) {
-        if (executor.isShutdown || executor.isTerminated) {
+        if (executor.isShutdown) {
             IZMK.logger.warn("Attempted to save config $name but executor is shut down!")
             return
         }
 
         executor.execute {
             val file = File(dir, "$name.izmk")
-            if (!file.exists()) file.createNewFile()
+            file.takeIf { !it.exists() }?.createNewFile()
 
-            configs.find { it.name == name }?.let {
-                val jsonData = gson.toJson(it.saveConfig())
-                val base64Data = Base64.getEncoder().encodeToString(jsonData.toByteArray(StandardCharsets.UTF_8))
-
-                file.writeText(base64Data, StandardCharsets.UTF_8)
-                logConfigAction(name, "Saved client config")
-            } ?: IZMK.logger.error("Failed to save config: $name")
+            configs.find { it.name == name }?.let { config ->
+                runCatching {
+                    val jsonData = gson.toJson(config.saveConfig())
+                    val base64Data = Base64.getEncoder().encodeToString(jsonData.toByteArray(StandardCharsets.UTF_8))
+                    file.writeText(base64Data, StandardCharsets.UTF_8)
+                }.onSuccess {
+                    logConfigAction(name, "Saved successfully")
+                }.onFailure {
+                    IZMK.logger.error("Failed to save config $name: ${it.message}")
+                }
+            } ?: IZMK.logger.error("Config $name not found!")
         }
     }
 
-    private fun loadAllConfig() {
-        if (executor.isShutdown || executor.isTerminated) {
+    fun loadAllConfig() {
+        if (executor.isShutdown) {
             IZMK.logger.warn("Attempted to load all configs but executor is shut down!")
             return
         }
 
         executor.execute {
             configs.forEach { loadConfig(it.name) }
-            logConfigAction("All configs", "Successfully loaded all configs")
+            logConfigAction("All configs", "Successfully loaded")
         }
     }
 
-    private fun saveAllConfig() {
-        if (executor.isShutdown || executor.isTerminated) {
+    fun saveAllConfig() {
+        if (executor.isShutdown) {
             IZMK.logger.warn("Attempted to save all configs but executor is shut down!")
             return
         }
 
         executor.execute {
             configs.forEach { saveConfig(it.name) }
-            logConfigAction("All configs", "Successfully saved all configs")
+            logConfigAction("All configs", "Successfully saved")
         }
     }
 

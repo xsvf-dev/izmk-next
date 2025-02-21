@@ -4,44 +4,44 @@ import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.module.impl.Test
 import java.lang.reflect.InvocationTargetException
 
-/**
- * @author LangYa466
- * @since 2025/2/16
- */
 object ModuleManager {
-    val modulesMap: MutableMap<String, Module> = HashMap()
+    val modulesMap = mutableMapOf<String, Module>()
 
     fun init(classes: Array<Class<*>>) {
         addModule(Test())
-        if (true) return
-        for (clazz in classes) {
-            val name = clazz.name ?: "null"
-            val superclass = clazz.superclass ?: "null"
 
-            if (superclass == Module::class) {
-                IZMK.logger.info("Loading module $name")
-                try {
-                    val module = clazz.getConstructor().newInstance() as Module
-                    addModule(module)
-                } catch (e: NoSuchMethodException) {
-                    IZMK.logger.error("Module $name does not have a default constructor.")
-                    throw e
-                } catch (e: IllegalAccessException) {
-                    IZMK.logger.error("Module $name constructor is not accessible.")
-                    throw e
-                } catch (e: InstantiationException) {
-                    IZMK.logger.error("Module $name cannot be instantiated.")
-                    throw e
-                } catch (e: InvocationTargetException) {
-                    IZMK.logger.error("Module $name constructor throws an exception.")
-                    throw e.targetException
-                }
+        for (clazz in classes) {
+            if (Module::class.java.isAssignableFrom(clazz) && clazz != Module::class.java) {
+                loadModule(clazz)
             }
         }
-        IZMK.logger.info("Module map size ${modulesMap.size}")
+        IZMK.logger.info("Module map size: ${modulesMap.size}")
+    }
+
+    private fun loadModule(clazz: Class<*>) {
+        val name = clazz.name
+        IZMK.logger.info("Loading module: $name")
+        try {
+            val module = clazz.getDeclaredConstructor().newInstance() as Module
+            addModule(module)
+        } catch (e: Exception) {
+            handleModuleLoadException(name, e)
+        }
     }
 
     private fun addModule(module: Module) {
         modulesMap[module.name] = module
+    }
+
+    private fun handleModuleLoadException(name: String, e: Exception) {
+        val message = when (e) {
+            is NoSuchMethodException -> "does not have a default constructor."
+            is IllegalAccessException -> "constructor is not accessible."
+            is InstantiationException -> "cannot be instantiated."
+            is InvocationTargetException -> "constructor threw an exception: ${e.targetException.message}"
+            else -> "unexpected error occurred."
+        }
+        IZMK.logger.error("Module $name $message", e)
+        throw e
     }
 }

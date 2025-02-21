@@ -56,8 +56,8 @@ public class AgentMain {
         Thread.currentThread().setContextClassLoader(finalClassLoader);
         try {
             Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)
-                    .getMethod("entry", Instrumentation.class, int.class, String.class)
-                    .invoke(null, inst, port, file);
+                    .getMethod("entry", Instrumentation.class, int.class, String.class, boolean.class)
+                    .invoke(null, inst, port, file, CoreFileProvider.DEV);
             logger.debug("Entry.entry() called");
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             logger.error("Entry class or method not found", e);
