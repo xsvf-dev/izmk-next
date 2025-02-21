@@ -6,6 +6,7 @@ import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.util.ResourceUtil
 import java.io.InputStream
 import java.io.StringWriter
 import java.nio.FloatBuffer
@@ -53,7 +54,7 @@ open class Shader(
     }
 
     private fun createShader(path: String, shaderType: Int): Int {
-        val srcString = javaClass.getResourceAsStream(path)?.use { it.readText() } ?: run {
+        val srcString = ResourceUtil.getAsStream(path)?.use { it.readText() } ?: run {
             throw IllegalArgumentException("Shader source not found: $path")
         }
         val id = glCreateShader(shaderType)

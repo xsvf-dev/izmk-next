@@ -18,7 +18,7 @@ object IZMK {
     var Obfuscated by Delegates.notNull<Boolean>()
     var runHeypixel: Boolean = false
 
-    const val ASSETS_DIRECTORY = "/assets/izmk/"
+    const val ASSETS_DIRECTORY = "assets/izmk"
 
     val excludedLoading: List<Class<*>> = listOf<Class<*>>(
         MixinMinecraft::class.java

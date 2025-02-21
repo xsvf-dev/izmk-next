@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.util.resources
 
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.util.ResourceUtil
 
 class Resource(
     path: String
@@ -10,7 +11,7 @@ class Resource(
     val data: String get() = String(byteArr, Charsets.UTF_8)
 
     init {
-        val stream = javaClass.getResourceAsStream("${IZMK.ASSETS_DIRECTORY}/${path}")
+        val stream = ResourceUtil.getAsStream("${IZMK.ASSETS_DIRECTORY}/${path}")
             ?: throw IllegalArgumentException("Resource not found: ${IZMK.ASSETS_DIRECTORY}/${path}")
 
         byteArr = stream.readBytes()

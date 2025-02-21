@@ -63,7 +63,8 @@ object GlHelper {
         GlStateManager._glBindVertexArray(0)
         GlStateManager._glUseProgram(0)
         GlStateManager._disableScissorTest()
-        GlStateManager._activeTexture(0)
+
+        GlStateManager._activeTexture(GL_TEXTURE0)
         GlStateManager._bindTexture(0)
     }
 
