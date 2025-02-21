@@ -16,7 +16,7 @@ import ovo.xsvf.izmk.injection.mixin.annotation.*;
 @Mixin(ChatComponent.class)
 public class MixinChatComponent {
 
-    @Inject(method = "addMessage", desc = "(Lnet/minecraft/network/chat/Component)V")
+    @Inject(method = "addMessage", desc = "(Lnet/minecraft/network/chat/Component;)V")
     public static void addMessage(Component pChatComponent, CallbackInfo ci) {
         SendMessageEvent sendMessageEvent = new SendMessageEvent(pChatComponent);
         EventBus.INSTANCE.post(sendMessageEvent);
