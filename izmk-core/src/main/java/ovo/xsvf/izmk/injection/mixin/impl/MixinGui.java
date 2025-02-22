@@ -13,5 +13,4 @@ public class MixinGui {
     public static void renderGui(GuiGraphics pGuiGraphics, float pPartialTick, CallbackInfo callbackInfo) {
         RenderSystem.INSTANCE.onRender2d(pGuiGraphics, pPartialTick);
     }
-
 }

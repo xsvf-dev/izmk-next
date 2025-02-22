@@ -1,6 +1,5 @@
 package ovo.xsvf.izmk.module
 
-import net.minecraft.client.Minecraft
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventBus
 
@@ -11,34 +10,28 @@ import ovo.xsvf.izmk.event.EventBus
 abstract class Module(val name: String, val description: String = "") {
     var enabled = false
         set(value) {
-            if (field != value) {
-                field = value
-                if (value) {
-                    EventBus.register(this)
-                    onEnable()
-                } else {
-                    EventBus.unregister(this)
-                    onDisable()
-                }
-                IZMK.logger.debug("$name state is set to $value")
+            if (field == value) return
+            field = value
+            IZMK.logger.debug("$name state is set to $value")
+            if (value) {
+                EventBus.register(this)
+                onEnable()
+            }
+            else {
+                onDisable()
+                EventBus.unregister(this)
             }
         }
 
-    protected val mc: Minecraft by lazy { Minecraft.getInstance() }
+    protected val mc by lazy { IZMK.mc }
+    protected val logger by lazy { IZMK.logger }
 
     var keyCode = -1
-
-    /**
-     * Called when the module is enabled
-     */
-    protected open fun onEnable() {}
-
-    /**
-     * Called when the module is disabled
-     */
-    protected open fun onDisable() {}
 
     fun toggle() {
         enabled = !enabled
     }
+
+    open fun onEnable() {}
+    open fun onDisable() {}
 }

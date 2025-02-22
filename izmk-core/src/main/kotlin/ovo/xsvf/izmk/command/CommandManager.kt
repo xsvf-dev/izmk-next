@@ -3,7 +3,7 @@ package ovo.xsvf.izmk.command
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.command.impl.BindCommand
 import ovo.xsvf.izmk.command.impl.ToggleCommand
-import ovo.xsvf.izmk.event.EventListener
+import ovo.xsvf.izmk.event.EventTarget
 import ovo.xsvf.izmk.event.impl.SendMessageEvent
 
 object CommandManager {
@@ -21,7 +21,7 @@ object CommandManager {
         } ?: false
     }
 
-    @EventListener
+    @EventTarget
     fun onChat(event: SendMessageEvent) {
         if (event.message.startsWith(".") && runCommand(event.message)) {
             event.isCancelled = true

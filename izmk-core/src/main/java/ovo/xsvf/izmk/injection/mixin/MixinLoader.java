@@ -9,6 +9,8 @@ import ovo.xsvf.izmk.injection.mixin.annotation.*;
 import ovo.xsvf.izmk.injection.mixin.api.IArgs;
 import ovo.xsvf.izmk.injection.mixin.api.IMixinLoader;
 import ovo.xsvf.izmk.injection.mixin.api.Invocation;
+import ovo.xsvf.izmk.injection.mixin.impl.MixinClientPacketListener;
+import ovo.xsvf.izmk.injection.mixin.impl.MixinGui;
 import ovo.xsvf.izmk.misc.ASMUtil;
 import ovo.xsvf.izmk.misc.ClassUtil;
 
@@ -22,12 +24,9 @@ import java.util.function.Predicate;
 public class MixinLoader implements IMixinLoader {
     public final static MixinLoader INSTANCE = new MixinLoader();
 
-    public static void loadMixins(List<Class<?>> classes) throws Exception {
-        for (Class<?> clazz : classes) {
-            if (!IZMK.INSTANCE.getExcludedLoading().contains(clazz) && clazz.isAnnotationPresent(Mixin.class)) {
-                INSTANCE.loadMixin(clazz);
-            }
-        }
+    public void loadMixins() throws Exception {
+        loadMixin(MixinGui.class);
+        loadMixin(MixinClientPacketListener.class);
         IZMK.INSTANCE.setRunHeypixel(true);
     }
 
