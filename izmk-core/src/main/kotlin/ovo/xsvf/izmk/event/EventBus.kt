@@ -30,6 +30,7 @@ object EventBus {
 
             eventHandlers.computeIfAbsent(eventType) { mutableListOf() }
                 .add(Triple(method, priority, alwaysListening))
+            method.isAccessible = true
 
             eventTypes.add(Pair(eventType, method))
         }
@@ -57,7 +58,6 @@ object EventBus {
                 if (events.any { it.first == event.javaClass }) {
                     if (event !is CancellableEvent || !event.isCancelled || alwaysListening) {
                         try {
-                            method.isAccessible = true
                             method.invoke(listener, event)
                         } catch (e: Throwable) {
                             IZMK.logger.error("Error executing event: $event", e)

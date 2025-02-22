@@ -2,6 +2,7 @@ package ovo.xsvf.izmk
 
 import net.minecraft.client.Minecraft
 import ovo.xsvf.izmk.config.ConfigManager
+import ovo.xsvf.izmk.graphics.RenderSystem
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
@@ -10,6 +11,7 @@ import ovo.xsvf.izmk.misc.ClassUtil
 import ovo.xsvf.izmk.module.ModuleManager
 import ovo.xsvf.logging.Logger
 import kotlin.properties.Delegates
+import com.mojang.blaze3d.systems.RenderSystem as MojangRenderSystem
 
 object IZMK {
     lateinit var logger: Logger
@@ -30,10 +32,10 @@ object IZMK {
         ModuleManager.init(classes)
         ConfigManager.init()
 
-        com.mojang.blaze3d.systems.RenderSystem.recordRenderCall {
+        MojangRenderSystem.recordRenderCall {
             // Systems
             VertexBufferObjects
-            ovo.xsvf.izmk.graphics.RenderSystem
+            RenderSystem
             // Fonts
             FontRenderers
             // Utils
