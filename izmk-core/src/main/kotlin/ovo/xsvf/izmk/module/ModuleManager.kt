@@ -7,14 +7,9 @@ import java.lang.reflect.InvocationTargetException
 object ModuleManager {
     val modulesMap = mutableMapOf<String, Module>()
 
-    fun init(classes: Array<Class<*>>) {
+    fun init() {
         addModule(Test())
 
-        for (clazz in classes) {
-            if (Module::class.java.isAssignableFrom(clazz) && clazz != Module::class.java) {
-                loadModule(clazz)
-            }
-        }
         IZMK.logger.info("Module map size: ${modulesMap.size}")
     }
 

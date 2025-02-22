@@ -2,7 +2,7 @@ package ovo.xsvf.izmk.event
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.command.CommandManager
-import ovo.xsvf.izmk.module.hud.HUDManager
+import ovo.xsvf.izmk.gui.HUDManager
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 

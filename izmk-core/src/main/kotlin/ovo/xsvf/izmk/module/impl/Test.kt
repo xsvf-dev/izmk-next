@@ -1,13 +1,11 @@
 package ovo.xsvf.izmk.module.impl
 
-import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventListener
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
-import ovo.xsvf.izmk.mod.hud.HUD
+import ovo.xsvf.izmk.gui.HUDManager
 import ovo.xsvf.izmk.module.Module
-import ovo.xsvf.izmk.module.hud.HUDManager
 
 /**
  * @author LangYa466
