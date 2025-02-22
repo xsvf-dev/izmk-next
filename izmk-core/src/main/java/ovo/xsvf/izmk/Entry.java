@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 public class Entry {
     public static void entry(Instrumentation inst, int logPort, String jar, boolean devMode) throws Exception {
         ClassUtil.init(inst);
-        IZMK.INSTANCE.setLogger(Logger.Companion.of("IZMK", logPort));
+        IZMK.INSTANCE.setLogger(Logger.of("IZMK", logPort));
         IZMK.INSTANCE.setObfuscated(!devMode);
         ResourceUtil.INSTANCE.init(Paths.get(jar));
 

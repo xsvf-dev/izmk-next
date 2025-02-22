@@ -14,7 +14,7 @@ public class Launcher {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        logger = Logger.Companion.of("Launcher", LogServer.getPort());
+        logger = Logger.of("Launcher", LogServer.getPort());
     }
 
     public static void main(String[] args) throws Exception {

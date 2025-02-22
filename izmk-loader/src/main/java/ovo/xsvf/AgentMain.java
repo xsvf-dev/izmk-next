@@ -22,7 +22,7 @@ public class AgentMain {
         String file = jsonObject.get("file").getAsString();
         int port = jsonObject.get("port").getAsInt();
         boolean debug = jsonObject.get("debug").getAsBoolean();
-        Logger logger = Logger.Companion.of("Agent", port);
+        Logger logger = Logger.of("Agent", port);
         System.load(dll);
 
         ClassLoader classLoader = null;
