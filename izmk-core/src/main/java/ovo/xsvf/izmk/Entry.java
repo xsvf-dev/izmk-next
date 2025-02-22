@@ -1,8 +1,6 @@
 package ovo.xsvf.izmk;
 
 import ovo.xsvf.izmk.injection.mixin.MixinLoader;
-import ovo.xsvf.izmk.injection.mixin.impl.MixinChatComponent;
-import ovo.xsvf.izmk.injection.mixin.impl.MixinGui;
 import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft;
 import ovo.xsvf.izmk.misc.ClassUtil;
 import ovo.xsvf.izmk.util.resources.ResourceUtil;
@@ -19,7 +17,6 @@ public class Entry {
         ResourceUtil.INSTANCE.init(Paths.get(jar));
 
         MixinLoader.INSTANCE.loadMixin(MixinMinecraft.class);
-        MixinLoader.INSTANCE.loadMixin(MixinGui.class);
-        MixinLoader.INSTANCE.loadMixin(MixinChatComponent.class);
+        // NOTE: If you want to load other mixins, add them at MixinLoader#loadMixins()
     }
 }

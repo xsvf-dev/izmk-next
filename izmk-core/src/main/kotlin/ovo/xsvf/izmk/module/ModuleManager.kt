@@ -7,33 +7,25 @@ import java.lang.reflect.InvocationTargetException
 object ModuleManager {
     val modulesMap = mutableMapOf<String, Module>()
 
-    fun init(classes: Array<Class<*>>) {
+    fun init() {
         addModule(Test())
 
-        for (clazz in classes) {
-            if (Module::class.java.isAssignableFrom(clazz) && clazz != Module::class.java) {
-                loadModule(clazz)
-            }
-        }
         IZMK.logger.info("Module map size: ${modulesMap.size}")
     }
 
     private fun loadModule(clazz: Class<*>) {
         val name = clazz.name
         IZMK.logger.info("Loading module: $name")
-        try {
-            val module = clazz.getDeclaredConstructor().newInstance() as Module
-            addModule(module)
-        } catch (e: Exception) {
-            handleModuleLoadException(name, e)
-        }
+        kotlin.runCatching {
+            addModule(clazz.getDeclaredConstructor().newInstance() as Module)
+        }.onFailure { handleModuleLoadException(name, it) }
     }
 
     private fun addModule(module: Module) {
         modulesMap[module.name] = module
     }
 
-    private fun handleModuleLoadException(name: String, e: Exception) {
+    private fun handleModuleLoadException(name: String, e: Throwable) {
         val message = when (e) {
             is NoSuchMethodException -> "does not have a default constructor."
             is IllegalAccessException -> "constructor is not accessible."

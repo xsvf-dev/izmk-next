@@ -1,71 +1,59 @@
 package ovo.xsvf.izmk.event
 
-import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.command.CommandManager
-import java.lang.reflect.Method
+import java.lang.invoke.MethodHandles
 import java.util.concurrent.ConcurrentHashMap
 
 object EventBus {
-    private val listenerEventMapping = ConcurrentHashMap<Any, Set<Pair<Class<out Event>, Method>>>()
-    private val eventHandlers = ConcurrentHashMap<Class<out Event>, MutableList<Triple<Method, Int, Boolean>>>()
-    private val registeredHandlers = ConcurrentHashMap.newKeySet<Any>()
+    private val listeners = ConcurrentHashMap<Class<out Event>, MutableList<Listener>>()
+    private val lookup = MethodHandles.lookup()
 
     init {
         register(CommandManager)
     }
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("unchecked_cast")
     fun register(listener: Any) {
-        if (!registeredHandlers.add(listener)) return  // 防止重复注册
+        require(listener !is Class<*>) { "Event listener should be an instance of a class" }
+        listener::class.java.declaredMethods.forEach { method ->
+            if (method.isAnnotationPresent(EventTarget::class.java)) {
+                require(method.parameterTypes.size == 1 && Event::class.java.isAssignableFrom(method.parameterTypes[0])) {
+                    "Event listener method should have only one parameter of type Event"
+                }
+                method.isAccessible = true
 
-        val eventTypes = mutableSetOf<Pair<Class<out Event>, Method>>()
-
-        listener.javaClass.declaredMethods.forEach { method ->
-            val annotation = method.getAnnotation(EventListener::class.java) ?: return@forEach
-            val params = method.parameterTypes
-            if (params.size != 1 || !Event::class.java.isAssignableFrom(params[0])) return@forEach
-            val eventType = params[0] as Class<out Event>
-
-            val priority = annotation.priority
-            val alwaysListening = annotation.alwaysListening
-
-            eventHandlers.computeIfAbsent(eventType) { mutableListOf() }
-                .add(Triple(method, priority, alwaysListening))
-            method.isAccessible = true
-
-            eventTypes.add(Pair(eventType, method))
-        }
-
-        eventHandlers.forEach { (_, handlers) ->
-            handlers.sortByDescending { it.second }
-        }
-
-        if (eventTypes.isNotEmpty()) {
-            listenerEventMapping[listener] = eventTypes
+                val methodHandle = lookup.unreflect(method).bindTo(listener)
+                val eventTarget = method.getAnnotation(EventTarget::class.java)
+                listeners.getOrPut(method.parameterTypes[0] as Class<out Event>) { mutableListOf() }
+                    .let { list ->
+                        list.add(Listener(listener::class.java,
+                            { methodHandle.invoke(it) },
+                            eventTarget.priority,
+                            eventTarget.alwaysListening))
+                        list.sortBy { it.priority }
+                    }
+            }
         }
     }
 
     fun unregister(listener: Any) {
-        if (!registeredHandlers.remove(listener)) return
-        listenerEventMapping.remove(listener)
-        eventHandlers.forEach { (_, handlers) ->
-            handlers.removeIf { it.first.declaringClass == listener.javaClass }
+        listeners.forEach { (_, listeners) ->
+            listeners.removeAll { it.clazz == listener::class.java }
         }
     }
 
     fun post(event: Event) {
-        eventHandlers[event.javaClass]?.forEach { (method, _, alwaysListening) ->
-            listenerEventMapping.forEach { (listener, events) ->
-                if (events.any { it.first == event.javaClass }) {
-                    if (event !is CancellableEvent || !event.isCancelled || alwaysListening) {
-                        try {
-                            method.invoke(listener, event)
-                        } catch (e: Throwable) {
-                            IZMK.logger.error("Error executing event: $event", e)
-                        }
-                    }
-                }
+        listeners[event::class.java]?.forEach {
+            if (event !is CancellableEvent || !event.isCancelled || it.alwaysListening) {
+                it.handle(event)
             }
         }
     }
+}
+
+data class Listener(val clazz: Class<*>,
+                    val method: (Event) -> Unit,
+                    val priority: Int = 0,
+                    val alwaysListening: Boolean = false) {
+    fun handle(event: Event) = method(event)
 }

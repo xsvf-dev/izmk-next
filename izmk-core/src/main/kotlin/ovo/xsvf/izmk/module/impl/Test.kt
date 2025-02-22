@@ -1,6 +1,6 @@
 package ovo.xsvf.izmk.module.impl
 
-import ovo.xsvf.izmk.event.EventListener
+import ovo.xsvf.izmk.event.EventTarget
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
@@ -11,12 +11,12 @@ import ovo.xsvf.izmk.module.Module
  * @since 2025/2/16
  */
 class Test : Module("Test") {
-    init {
-        enabled = true
-    }
-
-    @EventListener
+    @EventTarget
     fun onRender2D(event: Render2DEvent) {
         FontRenderers.drawString("Hello, world!", 10f, 10f, ColorRGB.WHITE)
+    }
+
+    override fun onEnable() {
+        logger.info("Test module enabled")
     }
 }

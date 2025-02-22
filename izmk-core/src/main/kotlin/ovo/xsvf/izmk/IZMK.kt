@@ -6,8 +6,8 @@ import ovo.xsvf.izmk.graphics.RenderSystem
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
+import ovo.xsvf.izmk.injection.mixin.MixinLoader
 import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft
-import ovo.xsvf.izmk.misc.ClassUtil
 import ovo.xsvf.izmk.module.ModuleManager
 import ovo.xsvf.logging.Logger
 import kotlin.properties.Delegates
@@ -27,9 +27,9 @@ object IZMK {
 
     fun init() {
         logger.info("Start initializing IZMK...")
+        MixinLoader.INSTANCE.loadMixins()
 
-        val classes = ClassUtil.getInstrumentation().allLoadedClasses
-        ModuleManager.init(classes)
+        ModuleManager.init()
         ConfigManager.init()
 
         MojangRenderSystem.recordRenderCall {

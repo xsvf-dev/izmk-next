@@ -1,6 +1,5 @@
 package ovo.xsvf.izmk.module
 
-import net.minecraft.client.Minecraft
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventBus
 
@@ -13,6 +12,7 @@ abstract class Module(val name: String, val description: String = "") {
         set(value) {
             if (field == value) return
             field = value
+            IZMK.logger.debug("$name state is set to $value")
             if (value) {
                 EventBus.register(this)
                 onEnable()
@@ -21,10 +21,10 @@ abstract class Module(val name: String, val description: String = "") {
                 onDisable()
                 EventBus.unregister(this)
             }
-            IZMK.logger.debug("$name state is set to $value")
         }
 
-    protected val mc: Minecraft by lazy { IZMK.mc }
+    protected val mc by lazy { IZMK.mc }
+    protected val logger by lazy { IZMK.logger }
 
     var keyCode = -1
 

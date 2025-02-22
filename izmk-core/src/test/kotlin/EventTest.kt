@@ -1,4 +1,7 @@
-import ovo.xsvf.izmk.event.*
+import ovo.xsvf.izmk.event.CancellableEvent
+import ovo.xsvf.izmk.event.Event
+import ovo.xsvf.izmk.event.EventBus
+import ovo.xsvf.izmk.event.EventTarget
 
 // 用于测试的事件类
 data class TestEvent(val message: String) : Event()
@@ -11,36 +14,36 @@ object TestListener {
     // 记录方法调用的顺序
     val invocationOrder = mutableListOf<String>()
 
-    @EventListener(priority = 10)
+    @EventTarget(priority = 10)
     fun highPriorityListener(event: TestEvent) {
         invocationOrder.add("highPriorityListener")
     }
 
-    @EventListener(priority = 5)
+    @EventTarget(priority = 5)
     fun mediumPriorityListener(event: TestEvent) {
         invocationOrder.add("mediumPriorityListener")
     }
 
-    @EventListener(priority = 1, alwaysListening = true)
+    @EventTarget(priority = 1, alwaysListening = true)
     fun lowPriorityAlwaysListener(event: TestEvent) {
         invocationOrder.add("lowPriorityAlwaysListener")
     }
 
     // 取消事件的监听器
-    @EventListener(priority = 20)
+    @EventTarget(priority = 20)
     fun cancelEventListener(event: TestCancellableEvent) {
         event.isCancelled = true
         invocationOrder.add("cancelEventListener")
     }
 
     // 此方法在事件被取消时不会被调用（除非 alwaysListening = true）
-    @EventListener(priority = 10)
+    @EventTarget(priority = 10)
     fun cancelledHandler(event: TestCancellableEvent) {
         invocationOrder.add("cancelledHandler")
     }
 
     // alwaysListening = true，即使事件被取消仍然会被调用
-    @EventListener(priority = 5, alwaysListening = true)
+    @EventTarget(priority = 5, alwaysListening = true)
     fun alwaysHandler(event: TestCancellableEvent) {
         invocationOrder.add("alwaysHandler")
     }
