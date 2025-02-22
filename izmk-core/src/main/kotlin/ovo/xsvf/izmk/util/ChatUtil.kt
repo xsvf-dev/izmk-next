@@ -5,8 +5,11 @@ import ovo.xsvf.izmk.IZMK.isNull
 import ovo.xsvf.izmk.IZMK.mc
 
 object ChatUtil {
+
     fun addMessageWithClient(message: String) {
         if (isNull()) return
-        mc.player?.sendSystemMessage(Component.literal(message))
+
+        val messageComponent = Component.literal(message)
+        mc.gui.chat.addMessage(messageComponent)
     }
 }

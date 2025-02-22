@@ -5,7 +5,6 @@ import ovo.xsvf.izmk.config.ConfigManager
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
-import ovo.xsvf.izmk.injection.mixin.MixinLoader
 import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft
 import ovo.xsvf.izmk.misc.ClassUtil
 import ovo.xsvf.izmk.module.ModuleManager
@@ -28,7 +27,6 @@ object IZMK {
         logger.info("Start initializing IZMK...")
 
         val classes = ClassUtil.getInstrumentation().allLoadedClasses
-        MixinLoader.loadMixins(classes.toMutableList())
         ModuleManager.init(classes)
         ConfigManager.init()
 

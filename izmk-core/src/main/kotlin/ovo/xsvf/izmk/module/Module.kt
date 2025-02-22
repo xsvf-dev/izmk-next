@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.module
 
 import net.minecraft.client.Minecraft
+import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventBus
 
 /**
@@ -13,6 +14,7 @@ abstract class Module(val name: String, val description: String = "") {
             if (field != value) { // 只有状态变化时才操作
                 field = value
                 if (value) EventBus.register(this) else EventBus.unregister(this)
+                IZMK.logger.debug("$name state is set to $value")
             }
         }
 
