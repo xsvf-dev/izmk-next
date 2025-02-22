@@ -1,17 +1,17 @@
 package ovo.xsvf.izmk.graphics.texture
 
-import ovo.xsvf.izmk.util.resources.Resource
-import ovo.xsvf.izmk.util.timing.TimerUtils
 import org.lwjgl.opengl.GL45.*
 import org.lwjgl.stb.STBImage
-import ovo.xsvf.izmk.util.memory.createDirectByteBuffer
+import ovo.xsvf.izmk.resource.Resource
+import ovo.xsvf.izmk.util.memory.MemoryUtil.createDirectByteBuffer
+import ovo.xsvf.izmk.util.timing.Timer
 import java.nio.ByteBuffer
 
 object ImageFileUtils {
 
     private const val DEFAULT_BUFFER_SIZE = 0x800000
     private var byteBuffer = createDirectByteBuffer(DEFAULT_BUFFER_SIZE) // Max 8 MB
-    private val reallocateTimer = TimerUtils()
+    private val reallocateTimer = Timer()
 
     /**
      * Dynamic memory allocation

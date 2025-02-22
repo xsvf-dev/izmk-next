@@ -1,6 +1,11 @@
 package ovo.xsvf.izmk.graphics.easing
 
-import ovo.xsvf.izmk.util.math.*
+import ovo.xsvf.izmk.util.extensions.cubic
+import ovo.xsvf.izmk.util.extensions.quart
+import ovo.xsvf.izmk.util.extensions.quint
+import ovo.xsvf.izmk.util.extensions.sq
+import ovo.xsvf.izmk.util.math.MathUtil
+import ovo.xsvf.izmk.util.math.PI_FLOAT
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin

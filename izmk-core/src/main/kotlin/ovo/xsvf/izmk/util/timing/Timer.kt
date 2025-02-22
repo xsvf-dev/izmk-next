@@ -4,8 +4,7 @@ package ovo.xsvf.izmk.util.timing
  * Created on 2/12/2023 by B312
  * Updated on 6/12/2024 by B312
  */
-class TimerUtils(val timeUnit: Duration = Duration.Millisecond) {
-
+class Timer(val timeUnit: Duration = Duration.Millisecond) {
     private var time = System.nanoTime()
 
     fun passed(interval: Int, timeUnit: Duration = this.timeUnit): Boolean {

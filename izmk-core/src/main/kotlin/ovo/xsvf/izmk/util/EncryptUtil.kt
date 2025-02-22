@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.util.resources
+package ovo.xsvf.izmk.util
 
 import java.io.File
 import java.util.jar.JarInputStream

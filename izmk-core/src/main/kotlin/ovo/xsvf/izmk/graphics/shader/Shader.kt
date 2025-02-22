@@ -6,7 +6,7 @@ import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.IZMK
-import ovo.xsvf.izmk.util.resources.ResourceUtil
+import ovo.xsvf.izmk.resource.ResourceUtil
 import java.io.InputStream
 import java.io.StringWriter
 import java.nio.FloatBuffer

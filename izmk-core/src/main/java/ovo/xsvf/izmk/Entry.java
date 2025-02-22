@@ -3,7 +3,7 @@ package ovo.xsvf.izmk;
 import ovo.xsvf.izmk.injection.mixin.MixinLoader;
 import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft;
 import ovo.xsvf.izmk.misc.ClassUtil;
-import ovo.xsvf.izmk.util.resources.ResourceUtil;
+import ovo.xsvf.izmk.resource.ResourceUtil;
 import ovo.xsvf.logging.Logger;
 
 import java.lang.instrument.Instrumentation;

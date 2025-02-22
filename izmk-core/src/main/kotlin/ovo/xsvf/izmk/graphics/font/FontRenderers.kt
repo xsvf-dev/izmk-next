@@ -2,7 +2,7 @@ package ovo.xsvf.izmk.graphics.font
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.graphics.color.ColorRGB
-import ovo.xsvf.izmk.util.resources.ResourceUtil
+import ovo.xsvf.izmk.resource.ResourceUtil
 import java.awt.Font
 import kotlin.io.path.Path
 

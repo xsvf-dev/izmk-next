@@ -3,9 +3,13 @@ package ovo.xsvf.izmk.graphics.buffer
 import ovo.xsvf.izmk.graphics.GlDataType
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.matrix.MatrixStack
-import ovo.xsvf.izmk.graphics.shader.impl.*
 import ovo.xsvf.izmk.graphics.shader.Shader
-import ovo.xsvf.izmk.util.math.*
+import ovo.xsvf.izmk.graphics.shader.impl.FontShader
+import ovo.xsvf.izmk.graphics.shader.impl.PosColorShader2D
+import ovo.xsvf.izmk.graphics.shader.impl.PosColorShader3D
+import ovo.xsvf.izmk.graphics.shader.impl.PosTexShader2D
+import ovo.xsvf.izmk.util.extensions.toRadians
+import ovo.xsvf.izmk.util.math.MathUtil
 import ovo.xsvf.izmk.util.math.vectors.Vec2f
 import kotlin.math.*
 

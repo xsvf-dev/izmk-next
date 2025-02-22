@@ -1,11 +1,14 @@
 package ovo.xsvf.izmk.util.math.vectors
 
 import net.minecraft.world.entity.Entity
-import ovo.xsvf.izmk.util.math.*
+import ovo.xsvf.izmk.util.extensions.sq
+import ovo.xsvf.izmk.util.extensions.toRadians
+import ovo.xsvf.izmk.util.math.distance
+import ovo.xsvf.izmk.util.math.distanceSq
 import kotlin.math.sqrt
 
 @JvmInline
-value class Vec2f private constructor(val bits: Long) {
+value class Vec2f private constructor(private val bits: Long) {
 
     constructor(x: Float, y: Float) : this((x.toRawBits().toLong() shl 32) or (y.toRawBits().toLong() and 0xFFFFFFFF))
 
@@ -35,7 +38,6 @@ value class Vec2f private constructor(val bits: Long) {
     fun length() = sqrt(lengthSq())
 
     fun lengthSq() = x.sq + y.sq
-
 
     operator fun div(vec2f: Vec2f) = div(vec2f.x, vec2f.y)
 

@@ -1,6 +1,7 @@
-package ovo.xsvf.izmk.util.resources
+package ovo.xsvf.izmk.resource
 
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.util.EncryptUtil
 import java.io.InputStream
 import java.nio.file.Path
 
@@ -11,7 +12,6 @@ object ResourceUtil {
         IZMK.logger.info("Loading resources from ${jar.toAbsolutePath()}")
         val func: (String, ByteArray) -> Unit = { name, data ->
             resources[Path.of(name)] = data
-            IZMK.logger.info("Loading resource: $name")
         }
         if (IZMK.Obfuscated) EncryptUtil.getBinaryFilesEncrypted(jar.toFile(), func)
         else EncryptUtil.getBinaryFiles(jar.toFile(), func)

@@ -1,11 +1,9 @@
-package ovo.xsvf.izmk.util.resources
+package ovo.xsvf.izmk.resource
 
 import ovo.xsvf.izmk.IZMK
 import kotlin.io.path.Path
 
-class Resource(
-    path: String
-) {
+class Resource(path: String) {
     val byteArr: ByteArray
 
     val data: String get() = String(byteArr, Charsets.UTF_8)

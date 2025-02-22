@@ -1,10 +1,11 @@
 package ovo.xsvf.izmk.graphics.texture
 
+import com.mojang.datafixers.kinds.ListBox.flip
 import ovo.xsvf.izmk.graphics.RenderSystem
-import ovo.xsvf.izmk.util.timing.TimerUtils
+import ovo.xsvf.izmk.util.timing.Timer
 import org.lwjgl.opengl.ARBSparseTexture.*
 import org.lwjgl.opengl.GL45.*
-import ovo.xsvf.izmk.util.memory.createDirectByteBuffer
+import ovo.xsvf.izmk.util.memory.MemoryUtil.createDirectByteBuffer
 import java.awt.image.BufferedImage
 import java.nio.IntBuffer
 
@@ -12,7 +13,7 @@ object ImageUtils {
 
     private const val DEFAULT_BUFFER_SIZE = 0x800000
     private var byteBuffer = createDirectByteBuffer(DEFAULT_BUFFER_SIZE) // Max 8 MB
-    private val reallocateTimer = TimerUtils()
+    private val reallocateTimer = Timer()
 
     /**
      * Dynamic memory allocation

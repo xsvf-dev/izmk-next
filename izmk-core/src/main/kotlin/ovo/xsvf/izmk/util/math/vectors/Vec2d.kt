@@ -1,9 +1,9 @@
 package ovo.xsvf.izmk.util.math.vectors
 
 import net.minecraft.world.phys.Vec3
+import ovo.xsvf.izmk.util.extensions.toRadians
 import ovo.xsvf.izmk.util.math.distance
 import ovo.xsvf.izmk.util.math.distanceSq
-import ovo.xsvf.izmk.util.math.toRadians
 
 data class Vec2d(val x: Double = 0.0, val y: Double = 0.0) {
     constructor(x: Float, y: Float) : this(x.toDouble(), y.toDouble())
