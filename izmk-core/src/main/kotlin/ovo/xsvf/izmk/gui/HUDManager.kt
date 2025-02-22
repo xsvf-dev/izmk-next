@@ -4,10 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.screens.ChatScreen
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.IZMK
-import ovo.xsvf.izmk.event.EventListener
+import ovo.xsvf.izmk.event.EventTarget
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.gui.impl.NeneHud
-import ovo.xsvf.izmk.mod.hud.HUD
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -24,6 +23,7 @@ object HUDManager {
 
     fun init() {
         registerHUD(NeneHud())
+        hudMap["NeneHud"]?.enabled = true
 
         IZMK.logger.info("HUD map size: ${hudMap.size}")
     }
@@ -32,11 +32,12 @@ object HUDManager {
         hudMap[hud::class.java.simpleName] = hud
     }
 
-    @EventListener
+    @EventTarget
     fun onRender2d(event: Render2DEvent) {
         val window = mc.window.window
         val xpos = DoubleArray(1)
         val ypos = DoubleArray(1)
+
         GLFW.glfwGetCursorPos(window, xpos, ypos)
         val mouseX = xpos[0].toFloat() / mc.window.guiScale.toFloat()
         val mouseY = ypos[0].toFloat() / mc.window.guiScale.toFloat()
@@ -46,7 +47,7 @@ object HUDManager {
         }
 
         hudMap.values
-            .filter { it.isEnabled }
+            .filter { it.enabled }
             .forEach { it.render(event) }
     }
 
@@ -56,7 +57,7 @@ object HUDManager {
 
         if (isMousePressed) {
             if (draggingHUD == null) {
-                hudMap.values.firstOrNull { it.isEnabled && it.isMouseOver(mouseX, mouseY) }
+                hudMap.values.firstOrNull { it.enabled && it.isMouseOver(mouseX, mouseY) }
                     ?.let { hud ->
                         drawHUDBorder(stack, hud)
                         draggingHUD = hud
@@ -76,9 +77,9 @@ object HUDManager {
         // TODO: Implement border drawing logic
     }
 
-    fun enableHUD(name: String) = hudMap[name]?.let { it.isEnabled = true }
+    fun enableHUD(name: String) = hudMap[name]?.let { it.enabled = true }
 
-    fun disableHUD(name: String) = hudMap[name]?.let { it.isEnabled = false }
+    fun disableHUD(name: String) = hudMap[name]?.let { it.enabled = false }
 
     fun getHUD(name: String) = hudMap.values.find { it.name.equals(name, ignoreCase = true) }
 

@@ -6,6 +6,7 @@ import ovo.xsvf.izmk.graphics.RenderSystem
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
+import ovo.xsvf.izmk.gui.HUDManager
 import ovo.xsvf.izmk.injection.mixin.MixinLoader
 import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft
 import ovo.xsvf.izmk.module.ModuleManager
@@ -31,6 +32,7 @@ object IZMK {
 
         ModuleManager.init()
         ConfigManager.init()
+        HUDManager.init()
 
         MojangRenderSystem.recordRenderCall {
             // Systems

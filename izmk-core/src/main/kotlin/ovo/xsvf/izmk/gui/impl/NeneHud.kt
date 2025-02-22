@@ -3,7 +3,7 @@ package ovo.xsvf.izmk.gui.impl
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
-import ovo.xsvf.izmk.mod.hud.HUD
+import ovo.xsvf.izmk.gui.HUD
 
 /**
  * @author xiaojiang233

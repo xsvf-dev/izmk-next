@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.event
 
 import ovo.xsvf.izmk.command.CommandManager
+import ovo.xsvf.izmk.gui.HUDManager
 import java.lang.invoke.MethodHandles
 import java.util.concurrent.ConcurrentHashMap
 
@@ -10,6 +11,7 @@ object EventBus {
 
     init {
         register(CommandManager)
+        register(HUDManager)
     }
 
     @Suppress("unchecked_cast")
