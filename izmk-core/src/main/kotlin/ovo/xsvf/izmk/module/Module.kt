@@ -11,18 +11,27 @@ import ovo.xsvf.izmk.event.EventBus
 abstract class Module(val name: String, val description: String = "") {
     var enabled = false
         set(value) {
-            if (field != value) { // 只有状态变化时才操作
-                field = value
-                if (value) EventBus.register(this) else EventBus.unregister(this)
-                IZMK.logger.debug("$name state is set to $value")
+            if (field == value) return
+            field = value
+            if (value) {
+                EventBus.register(this)
+                onEnable()
             }
+            else {
+                onDisable()
+                EventBus.unregister(this)
+            }
+            IZMK.logger.debug("$name state is set to $value")
         }
 
-    protected val mc: Minecraft by lazy { Minecraft.getInstance() }
+    protected val mc: Minecraft by lazy { IZMK.mc }
 
     var keyCode = -1
 
     fun toggle() {
         enabled = !enabled
     }
+
+    open fun onEnable() {}
+    open fun onDisable() {}
 }

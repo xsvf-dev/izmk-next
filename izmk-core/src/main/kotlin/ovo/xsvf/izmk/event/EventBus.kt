@@ -14,6 +14,7 @@ object EventBus {
         register(CommandManager)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun register(listener: Any) {
         if (!registeredHandlers.add(listener)) return  // 防止重复注册
 
