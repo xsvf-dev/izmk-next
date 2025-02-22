@@ -12,6 +12,7 @@ import ovo.xsvf.izmk.injection.mixin.api.Invocation;
 import ovo.xsvf.izmk.injection.mixin.impl.MixinClientPacketListener;
 import ovo.xsvf.izmk.injection.mixin.impl.MixinGameRenderer;
 import ovo.xsvf.izmk.injection.mixin.impl.MixinGui;
+import ovo.xsvf.izmk.injection.mixin.impl.MixinSharedConstants;
 import ovo.xsvf.izmk.misc.ASMUtil;
 import ovo.xsvf.izmk.misc.ClassUtil;
 
@@ -29,6 +30,7 @@ public class MixinLoader implements IMixinLoader {
         loadMixin(MixinGui.class);
         loadMixin(MixinClientPacketListener.class);
         loadMixin(MixinGameRenderer.class);
+        loadMixin(MixinSharedConstants.class);
 
         IZMK.INSTANCE.setRunHeypixel(true);
     }
