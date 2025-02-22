@@ -7,7 +7,6 @@ import java.awt.Font
 import kotlin.io.path.Path
 
 object FontRenderers {
-
     val fontMode = FontMode.GENERAL
     const val DRAW_FONT_SIZE = 12f
 
