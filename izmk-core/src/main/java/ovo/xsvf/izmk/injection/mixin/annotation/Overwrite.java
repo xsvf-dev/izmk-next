@@ -8,7 +8,8 @@ import java.lang.annotation.Target;
 /**
  * This annotation is used to indicate that a method overwrites the method to be injected.
  * <p>
- *     <b>Note:</b> The method should be public and static, and have the same desrciptor as the method to be injected.
+ *     <b>Note:</b> The method should be public and static, with the first parameter being the target class instance
+ *     and have the other parameters and return type as the same as the method to be injected.
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
