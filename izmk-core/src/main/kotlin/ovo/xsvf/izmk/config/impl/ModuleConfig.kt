@@ -7,7 +7,7 @@ import ovo.xsvf.izmk.module.ModuleManager
 class ModuleConfig : Config("Module") {
     override fun saveConfig(): JsonObject {
         return JsonObject().apply {
-            ModuleManager.modulesMap.values.forEach { module ->
+            ModuleManager.modules().forEach { module ->
                 add(module.name, JsonObject().apply {
                     addProperty("enabled", module.enabled)
                     addProperty("keyCode", module.keyCode)
@@ -17,7 +17,7 @@ class ModuleConfig : Config("Module") {
     }
 
     override fun loadConfig(jsonObject: JsonObject) {
-        ModuleManager.modulesMap.values.forEach { module ->
+        ModuleManager.modules().forEach { module ->
             jsonObject.getAsJsonObject(module.name)?.let { moduleObject ->
                 module.enabled = moduleObject["enabled"].asBoolean
                 module.keyCode = moduleObject["keyCode"].asInt

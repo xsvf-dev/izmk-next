@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
+
 subprojects {
     // mirror repositories to speed up builds
     repositories {
