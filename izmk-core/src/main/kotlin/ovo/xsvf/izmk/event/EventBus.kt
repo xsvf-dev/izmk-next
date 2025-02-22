@@ -2,6 +2,7 @@ package ovo.xsvf.izmk.event
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.command.CommandManager
+import ovo.xsvf.izmk.module.hud.HUDManager
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 
@@ -12,6 +13,7 @@ object EventBus {
 
     init {
         register(CommandManager)
+        register(HUDManager)
     }
 
     fun register(listener: Any) {

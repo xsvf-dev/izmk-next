@@ -8,6 +8,7 @@ import ovo.xsvf.izmk.graphics.utils.RenderUtils
 import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft
 import ovo.xsvf.izmk.misc.ClassUtil
 import ovo.xsvf.izmk.module.ModuleManager
+import ovo.xsvf.izmk.module.hud.HUDManager
 import ovo.xsvf.logging.Logger
 import kotlin.properties.Delegates
 
@@ -28,6 +29,7 @@ object IZMK {
 
         val classes = ClassUtil.getInstrumentation().allLoadedClasses
         ModuleManager.init(classes)
+        HUDManager.init(classes)
         ConfigManager.init()
 
         com.mojang.blaze3d.systems.RenderSystem.recordRenderCall {
