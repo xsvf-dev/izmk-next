@@ -1,4 +1,4 @@
-package malte0811.ferritecore.mixin.dedupbakedquad;
+package malte0811.ferritecore.mixin;
 
 import malte0811.ferritecore.impl.Deduplicator;
 import net.minecraft.client.renderer.block.model.BakedQuad;

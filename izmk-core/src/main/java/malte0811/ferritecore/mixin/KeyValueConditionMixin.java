@@ -1,4 +1,4 @@
-package malte0811.ferritecore.mixin.predicates;
+package malte0811.ferritecore.mixin;
 
 import malte0811.ferritecore.impl.KeyValueConditionImpl;
 import malte0811.ferritecore.mixin.accessors.KeyValueConditionAccess;

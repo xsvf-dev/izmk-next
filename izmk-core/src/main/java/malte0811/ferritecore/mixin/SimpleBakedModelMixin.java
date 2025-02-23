@@ -1,4 +1,4 @@
-package malte0811.ferritecore.mixin.modelsides;
+package malte0811.ferritecore.mixin;
 
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import ovo.xsvf.izmk.injection.mixin.annotation.Mixin;

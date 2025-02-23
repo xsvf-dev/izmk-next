@@ -1,12 +1,12 @@
 package ovo.xsvf.izmk.injection.mixin;
 
-import malte0811.ferritecore.mixin.dedupbakedquad.SimpleModelBuilderMixin;
-import malte0811.ferritecore.mixin.dedupmultipart.MixinMultipartBuilder;
-import malte0811.ferritecore.mixin.modelsides.SimpleBakedModelMixin;
-import malte0811.ferritecore.mixin.mrl.ModelResourceLocationMixin;
-import malte0811.ferritecore.mixin.predicates.AndConditionMixin;
-import malte0811.ferritecore.mixin.predicates.KeyValueConditionMixin;
-import malte0811.ferritecore.mixin.predicates.OrConditionMixin;
+import malte0811.ferritecore.mixin.SimpleModelBuilderMixin;
+import malte0811.ferritecore.mixin.MixinMultipartBuilder;
+import malte0811.ferritecore.mixin.SimpleBakedModelMixin;
+import malte0811.ferritecore.mixin.ModelResourceLocationMixin;
+import malte0811.ferritecore.mixin.AndConditionMixin;
+import malte0811.ferritecore.mixin.KeyValueConditionMixin;
+import malte0811.ferritecore.mixin.OrConditionMixin;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import ovo.xsvf.Pair;

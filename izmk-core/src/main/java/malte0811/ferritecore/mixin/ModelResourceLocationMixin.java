@@ -1,4 +1,4 @@
-package malte0811.ferritecore.mixin.mrl;
+package malte0811.ferritecore.mixin;
 
 import malte0811.ferritecore.impl.Deduplicator;
 import malte0811.ferritecore.mixin.accessors.ModelResourceLocationAccess;
