@@ -18,11 +18,17 @@ public class StaticInvocation implements Invocation {
     private final String name;
     private final String desc;
 
+    private final Object[] args;
+
     private StaticInvocation(MethodHelper helper, String owner, String name, String desc) {
         this.helper = helper;
         this.owner = owner;
         this.name = name;
         this.desc = desc;
+
+        Object[] args = helper.getMethodParams().toArray(new Object[0]);
+        this.args = new Object[args.length];
+        for (int i = args.length - 1,j = 0; i >= 0; i--, j++) this.args[j] = args[i];
     }
 
     /**
@@ -44,10 +50,7 @@ public class StaticInvocation implements Invocation {
 
     @Override
     public Object[] getArgs() {
-        Object[] args = helper.getMethodParams().toArray(new Object[0]);
-        Object[] result = new Object[args.length];
-        for (int i = args.length - 1,j = 0; i >= 0; i--, j++) result[j] = args[i];
-        return result;
+        return args;
     }
 
     @Override

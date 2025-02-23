@@ -8,7 +8,6 @@ import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
 import ovo.xsvf.izmk.gui.HUDManager
 import ovo.xsvf.izmk.injection.mixin.MixinLoader
-import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft
 import ovo.xsvf.izmk.module.ModuleManager
 import ovo.xsvf.logging.Logger
 import kotlin.properties.Delegates
@@ -17,14 +16,10 @@ import com.mojang.blaze3d.systems.RenderSystem as MojangRenderSystem
 object IZMK {
     lateinit var logger: Logger
     lateinit var mc: Minecraft
-    var Obfuscated by Delegates.notNull<Boolean>()
+    var obfuscated by Delegates.notNull<Boolean>()
     var runHeypixel: Boolean = false
 
     const val ASSETS_DIRECTORY = "assets/izmk"
-
-    val excludedLoading: List<Class<*>> = listOf<Class<*>>(
-        MixinMinecraft::class.java
-    )
 
     fun init() {
         logger.info("Start initializing IZMK...")

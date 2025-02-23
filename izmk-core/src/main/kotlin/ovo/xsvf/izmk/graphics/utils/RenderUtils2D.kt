@@ -1,11 +1,11 @@
 package ovo.xsvf.izmk.graphics.utils
 
+import org.lwjgl.opengl.GL45
 import ovo.xsvf.izmk.graphics.GlHelper
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.buffer.drawArrays
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.texture.Texture
-import org.lwjgl.opengl.GL45
 
 object RenderUtils2D {
     fun drawDynamicIsland(
@@ -116,17 +116,15 @@ object RenderUtils2D {
     fun drawTextureRect(
         x: Float, y: Float, width: Float, height: Float, texture: Texture, color: ColorRGB = ColorRGB.WHITE
     ) {
-        val startX = x
-        val startY = y
         val endX = x + width
         val endY = y + height
 
         texture.use {
             VertexBufferObjects.PosTex2D.drawArrays(GL45.GL_TRIANGLE_STRIP) {
-                texture(endX, startY, 1f, 0f, color)
-                texture(startX, startY, 0f, 0f, color)
+                texture(endX, y, 1f, 0f, color)
+                texture(x, y, 0f, 0f, color)
                 texture(endX, endY, 1f, 1f, color)
-                texture(startX, endY, 0f, 1f, color)
+                texture(x, endY, 0f, 1f, color)
             }
         }
     }

@@ -4,10 +4,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import ovo.xsvf.logging.LogServer;
 import ovo.xsvf.logging.Logger;
+import ovo.xsvf.util.BMWClassLoader;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,12 +16,12 @@ import java.util.Set;
 public class AgentMain {
     private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
 
-    public static void agentmain(String agentArgs, Instrumentation inst) {
+    @SuppressWarnings("unchecked")
+    public static void agentmain(String agentArgs, Instrumentation inst) throws Exception {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
         String dll = jsonObject.get("dll").getAsString();
         String file = jsonObject.get("file").getAsString();
         int port = jsonObject.get("port").getAsInt();
-        boolean debug = jsonObject.get("debug").getAsBoolean();
         Logger logger = Logger.of("Agent", port);
         System.load(dll);
 
@@ -36,22 +36,18 @@ public class AgentMain {
         } while (classLoader == null);
         final ClassLoader finalClassLoader = classLoader;
 
-        logger.debug("loading class...");
-        try {
-            Class<?> clazz = Class.forName("net.minecraftforge.securemodules.SecureModuleClassLoader", true, finalClassLoader);
-            Field loaders = clazz.getDeclaredField("packageToParentLoader");
-            loaders.setAccessible(true);
-            Map<String, ClassLoader> packageToParentLoader = (Map<String, ClassLoader>) loaders.get(finalClassLoader);
-            Set<String> packages = new HashSet<>();
-            ClassLoader bmw = new BMWClassLoader(Paths.get(file),
-                    packages::add, (name, b) -> defineClass(name, finalClassLoader, b));
-            packages.forEach(pkg -> {
-                logger.debug("adding package {} to parent loader", pkg);
-                packageToParentLoader.put(pkg, bmw);
-            });
-        } catch (NoSuchFieldException | ClassNotFoundException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        Field loaders = Class.forName("net.minecraftforge.securemodules.SecureModuleClassLoader", true, finalClassLoader)
+                .getDeclaredField("packageToParentLoader");
+        loaders.setAccessible(true);
+
+        Map<String, ClassLoader> pkgToParentLoader = (Map<String, ClassLoader>) loaders.get(finalClassLoader);
+        Set<String> packages = new HashSet<>();
+        ClassLoader bmw = new BMWClassLoader(Paths.get(file),
+                packages::add, (name, b) -> defineClass(name, finalClassLoader, b));
+        packages.forEach(pkg -> {
+            logger.debug("adding package {} to parent loader", pkg);
+            pkgToParentLoader.put(pkg, bmw);
+        });
 
         Thread.currentThread().setContextClassLoader(finalClassLoader);
         try {
@@ -61,8 +57,6 @@ public class AgentMain {
             logger.debug("Entry.entry() called");
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             logger.error("Entry class or method not found", e);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -76,7 +70,6 @@ public class AgentMain {
         jsonObject.addProperty("dll", loaderSrcPath + "\\src\\main\\resources\\lib.dll");
         jsonObject.addProperty("file", loaderSrcPath + "\\build\\libs\\merged-loader.jar");
         jsonObject.addProperty("port", LogServer.getPort());
-        jsonObject.addProperty("debug", true);
 
         new Thread(() -> {
             try {

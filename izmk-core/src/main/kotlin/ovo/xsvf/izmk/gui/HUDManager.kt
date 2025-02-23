@@ -29,7 +29,6 @@ object HUDManager {
     fun init() {
         registerHUD(NeneHud())
         hudMap["NeneHud"]?.enabled = true
-        IZMK.logger.info("HUD map size: ${hudMap.size}")
     }
 
     private fun registerHUD(hud: HUD) {
@@ -47,9 +46,8 @@ object HUDManager {
         val mouseY = ypos[0].toFloat() / mc.window.guiScale.toFloat()
 
         hudMap.values.filter { it.enabled }.forEach { hud ->
-
-
             hud.render(event)
+
             if (mc.screen is ChatScreen) {
                 val fadeAnimation = fadeAnimations.getOrPut(hud.name) {
                     AnimationFlag(Easing.OUT_CUBIC, 300f)
@@ -62,11 +60,9 @@ object HUDManager {
                     drawHUDBorder(event.guiGraphics.pose(), hud, currentFade)
                 }
             }
-
         }
 
         if (mc.screen is ChatScreen) {
-
             onMouseInput(mouseX, mouseY, event.guiGraphics.pose())
         }
     }

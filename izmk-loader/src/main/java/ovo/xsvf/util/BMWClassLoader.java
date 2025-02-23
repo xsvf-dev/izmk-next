@@ -1,4 +1,6 @@
-package ovo.xsvf;
+package ovo.xsvf.util;
+
+import ovo.xsvf.CoreFileProvider;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -9,7 +11,8 @@ public class BMWClassLoader extends ClassLoader {
     private final HashMap<String, byte[]> classMap = new HashMap<>();
     private final BiFunction<String, byte[], Class<?>> defineClass;
 
-    public BMWClassLoader(Path jar, Consumer<String> pkgConsumer, BiFunction<String, byte[], Class<?>> defineClass) {
+    public BMWClassLoader(Path jar, Consumer<String> pkgConsumer,
+                          BiFunction<String, byte[], Class<?>> defineClass) {
         this.defineClass = defineClass;
         for (byte[] bytes : CoreFileProvider.getBinaryFiles(jar.toString())) {
             String replaced = ASMUtil.node(bytes).name.replace('/', '.');

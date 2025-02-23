@@ -13,7 +13,7 @@ object ResourceUtil {
         val func: (String, ByteArray) -> Unit = { name, data ->
             resources[Path.of(name)] = data
         }
-        if (IZMK.Obfuscated) EncryptUtil.getBinaryFilesEncrypted(jar.toFile(), func)
+        if (IZMK.obfuscated) EncryptUtil.getBinaryFilesEncrypted(jar.toFile(), func)
         else EncryptUtil.getBinaryFiles(jar.toFile(), func)
     }
 

@@ -16,10 +16,7 @@ import ovo.xsvf.izmk.injection.mixin.annotation.*;
 import ovo.xsvf.izmk.injection.mixin.api.IArgs;
 import ovo.xsvf.izmk.injection.mixin.api.IMixinLoader;
 import ovo.xsvf.izmk.injection.mixin.api.Invocation;
-import ovo.xsvf.izmk.injection.mixin.impl.MixinClientPacketListener;
-import ovo.xsvf.izmk.injection.mixin.impl.MixinGameRenderer;
-import ovo.xsvf.izmk.injection.mixin.impl.MixinGui;
-import ovo.xsvf.izmk.injection.mixin.impl.MixinSharedConstants;
+import ovo.xsvf.izmk.injection.mixin.impl.*;
 import ovo.xsvf.izmk.misc.ASMUtil;
 import ovo.xsvf.izmk.misc.ClassUtil;
 
@@ -38,6 +35,7 @@ public class MixinLoader implements IMixinLoader {
         loadMixin(MixinClientPacketListener.class);
         loadMixin(MixinGameRenderer.class);
         loadMixin(MixinSharedConstants.class);
+        loadMixin(MixinItemInHandRenderer.class);
 
         /* FerriteCore mixins */
         loadMixin(SimpleModelBuilderMixin.class);
@@ -91,17 +89,19 @@ public class MixinLoader implements IMixinLoader {
         if (slice.start().value() == At.Type.HEAD && slice.end().value() == At.Type.TAIL && slice.startIndex() == -1 && slice.endIndex() == -1) {
             IZMK.INSTANCE.getLogger().debug("head-tail slice injection point found!");
             injectionPoints.addAll(Arrays.stream(insnList.toArray()).filter(filter).toList());
-        } else if (slice.startIndex() != -1 && slice.endIndex() != -1) {
+        } else if (slice.startIndex() != -1 || slice.endIndex() != -1) {
             // This is an index-based slice
             int count = 0;
+            int endIndex = (slice.end().value() == At.Type.TAIL && slice.endIndex() == -1)
+                    ? insnList.size() : slice.endIndex();
             for (AbstractInsnNode insnNode : insnList) {
                 if (filter.test(insnNode)) {
                     count++;
                     IZMK.INSTANCE.getLogger().debug("index-based slice match found!, count = " + count);
-                    if (count >= slice.startIndex() && count <= slice.endIndex()) {
+                    if (count >= slice.startIndex() && count <= endIndex) {
                         IZMK.INSTANCE.getLogger().debug("index-based slice injection point found!");
                         injectionPoints.add(insnNode);
-                    } else if (count > slice.endIndex()) {
+                    } else if (count > endIndex) {
                         break;
                     }
                 }
@@ -113,7 +113,6 @@ public class MixinLoader implements IMixinLoader {
             boolean tail = slice.end().value() == At.Type.TAIL;
 
             var startSplit = ASMUtil.splitDesc(slice.start().method());
-
             var endSplit = ASMUtil.splitDesc(slice.end().method());
 
             boolean foundStart = head;
@@ -436,6 +435,7 @@ public class MixinLoader implements IMixinLoader {
             // STACK: [<mInstance>, margs...]
             Type[] argTypes = Type.getArgumentTypes(wrap.second);
             for (int i = argTypes.length - 1; i >= 0; i--) {
+                IZMK.logger.debug("argType: {}", argTypes[i]);
                 // STACK: [<mInstance>, margs..., arg]
                 insnList.add(ASMUtil.checkcastToObject(argTypes[i]));
                 // STACK: [<mInstance>, margs..., (Object)arg]
@@ -632,7 +632,7 @@ public class MixinLoader implements IMixinLoader {
                     name = transform.method();
                     desc = transform.desc().isEmpty() ? Type.getMethodDescriptor(Type.VOID_TYPE, Type.getArgumentTypes(method)) : transform.desc();
                 } else if (method.isAnnotationPresent(WrapInvoke.class)) {
-                    if (method.getParameterCount() == 0 || !parameterTypes[parameterTypes.length - 1].isAssignableFrom(Invocation.class))
+                    if (method.getParameterCount() == 0 || !Invocation.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1]))
                         throw new IllegalArgumentException("WrapInvoke method " + method.getName() + " in class " + mixinClass.getName() + " must have at least one parameter of type Invocation as the last parameter");
                     WrapInvoke wrapInvoke = method.getAnnotation(WrapInvoke.class);
                     name = wrapInvoke.method();
@@ -684,7 +684,7 @@ public class MixinLoader implements IMixinLoader {
                             throw new IllegalArgumentException("WrapInvoke method " + injectMethod.getName() + " in class " + mixinClass.getName() + " has a different type of the first parameter than the target class");
                         wrapInvoke(method, injectMethod);
                     } else if (injectMethod.isAnnotationPresent(ModifyLocals.class)) {
-                        if (injectMethod.getParameterCount() != 1 || !injectMethod.getParameterTypes()[0].isAssignableFrom(IArgs.class))
+                        if (injectMethod.getParameterCount() != 1 || !IArgs.class.isAssignableFrom(injectMethod.getParameterTypes()[0]))
                             throw new IllegalArgumentException("ModifyLocals method " + injectMethod.getName() + " in class " + mixinClass.getName() + " must have one parameter of type IArgs");
                         modifyLocals(method, injectMethod);
                     }

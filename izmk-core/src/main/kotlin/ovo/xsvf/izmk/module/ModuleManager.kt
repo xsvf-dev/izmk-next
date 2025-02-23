@@ -2,6 +2,7 @@ package ovo.xsvf.izmk.module
 
 import ovo.xsvf.izmk.module.impl.FPSDisplay
 import ovo.xsvf.izmk.module.impl.NoHurtcam
+import ovo.xsvf.izmk.module.impl.OldAnimations
 import ovo.xsvf.izmk.module.impl.RenderTest
 
 object ModuleManager {
@@ -11,13 +12,14 @@ object ModuleManager {
         addModule(NoHurtcam)
         addModule(FPSDisplay)
         addModule(RenderTest)
+        addModule(OldAnimations)
     }
 
     private fun addModule(module: Module) {
         modulesMap[module.name] = module
     }
 
-    fun get(name: String): Module? {
+    operator fun get(name: String): Module? {
         return modulesMap[name]
     }
 

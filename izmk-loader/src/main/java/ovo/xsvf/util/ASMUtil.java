@@ -1,7 +1,8 @@
-package ovo.xsvf;
+package ovo.xsvf.util;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
+import ovo.xsvf.Pair;
 
 public class ASMUtil {
     // owner, name

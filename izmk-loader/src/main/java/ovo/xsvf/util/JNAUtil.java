@@ -1,4 +1,4 @@
-package ovo.xsvf;
+package ovo.xsvf.util;
 
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinNT;

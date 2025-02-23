@@ -12,12 +12,18 @@ public class VirtualInvocation implements Invocation {
     private final String name;
     private final String desc;
 
+    private final Object[] args;
+
     private VirtualInvocation(Object methodInstance, MethodHelper helper, String owner, String name, String desc) {
         this.methodInstance = methodInstance;
         this.helper = helper;
         this.owner = owner;
         this.name = name;
         this.desc = desc;
+
+        Object[] args = helper.getMethodParams().toArray(new Object[0]);
+        this.args = new Object[args.length];
+        for (int i = args.length - 1,j = 0; i >= 0; i--, j++) this.args[j] = args[i];
     }
 
     /**
@@ -42,14 +48,15 @@ public class VirtualInvocation implements Invocation {
 
     @Override
     public Object[] getArgs() {
-        Object[] args = helper.getMethodParams().toArray(new Object[0]);
-        Object[] result = new Object[args.length];
-        for (int i = args.length - 1,j = 0; i >= 0; i--, j++) result[j] = args[i];
-        return result;
+        return args;
     }
 
     @Override
     public void setArg(int index, Object value) {
         helper.getMethodParams().set(index, value);
+    }
+
+    public Object getTargetInstance() {
+        return methodInstance;
     }
 }

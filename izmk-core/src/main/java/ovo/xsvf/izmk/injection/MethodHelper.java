@@ -34,6 +34,9 @@ public class MethodHelper {
     }
 
     public Object call(Object instance, String classOwner, String methodName, String methodDesc) {
+
+        methodParams.forEach(it -> IZMK.logger.debug("Method param: {}", it));
+
         Class<?> clazz = ReflectionUtil.forName(classOwner);
         Pair<String, String> key = new Pair<>(classOwner + "/" + methodName, methodDesc);
         Method method = cachedMethods.get(key);
@@ -87,8 +90,6 @@ public class MethodHelper {
         } catch (InvocationTargetException e) {
             IZMK.INSTANCE.getLogger().error("InvocationTargetException occurred while invoking method %s: %s", e.getTargetException(), method.getName());
             throw new RuntimeException("InvocationTargetException occurred while invoking method " + method.getName(), e.getTargetException());
-        } finally {
-            methodParams.clear(); // 清空参数列表，以便下次使用
         }
     }
 }

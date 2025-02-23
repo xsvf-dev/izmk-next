@@ -16,7 +16,8 @@ class ToggleCommand : Command("t", ".t 模块名称") {
         }
 
         val moduleName = args[1]
-        val module = ModuleManager.modulesMap[moduleName] ?: return ChatUtil.addMessageWithClient("找不到有这个名字的模块")
+        val module = ModuleManager[moduleName] ?:
+        return ChatUtil.addMessageWithClient("找不到有这个名字的模块")
 
         module.toggle()
     }

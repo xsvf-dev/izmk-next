@@ -2,6 +2,7 @@ package ovo.xsvf;
 
 import ovo.xsvf.logging.LogServer;
 import ovo.xsvf.logging.Logger;
+import ovo.xsvf.util.JNAUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

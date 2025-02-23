@@ -5,8 +5,8 @@ package ovo.xsvf
  * @since 2025/2/17
  */
 data class Pair<T, U>(
-    @JvmField val first: T,
-    @JvmField val second: U
+    @JvmField var first: T,
+    @JvmField var second: U
 ) {
     companion object {
         @JvmStatic

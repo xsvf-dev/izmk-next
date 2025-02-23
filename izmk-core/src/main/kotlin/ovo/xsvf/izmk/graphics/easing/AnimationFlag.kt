@@ -1,7 +1,6 @@
 package ovo.xsvf.izmk.graphics.easing
 
 class AnimationFlag(private val interpolation: InterpolateFunction) {
-
     constructor(easing: Easing, length: Float) : this({ time, prev, current ->
         easing.incOrDec(Easing.toDelta(time, length), prev, current)
     })

@@ -15,7 +15,7 @@ object CommandManager {
         val args = message.split(' ')
         IZMK.logger.debug(args.toString())
         val commandName = args[0].removePrefix(".")
-        return commands.firstOrNull { it.name == commandName }?.let {
+        return commands.firstOrNull { it.name.lowercase() == commandName.lowercase() }?.let {
             it.run(args.toTypedArray())
             true
         } ?: false

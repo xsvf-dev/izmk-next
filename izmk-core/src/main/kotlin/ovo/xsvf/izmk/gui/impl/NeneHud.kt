@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.gui.impl
 
+import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
@@ -9,7 +10,8 @@ import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.HUD
 import ovo.xsvf.izmk.resource.Resource
 
-class NeneHud : HUD("nene-hud", 0f, 0f, 300f, 120f) {
+
+class NeneHud : HUD("NeneHud", 0f, 0f, 300f, 120f) {
     private val imageTexture: Texture = ImageFileUtils.loadTextureFromResource(Resource("image/nene.png"))
 
     override fun render(event: Render2DEvent) {
