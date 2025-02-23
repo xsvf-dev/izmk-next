@@ -5,16 +5,9 @@ import com.mojang.math.Axis
 import net.minecraft.util.Mth
 import net.minecraft.world.entity.HumanoidArm
 import ovo.xsvf.izmk.module.Module
-import ovo.xsvf.izmk.settings.BooleanSetting
-import ovo.xsvf.izmk.translation.TranslationKey
-import ovo.xsvf.izmk.translation.TranslationString
 
 object OldAnimations: Module("OldAnimations", "旧版本动画效果") {
-    val swordBlocking = BooleanSetting(TranslationString(TranslationKey("sword_blocking")), true)
-
-    init {
-        settings.add(swordBlocking)
-    }
+    val swordBlocking by setting("swordBlocking")
 
     fun transform(matrices: PoseStack, arm: HumanoidArm, equipProgress: Float, swingProgress: Float) {
         matrices.translate(if (arm == HumanoidArm.RIGHT) -0.1f else 0.1f, 0.1f, 0.0f)

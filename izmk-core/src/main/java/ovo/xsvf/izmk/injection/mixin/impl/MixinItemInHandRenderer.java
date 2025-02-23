@@ -25,7 +25,7 @@ public class MixinItemInHandRenderer {
                                           float pSwingProgress, ItemStack pStack, float pEquippedProgress,
                                           PoseStack pPoseStack, MultiBufferSource pBuffer, int pCombinedLight,
                                           VirtualInvocation invocation) {
-        if (OldAnimations.INSTANCE.getEnabled() && OldAnimations.INSTANCE.getSwordBlocking().getValue() &&
+        if (OldAnimations.INSTANCE.getEnabled() && OldAnimations.INSTANCE.getSwordBlocking() &&
                 ((ItemStack) invocation.getTargetInstance()).getItem() instanceof SwordItem) {
            return UseAnim.BLOCK;
         }
@@ -40,7 +40,7 @@ public class MixinItemInHandRenderer {
                                          float pSwingProgress, ItemStack pStack, float pEquippedProgress,
                                          PoseStack pPoseStack, MultiBufferSource pBuffer,
                                          int pCombinedLight, CallbackInfo ci) {
-        if (IZMK.mc.options.keyUse.isDown() && OldAnimations.INSTANCE.getEnabled() && OldAnimations.INSTANCE.getSwordBlocking().getValue() &&
+        if (IZMK.mc.options.keyUse.isDown() && OldAnimations.INSTANCE.getEnabled() && OldAnimations.INSTANCE.getSwordBlocking() &&
                 pStack.getItem() instanceof SwordItem) {
             OldAnimations.INSTANCE.transform(
                     pPoseStack,
@@ -60,7 +60,7 @@ public class MixinItemInHandRenderer {
                                  PoseStack pPoseStack, MultiBufferSource pBuffer,
                                  int pCombinedLight, Invocation invocation) throws Exception {
         if (IZMK.mc.player != null && IZMK.mc.options.keyUse.isDown() && OldAnimations.INSTANCE.getEnabled() &&
-                OldAnimations.INSTANCE.getSwordBlocking().getValue() && pStack.getItem() instanceof SwordItem) {
+                OldAnimations.INSTANCE.getSwordBlocking() && pStack.getItem() instanceof SwordItem) {
             invocation.setArg(3, -0.52f);
         }
         invocation.call();
