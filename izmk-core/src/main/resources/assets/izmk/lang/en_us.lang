@@ -1,0 +1,8 @@
+modules.fps-display=FPS Display
+modules.fps-display.draw-string=Draw String
+
+modules.no-hurtcam=No HurtCam
+
+modules.render-test=Render Test
+
+hud.nene-hud=Nene HUD

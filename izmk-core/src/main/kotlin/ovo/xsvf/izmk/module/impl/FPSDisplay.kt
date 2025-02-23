@@ -6,18 +6,13 @@ import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.module.Module
-import ovo.xsvf.izmk.setting.impl.BoolSetting
 
-object FPSDisplay: Module("FPSDisplay", "Displays the FPS on the screen") {
-    private val drawString = BoolSetting("DrawString", true)
-
-    init {
-        settings.add(drawString)
-    }
+object FPSDisplay: Module("fps-display", "Displays the FPS on the screen") {
+    private val drawString by setting("draw-string")
 
     @EventTarget
     fun onRender2D(event: Render2DEvent) {
-        if (drawString.value) {
+        if (drawString) {
             FontRenderers.drawString(
                 "FPS: ${IZMK.mc.fpsString}",
                 20f, 20f,

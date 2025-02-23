@@ -2,7 +2,9 @@ package ovo.xsvf.izmk.module
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventBus
-import ovo.xsvf.izmk.setting.AbstractSetting
+import ovo.xsvf.izmk.settings.AbstractSetting
+import ovo.xsvf.izmk.settings.SettingsDesigner
+import ovo.xsvf.izmk.translation.TranslationString
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -12,9 +14,11 @@ import java.util.concurrent.CopyOnWriteArrayList
 abstract class Module(val name: String,
                       val description: String = "",
                       var keyCode: Int = -1,
-                      val settings: CopyOnWriteArrayList<AbstractSetting<*>> =
-                          CopyOnWriteArrayList<AbstractSetting<*>>()
-) {
+): SettingsDesigner<Module> {
+    private val settings = CopyOnWriteArrayList<AbstractSetting<*>>()
+
+    val translation = TranslationString("modules", name)
+
     var enabled = false
         set(value) {
             if (field == value) return
@@ -38,4 +42,10 @@ abstract class Module(val name: String,
 
     open fun onEnable() {}
     open fun onDisable() {}
+
+    override fun <S : AbstractSetting<*>> Module.setting(setting: S): S {
+        setting.key.key.prefix = "modules.$name"
+        settings.add(setting)
+        return setting
+    }
 }
