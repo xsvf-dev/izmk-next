@@ -1,0 +1,8 @@
+modules.fps-display=帧数显示
+modules.fps-display.draw-string=绘制字符串
+
+modules.no-hurtcam=无受伤抖动
+
+modules.render-test=渲染测试
+
+hud.nene-hud=Nene HUD

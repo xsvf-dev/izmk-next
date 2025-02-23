@@ -2,6 +2,7 @@ package ovo.xsvf.izmk.gui
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.impl.Render2DEvent
+import ovo.xsvf.izmk.translation.TranslationString
 
 /**
  * @author xiaojiang233
@@ -14,6 +15,8 @@ abstract class HUD(
     var width: Float,
     var height: Float
 ) {
+    val translation = TranslationString("hud", name)
+
     var x: Float = x
         set(value) {
             field = value.coerceIn(0f, IZMK.mc.window.width - width)

@@ -7,7 +7,7 @@ import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.RectMultiDraw
 import ovo.xsvf.izmk.module.Module
 
-object RenderTest: Module("RenderTest") {
+object RenderTest: Module("render-test") {
 
     private val rectMulti = RectMultiDraw()
     private val fontMulti = FontMultiDraw()
