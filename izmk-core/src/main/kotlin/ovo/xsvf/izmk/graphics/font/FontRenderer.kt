@@ -10,9 +10,8 @@ import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.graphics.font.FontRenderers.fontMode
 
 class FontRenderer(
-    private val font: FontAdapter
+    internal val font: FontAdapter
 ) {
-       
     fun drawString(
         text: String, x: Float, y: Float,
         color0: ColorRGB,
@@ -203,11 +202,11 @@ class FontRenderer(
         return font.getHeight() * scale / 40f * FONT_SIZE
     }
 
-    private fun getColor(ch: Char): ColorRGB =
+    fun getColor(ch: Char): ColorRGB =
         ci[ch]?.let { return ColorRGB(it) } ?: ColorRGB.WHITE
 
     companion object {
-        private const val FONT_SIZE = 12f
+        internal const val FONT_SIZE = 12f
         
         val ci: MutableMap<Char, Int> = mutableMapOf<Char, Int>().also {
             it['0'] = 0x000000FF.toInt()

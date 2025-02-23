@@ -18,7 +18,7 @@ object FontRenderers {
         ResourceUtil.getAsStream(Path("${IZMK.ASSETS_DIRECTORY}/font/font.ttf"))
     ).deriveFont(Font.PLAIN, FONT_SIZE * 2f))
 
-    private val default = FontRenderer(enFont)
+    internal val default = FontRenderer(enFont)
 
     fun drawString(
         text: String, x: Float, y: Float,
