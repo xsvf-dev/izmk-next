@@ -2,7 +2,6 @@ package malte0811.ferritecore.mixin.accessors;
 
 import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
 import ovo.xsvf.izmk.injection.accessor.annotation.Accessor;
 import ovo.xsvf.izmk.injection.accessor.annotation.FieldAccessor;
 
@@ -18,5 +17,5 @@ public interface VoxelShapeAccess {
     void setShape(DiscreteVoxelShape newPart);
 
     @FieldAccessor(value = "faces", getter = false)
-    void setFaces(@Nullable VoxelShape[] newCache);
+    void setFaces(VoxelShape[] newCache);
 }

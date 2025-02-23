@@ -34,7 +34,6 @@ public class JarClassLoader extends ClassLoader {
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         if (jarClasses.containsKey(name)) {
-            log.accept("Reading class " + name + " from jar");
             byte[] classData = jarClasses.get(name);
             return super.defineClass(name, classData, 0, classData.length);
         }

@@ -46,6 +46,15 @@ dependencies {
     shade "com.twelvemonkeys.imageio:imageio-webp:3.7.1"
     shade "dev.luna5ama:kmogus-core:1.1-SNAPSHOT"
     shade "dev.luna5ama:kmogus-struct-api:1.1-SNAPSHOT"
+
+    testImplementation "it.unimi.dsi:fastutil:8.5.6"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+    testImplementation "org.junit.platform:junit-platform-commons:1.8.2"
+    testImplementation "org.mockito:mockito-core:4.3.1"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.3.1"
+    testImplementation project(':izmk-common')
+    testImplementation project(':izmk-loader')
 }
 
 tasks.register('accessor', AccessorTask) {

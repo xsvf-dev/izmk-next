@@ -8,7 +8,7 @@ import ovo.xsvf.izmk.injection.accessor.annotation.FieldAccessor;
 
 @Accessor(SliceShape.class)
 public interface SliceShapeAccess extends VoxelShapeAccess {
-    @FieldAccessor(value = "delegate", getter = false)
+    @FieldAccessor(value = "delegate")
     VoxelShape getDelegate();
 
     @FieldAccessor(value = "axis")

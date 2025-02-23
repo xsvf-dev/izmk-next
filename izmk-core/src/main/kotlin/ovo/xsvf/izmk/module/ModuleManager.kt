@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.module
 
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.module.impl.FPSDisplay
 import ovo.xsvf.izmk.module.impl.NoHurtcam
 
 object ModuleManager {
@@ -8,6 +9,7 @@ object ModuleManager {
 
     fun init() {
         addModule(NoHurtcam)
+        addModule(FPSDisplay)
 
         IZMK.logger.info("Module map size: ${modulesMap.size}")
     }

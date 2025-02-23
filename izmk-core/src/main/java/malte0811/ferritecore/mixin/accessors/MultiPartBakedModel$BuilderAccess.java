@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @Accessor(MultiPartBakedModel.Builder.class)
-public interface MultiPartBakedModel$BuilderAccessor {
+public interface MultiPartBakedModel$BuilderAccess {
     @FieldAccessor("selectors")
     public abstract List<Pair<Predicate<BlockState>, BakedModel>> selectors();
 }

@@ -6,7 +6,7 @@ import ovo.xsvf.izmk.injection.accessor.annotation.Accessor;
 import ovo.xsvf.izmk.injection.accessor.annotation.MethodAccessor;
 
 @Accessor(BlockBehaviour.BlockStateBase.class)
-public interface BlockStateBaseAccessor {
+public interface BlockStateBaseAccess {
     @MethodAccessor
     BlockState asState();
 }

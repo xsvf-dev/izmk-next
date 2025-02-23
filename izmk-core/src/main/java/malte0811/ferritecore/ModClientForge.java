@@ -11,6 +11,9 @@ public class ModClientForge {
         Deduplicator.registerReloadListener();
     }
 
+    /**
+     * Called by IZMK Entry to register the event listener
+     */
     public static void init() {
         MinecraftForge.EVENT_BUS.register(ModClientForge.class);
     }
