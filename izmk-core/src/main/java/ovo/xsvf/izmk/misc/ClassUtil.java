@@ -1,11 +1,8 @@
 package ovo.xsvf.izmk.misc;
 
+import it.unimi.dsi.fastutil.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import ovo.xsvf.Pair;
 import ovo.xsvf.izmk.IZMK;
 
 import java.lang.instrument.ClassDefinition;
@@ -54,24 +51,6 @@ public class ClassUtil implements Opcodes {
 
     public static void redefineClass(@NotNull Class<?> clazz, byte @NotNull [] bytes) {
         redefineClass(clazz, bytes, true);
-    }
-
-    public static @NotNull ClassNode node(byte @NotNull [] bytes) {
-        ClassReader cr = new ClassReader(bytes);
-        ClassNode node = new ClassNode();
-        cr.accept(node, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
-        return node;
-    }
-
-    public static byte[] rewriteClass(@NotNull ClassNode node) {
-        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
-            @Override
-            protected ClassLoader getClassLoader() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        };
-        node.accept(cw);
-        return cw.toByteArray();
     }
 
     public static void selfDestruct() {

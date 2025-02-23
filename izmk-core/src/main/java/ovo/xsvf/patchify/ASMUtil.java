@@ -1,5 +1,9 @@
-package ovo.xsvf;
+package ovo.xsvf.patchify;
 
+import it.unimi.dsi.fastutil.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
@@ -18,11 +22,29 @@ public class ASMUtil implements Opcodes {
                     OPCODE_NAMES.put(field.getInt(null), field.getName());
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
-    public static void printMethod(MethodNode methodNode, Consumer<String> log) {
+    public static @NotNull ClassNode node(byte @NotNull [] bytes) {
+        ClassReader cr = new ClassReader(bytes);
+        ClassNode node = new ClassNode();
+        cr.accept(node, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+        return node;
+    }
+
+    public static byte[] rewriteClass(@NotNull ClassNode node) {
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
+            @Override
+            protected ClassLoader getClassLoader() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        };
+        node.accept(cw);
+        return cw.toByteArray();
+    }
+
+    public static void printOpcodesWithParameters(MethodNode methodNode, Consumer<String> log) {
         log.accept("Method: " + methodNode.name);
         int i = 0;
 
@@ -43,33 +65,80 @@ public class ASMUtil implements Opcodes {
             // 解析并打印参数
             String parameters = parseParameters(abstractInsn);
             if (!parameters.isEmpty()) {
-                sb.append(" Parameters: ").append(parameters);
+                sb.append(" Parameters: " + parameters);
             }
 
             log.accept(sb.toString());
         }
     }
 
+    // 辅助函数：将操作码值转换为名称
     private static String getOpcodeName(int opcode) {
-        return OPCODE_NAMES.getOrDefault(opcode, "UNKNOWN_" + opcode);
+        try {
+            // 使用反射获取 Opcodes 类中的操作码名称
+            return OPCODE_NAMES.getOrDefault(opcode, "UNKNOWN_" + opcode);
+        } catch (Exception e) {
+            return "UNKNOWN_" + opcode;
+        }
     }
 
+    // 辅助函数：解析指令的参数
     private static String parseParameters(AbstractInsnNode abstractInsn) {
-        return switch (abstractInsn) {
-            case VarInsnNode varInsn -> "var: " + varInsn.var;
-            case IntInsnNode intInsn -> "value: " + intInsn.operand;
-            case FieldInsnNode fieldInsn ->
-                    "owner: " + fieldInsn.owner + ", name: " + fieldInsn.name + ", desc: " + fieldInsn.desc;
-            case MethodInsnNode methodInsn ->
-                    "owner: " + methodInsn.owner + ", name: " + methodInsn.name + ", desc: " + methodInsn.desc;
-            case LdcInsnNode ldcInsn -> "value: " + ldcInsn.cst;
-            case TypeInsnNode typeInsn -> "desc: " + typeInsn.desc;
-            case JumpInsnNode jumpInsn -> "label: " + jumpInsn.label.toString();
-            case MultiANewArrayInsnNode multiANewArrayInsn ->
-                    "desc: " + multiANewArrayInsn.desc + ", dims: " + multiANewArrayInsn.dims;
-            case IincInsnNode iincInsn -> "var: " + iincInsn.var + ", incr: " + iincInsn.incr;
-            case null, default -> "";
-        };
+        if (abstractInsn instanceof VarInsnNode varInsn) {
+            return "var: " + varInsn.var;
+        } else if (abstractInsn instanceof IntInsnNode intInsn) {
+            return "value: " + intInsn.operand;
+        } else if (abstractInsn instanceof FieldInsnNode fieldInsn) {
+            return "owner: " + fieldInsn.owner + ", name: " + fieldInsn.name + ", desc: " + fieldInsn.desc;
+        } else if (abstractInsn instanceof MethodInsnNode methodInsn) {
+            return "owner: " + methodInsn.owner + ", name: " + methodInsn.name + ", desc: " + methodInsn.desc;
+        } else if (abstractInsn instanceof LdcInsnNode ldcInsn) {
+            return "value: " + ldcInsn.cst;
+        } else if (abstractInsn instanceof TypeInsnNode typeInsn) {
+            return "desc: " + typeInsn.desc;
+        } else if (abstractInsn instanceof JumpInsnNode jumpInsn) {
+            return "label: " + jumpInsn.label.toString();
+        } else if (abstractInsn instanceof MultiANewArrayInsnNode multiANewArrayInsn) {
+            return "desc: " + multiANewArrayInsn.desc + ", dims: " + multiANewArrayInsn.dims;
+        } else if (abstractInsn instanceof IincInsnNode iincInsn) {
+            return "var: " + iincInsn.var + ", incr: " + iincInsn.incr;
+        } else {
+            return "";
+        }
+    }
+
+    public static InsnList checkcastFromObject(Type type) {
+        InsnList insnList = new InsnList();
+
+        if (type.equals(Type.INT_TYPE)) {
+            insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Integer"));
+            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false));
+        } else if (type.equals(Type.BOOLEAN_TYPE)) {
+            insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Boolean"));
+            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false));
+        } else if (type.equals(Type.CHAR_TYPE)) {
+            insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Character"));
+            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Character", "charValue", "()C", false));
+        } else if (type.equals(Type.BYTE_TYPE)) {
+            insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Byte"));
+            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Byte", "byteValue", "()B", false));
+        } else if (type.equals(Type.SHORT_TYPE)) {
+            insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Short"));
+            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Short", "shortValue", "()S", false));
+        } else if (type.equals(Type.LONG_TYPE)) {
+            insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Long"));
+            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false));
+        } else if (type.equals(Type.FLOAT_TYPE)) {
+            insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Float"));
+            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Float", "floatValue", "()F", false));
+        } else if (type.equals(Type.DOUBLE_TYPE)) {
+            insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Double"));
+            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false));
+        } else {
+            insnList.add(new TypeInsnNode(CHECKCAST, type.getInternalName()));
+        }
+
+        return insnList;
     }
 
     public static InsnList checkcastFromObject(String desc) {
@@ -158,5 +227,14 @@ public class ASMUtil implements Opcodes {
         }
 
         return insnList;
+    }
+
+
+    // owner, name
+    public static @NotNull Pair<String, String> splitDesc(@NotNull String desc) {
+        String[] descs = desc.split("/");
+        StringBuilder name = new StringBuilder();
+        for (int i = 0; i < descs.length - 1; ++i) name.append(descs[i]).append("/");
+        return Pair.of(name.substring(0, name.length() - 1), descs[descs.length - 1]);
     }
 }

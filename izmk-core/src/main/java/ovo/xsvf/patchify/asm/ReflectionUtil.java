@@ -1,8 +1,7 @@
+package ovo.xsvf.patchify.asm;
+
 import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import it.unimi.dsi.fastutil.objects.Object2LongRBTreeMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.*;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandles;
@@ -10,7 +9,7 @@ import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 
 @SuppressWarnings("deprecation")
-public class ReflectionUtil2 {
+public class ReflectionUtil {
     private static final MethodHandles.Lookup publicLookup = MethodHandles.lookup();
 
     private static final Object2ObjectMap<String, MethodHandles.Lookup> cachedLookups = new Object2ObjectOpenHashMap<>(500);
@@ -18,7 +17,7 @@ public class ReflectionUtil2 {
     private static final Object2ObjectMap<String, VarHandle> cachedVarHandles = new Object2ObjectOpenHashMap<>(1000);
 
     private static final Object2LongMap<String> cachedFieldOffsets = new Object2LongRBTreeMap<>();
-    private static final Object2ObjectMap<String, Pair<Object, Long>> cachedStaticFieldOffsets = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<String, ObjectLongPair<Object>> cachedStaticFieldOffsets = new Object2ObjectOpenHashMap<>();
 
     private static final Unsafe unsafe;
     static {
@@ -47,15 +46,15 @@ public class ReflectionUtil2 {
         }
     }
 
-    private static Pair<Object, Long> getStaticFieldOffset(Class<?> clazz, String name) {
+    private static ObjectLongPair<Object> getStaticFieldOffset(Class<?> clazz, String name) {
         String key = clazz.getName()+ "/" + name;
-        Pair<Object, Long> pair = cachedStaticFieldOffsets.get(key);
+        ObjectLongPair<Object> pair = cachedStaticFieldOffsets.get(key);
         if (pair != null) return pair;
 
         try {
             Field field = clazz.getDeclaredField(name);
 
-            Pair<Object, Long> value = Pair.of(unsafe.staticFieldBase(field), unsafe.staticFieldOffset(field));
+            ObjectLongPair<Object> value = new ObjectLongImmutablePair<>(unsafe.staticFieldBase(field), unsafe.staticFieldOffset(field));
             cachedStaticFieldOffsets.put(key, value);
             return value;
         } catch (NoSuchFieldException e) {
@@ -92,10 +91,8 @@ public class ReflectionUtil2 {
 
     public static Object getField(Object instance, String field, String className) {
         Class<?> clazz = forName(className);
-        // static field: unsafe > varhandle
-        // instance field: varhandle > unsafe
         if (instance == null) {
-            Pair<Object, Long> pair = getStaticFieldOffset(clazz, field);
+            ObjectLongPair<Object> pair = getStaticFieldOffset(clazz, field);
             return unsafe.getObject(pair.first(), pair.second());
         }
         else {
