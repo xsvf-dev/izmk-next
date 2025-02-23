@@ -311,7 +311,7 @@ public class AccessorProcessor implements Opcodes {
                             insnList.add(checkcastFromObject(Type.getReturnType(method1.desc)));
                         }
                     } else {
-                        throw new IllegalStateException("Unexpected method: " + owner + "." + ((MethodInsnNode) insnNode).name + " " + ((MethodInsnNode) insnNode).desc);
+                        log.accept("WARN: Unexpected method: " + owner + "." + ((MethodInsnNode) insnNode).name + " " + ((MethodInsnNode) insnNode).desc);
                     }
 
                     if (insnList.size() > 0) {

@@ -1,5 +1,3 @@
-package ovo.xsvf.izmk.injection;
-
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongRBTreeMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -12,7 +10,7 @@ import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 
 @SuppressWarnings("deprecation")
-public class ReflectionUtil {
+public class ReflectionUtil2 {
     private static final MethodHandles.Lookup publicLookup = MethodHandles.lookup();
 
     private static final Object2ObjectMap<String, MethodHandles.Lookup> cachedLookups = new Object2ObjectOpenHashMap<>(500);
@@ -94,6 +92,8 @@ public class ReflectionUtil {
 
     public static Object getField(Object instance, String field, String className) {
         Class<?> clazz = forName(className);
+        // static field: unsafe > varhandle
+        // instance field: varhandle > unsafe
         if (instance == null) {
             Pair<Object, Long> pair = getStaticFieldOffset(clazz, field);
             return unsafe.getObject(pair.first, pair.second);

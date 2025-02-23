@@ -34,7 +34,7 @@ fun main() {
 //    EventBus.post(event)  // 触发普通事件
 //    EventBus.post(cancellableEvent)  // 触发可取消事件
 
-    println("100 times posting event...")
+    println("10000 times posting event...")
     val time0 = System.nanoTime()
     for (i in 0 until 100) {
 //        println("Posting event... $i")

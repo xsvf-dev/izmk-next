@@ -1,9 +1,16 @@
 package ovo.xsvf.izmk.injection.mixin;
 
+import malte0811.ferritecore.mixin.SimpleModelBuilderMixin;
+import malte0811.ferritecore.mixin.MixinMultipartBuilder;
+import malte0811.ferritecore.mixin.SimpleBakedModelMixin;
+import malte0811.ferritecore.mixin.ModelResourceLocationMixin;
+import malte0811.ferritecore.mixin.AndConditionMixin;
+import malte0811.ferritecore.mixin.KeyValueConditionMixin;
+import malte0811.ferritecore.mixin.OrConditionMixin;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
-import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.Pair;
+import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.izmk.injection.MethodHelper;
 import ovo.xsvf.izmk.injection.mixin.annotation.*;
 import ovo.xsvf.izmk.injection.mixin.api.IArgs;
@@ -31,6 +38,15 @@ public class MixinLoader implements IMixinLoader {
         loadMixin(MixinClientPacketListener.class);
         loadMixin(MixinGameRenderer.class);
         loadMixin(MixinSharedConstants.class);
+
+        /* FerriteCore mixins */
+        loadMixin(SimpleModelBuilderMixin.class);
+        loadMixin(MixinMultipartBuilder.class);
+        loadMixin(SimpleBakedModelMixin.class);
+        loadMixin(ModelResourceLocationMixin.class);
+        loadMixin(AndConditionMixin.class);
+        loadMixin(KeyValueConditionMixin.class);
+        loadMixin(OrConditionMixin.class);
 
         IZMK.INSTANCE.setRunHeypixel(true);
     }

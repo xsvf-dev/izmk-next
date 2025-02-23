@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk;
 
+import malte0811.ferritecore.ModClientForge;
 import ovo.xsvf.izmk.injection.mixin.MixinLoader;
 import ovo.xsvf.izmk.injection.mixin.impl.MixinMinecraft;
 import ovo.xsvf.izmk.misc.ClassUtil;
@@ -15,6 +16,7 @@ public class Entry {
         IZMK.INSTANCE.setLogger(Logger.of("IZMK", logPort));
         IZMK.INSTANCE.setObfuscated(!devMode);
         ResourceUtil.INSTANCE.init(Paths.get(jar));
+        ModClientForge.init();
 
         MixinLoader.INSTANCE.loadMixin(MixinMinecraft.class);
         // NOTE: If you want to load other mixins, add them at MixinLoader#loadMixins()
