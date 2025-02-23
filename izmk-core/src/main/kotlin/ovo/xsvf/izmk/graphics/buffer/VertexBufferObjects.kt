@@ -155,3 +155,8 @@ inline fun <reified T: VertexMode> T.drawElements(mode: Int, ebo: ElementBufferO
     this.block()
     this.drawElements(shader, ebo, mode)
 }
+
+inline fun <reified T: VertexMode> T.multiDrawArrays(mode: Int, count: IntArray, shader: Shader = this.shader, block: T.() -> Unit) {
+    this.block()
+    this.multiDrawArrays(shader, count, mode)
+}

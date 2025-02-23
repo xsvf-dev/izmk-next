@@ -53,6 +53,28 @@ open class VertexMode(
         vertexSize = 0
     }
 
+    fun multiDrawArrays(shader: Shader, counts: IntArray, mode: Int) {
+        if (vertexSize == 0) return
+
+        shader.bind()
+        shader.default()
+
+        glVertexArrayVertexBuffer(vao, 0, vbo.id, this.vbo.offset * attribute.stride, attribute.stride)
+        GlHelper.vertexArray = this.vao
+
+        val first = IntArray(counts.size)
+        var offset = 0
+        for (i in counts.indices) {
+            first[i] = offset
+            offset += counts[i]
+        }
+
+        glMultiDrawArrays(mode, first, counts)
+
+        vbo.end()
+        vertexSize = 0
+    }
+
     /* Vertex Array Object */
     private fun createVao(vbo: PersistentMappedVBO, vertexAttribute: VertexAttribute): Int {
         val vaoID = glCreateVertexArrays()
