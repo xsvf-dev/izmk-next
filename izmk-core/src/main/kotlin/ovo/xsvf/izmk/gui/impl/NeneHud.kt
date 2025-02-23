@@ -1,17 +1,29 @@
 package ovo.xsvf.izmk.gui.impl
 
+import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
+import ovo.xsvf.izmk.graphics.texture.ImageFileUtils
+import ovo.xsvf.izmk.graphics.texture.Texture
+import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.HUD
+import ovo.xsvf.izmk.resource.Resource
 
-/**
- * @author xiaojiang233
- * @since 2025/2/22
- * Test Only
- */
-class NeneHud : HUD("NeneHud", 0f, 0f, 100f,20f) {
+
+class NeneHud : HUD("NeneHud", 0f, 0f, 300f, 120f) {
+    private val imageTexture: Texture = ImageFileUtils.loadTextureFromResource(Resource("image/nene.png"))
+
     override fun render(event: Render2DEvent) {
-        FontRenderers.drawString("谁敢反对宁宁，我就打爆他的狗头", x, y, ColorRGB.WHITE)
+        FontRenderers.drawString("起爆器", x, y, ColorRGB.WHITE)
+
+        RenderUtils2D.drawTextureRect(
+            x + FontRenderers.getStringWidth("起爆器 "),
+            y,
+            200f,
+            120f,
+            imageTexture,
+            ColorRGB.WHITE
+        )
     }
 }
