@@ -1,8 +1,8 @@
 package malte0811.ferritecore.mixin.accessors;
 
 import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
-import ovo.xsvf.izmk.injection.accessor.annotation.Accessor;
-import ovo.xsvf.izmk.injection.accessor.annotation.FieldAccessor;
+import ovo.xsvf.patchify.annotation.Accessor;
+import ovo.xsvf.patchify.annotation.FieldAccessor;
 
 @Accessor(DiscreteVoxelShape.class)
 public interface DiscreteVSAccess {

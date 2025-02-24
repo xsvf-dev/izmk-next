@@ -1,9 +1,9 @@
 package malte0811.ferritecore.mixin.accessors;
 
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import ovo.xsvf.izmk.injection.accessor.annotation.Accessor;
-import ovo.xsvf.izmk.injection.accessor.annotation.FieldAccessor;
-import ovo.xsvf.izmk.injection.accessor.annotation.Final;
+import ovo.xsvf.patchify.annotation.Accessor;
+import ovo.xsvf.patchify.annotation.FieldAccessor;
+import ovo.xsvf.patchify.annotation.Final;
 
 @Accessor(ModelResourceLocation.class)
 public interface ModelResourceLocationAccess {

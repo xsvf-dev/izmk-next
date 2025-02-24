@@ -6,12 +6,12 @@ import net.minecraft.client.renderer.block.model.multipart.KeyValueCondition;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import ovo.xsvf.izmk.injection.mixin.annotation.Mixin;
-import ovo.xsvf.izmk.injection.mixin.annotation.Overwrite;
+import ovo.xsvf.patchify.annotation.Overwrite;
+import ovo.xsvf.patchify.annotation.Patch;
 
 import java.util.function.Predicate;
 
-@Mixin(KeyValueCondition.class)
+@Patch(KeyValueCondition.class)
 public class KeyValueConditionMixin {
     /**
      * Use cached predicates in the case of multiple specified values

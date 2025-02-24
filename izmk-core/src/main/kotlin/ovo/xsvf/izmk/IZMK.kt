@@ -7,7 +7,6 @@ import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
 import ovo.xsvf.izmk.gui.HUDManager
-import ovo.xsvf.izmk.injection.mixin.MixinLoader
 import ovo.xsvf.izmk.module.ModuleManager
 import ovo.xsvf.logging.Logger
 import kotlin.properties.Delegates
@@ -17,13 +16,11 @@ object IZMK {
     lateinit var logger: Logger
     lateinit var mc: Minecraft
     var obfuscated by Delegates.notNull<Boolean>()
-    var runHeypixel: Boolean = false
 
     const val ASSETS_DIRECTORY = "assets/izmk"
 
     fun init() {
         logger.info("Start initializing IZMK...")
-        MixinLoader.INSTANCE.loadMixins()
 
         ModuleManager.init()
         ConfigManager.init()

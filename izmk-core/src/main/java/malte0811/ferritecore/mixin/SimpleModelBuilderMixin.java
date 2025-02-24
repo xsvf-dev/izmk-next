@@ -4,11 +4,11 @@ import malte0811.ferritecore.impl.Deduplicator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.Direction;
-import ovo.xsvf.izmk.injection.mixin.CallbackInfo;
-import ovo.xsvf.izmk.injection.mixin.annotation.Inject;
-import ovo.xsvf.izmk.injection.mixin.annotation.Mixin;
+import ovo.xsvf.patchify.CallbackInfo;
+import ovo.xsvf.patchify.annotation.Inject;
+import ovo.xsvf.patchify.annotation.Patch;
 
-@Mixin(SimpleBakedModel.Builder.class)
+@Patch(SimpleBakedModel.Builder.class)
 public class SimpleModelBuilderMixin {
     @Inject(method = "addUnculledFace", desc = "(Lnet/minecraft/client/renderer/block/model/BakedQuad;)Lnet/minecraft/client/renderer/block/model/SimpleBakedModel$Builder;")
     public static void deduplicate(SimpleBakedModel.Builder builder, BakedQuad quad, CallbackInfo cir) {

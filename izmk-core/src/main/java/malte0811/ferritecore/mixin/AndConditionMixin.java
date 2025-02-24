@@ -7,12 +7,12 @@ import net.minecraft.client.renderer.block.model.multipart.AndCondition;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import ovo.xsvf.izmk.injection.mixin.annotation.Mixin;
-import ovo.xsvf.izmk.injection.mixin.annotation.Overwrite;
+import ovo.xsvf.patchify.annotation.Overwrite;
+import ovo.xsvf.patchify.annotation.Patch;
 
 import java.util.function.Predicate;
 
-@Mixin(AndCondition.class)
+@Patch(AndCondition.class)
 public class AndConditionMixin {
     /**
      * Use cached result predicates

@@ -1,3 +1,8 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
+}
+
 repositories {
     mavenLocal()
     maven { url 'https://maven.aliyun.com/repository/central' }
@@ -8,7 +13,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
 dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
     implementation 'org.ow2.asm:asm:9.7.1'
     implementation 'org.ow2.asm:asm-commons:9.7.1'
     implementation 'org.ow2.asm:asm-analysis:9.7.1'

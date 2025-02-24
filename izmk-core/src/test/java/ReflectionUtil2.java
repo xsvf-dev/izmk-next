@@ -1,8 +1,8 @@
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongRBTreeMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import ovo.xsvf.Pair;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandles;
@@ -96,7 +96,7 @@ public class ReflectionUtil2 {
         // instance field: varhandle > unsafe
         if (instance == null) {
             Pair<Object, Long> pair = getStaticFieldOffset(clazz, field);
-            return unsafe.getObject(pair.first, pair.second);
+            return unsafe.getObject(pair.first(), pair.second());
         }
         else {
             return getVarHandle(clazz, field, className).get(instance);
@@ -111,7 +111,7 @@ public class ReflectionUtil2 {
     public static void setFieldStatic(Object value, String field, String className) {
         Class<?> clazz = forName(className);
         Pair<Object, Long> pair = getStaticFieldOffset(clazz, field);
-        unsafe.putObject(pair.first, pair.second, value);
+        unsafe.putObject(pair.first(), pair.second(), value);
     }
 
     public static void setFieldFinal(Object instance, Object value, String field) {
@@ -122,7 +122,7 @@ public class ReflectionUtil2 {
     public static void setFieldFinalStatic(Object value, String field, String className) {
         Class<?> clazz = forName(className);
         Pair<Object, Long> pair = getStaticFieldOffset(clazz, field);
-        unsafe.putObject(pair.first, pair.second, value);
+        unsafe.putObject(pair.first(), pair.second(), value);
     }
 
     public static Class<?> forName(String className) {

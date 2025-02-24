@@ -5,12 +5,12 @@ import malte0811.ferritecore.mixin.accessors.ModelResourceLocationAccess;
 import malte0811.ferritecore.mixin.accessors.ResourceLocationAccess;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import ovo.xsvf.izmk.injection.mixin.CallbackInfo;
-import ovo.xsvf.izmk.injection.mixin.annotation.At;
-import ovo.xsvf.izmk.injection.mixin.annotation.Inject;
-import ovo.xsvf.izmk.injection.mixin.annotation.Mixin;
+import ovo.xsvf.patchify.CallbackInfo;
+import ovo.xsvf.patchify.annotation.At;
+import ovo.xsvf.patchify.annotation.Inject;
+import ovo.xsvf.patchify.annotation.Patch;
 
-@Mixin(ModelResourceLocation.class)
+@Patch(ModelResourceLocation.class)
 public class ModelResourceLocationMixin {
     @Inject(method = "<init>", desc = "(Lnet/minecraft/resources/ResourceLocation;Ljava/lang/String;)V", at = @At(At.Type.TAIL))
     public static void constructTail(ModelResourceLocation instance, ResourceLocation location, String path, CallbackInfo ci) {

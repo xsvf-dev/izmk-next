@@ -2,8 +2,8 @@ package malte0811.ferritecore.mixin.accessors;
 
 import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
 import net.minecraft.world.phys.shapes.SubShape;
-import ovo.xsvf.izmk.injection.accessor.annotation.Accessor;
-import ovo.xsvf.izmk.injection.accessor.annotation.FieldAccessor;
+import ovo.xsvf.patchify.annotation.Accessor;
+import ovo.xsvf.patchify.annotation.FieldAccessor;
 
 @Accessor(SubShape.class)
 public interface SubShapeAccess extends DiscreteVSAccess {

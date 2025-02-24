@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm'
 }
 
 group = 'ovo.xsvf'
@@ -14,11 +13,5 @@ dependencies {
     // gson
     compileOnly 'com.google.code.gson:gson:2.10.1'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
-repositories {
-    mavenCentral()
-}
-kotlin {
-    jvmToolchain(21)
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }

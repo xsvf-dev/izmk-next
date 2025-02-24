@@ -2,9 +2,9 @@ package malte0811.ferritecore.mixin.accessors;
 
 import net.minecraft.client.renderer.block.model.multipart.AndCondition;
 import net.minecraft.client.renderer.block.model.multipart.Condition;
-import ovo.xsvf.izmk.injection.accessor.annotation.Accessor;
-import ovo.xsvf.izmk.injection.accessor.annotation.FieldAccessor;
-import ovo.xsvf.izmk.injection.accessor.annotation.Final;
+import ovo.xsvf.patchify.annotation.Accessor;
+import ovo.xsvf.patchify.annotation.FieldAccessor;
+import ovo.xsvf.patchify.annotation.Final;
 
 @Accessor(AndCondition.class)
 public interface AndConditionAccess {

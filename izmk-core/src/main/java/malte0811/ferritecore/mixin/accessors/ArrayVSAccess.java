@@ -2,8 +2,8 @@ package malte0811.ferritecore.mixin.accessors;
 
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import net.minecraft.world.phys.shapes.ArrayVoxelShape;
-import ovo.xsvf.izmk.injection.accessor.annotation.Accessor;
-import ovo.xsvf.izmk.injection.accessor.annotation.FieldAccessor;
+import ovo.xsvf.patchify.annotation.Accessor;
+import ovo.xsvf.patchify.annotation.FieldAccessor;
 
 @Accessor(ArrayVoxelShape.class)
 public interface ArrayVSAccess extends VoxelShapeAccess {

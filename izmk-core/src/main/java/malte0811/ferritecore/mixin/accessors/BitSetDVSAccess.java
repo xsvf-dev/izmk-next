@@ -1,8 +1,8 @@
 package malte0811.ferritecore.mixin.accessors;
 
 import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
-import ovo.xsvf.izmk.injection.accessor.annotation.Accessor;
-import ovo.xsvf.izmk.injection.accessor.annotation.FieldAccessor;
+import ovo.xsvf.patchify.annotation.Accessor;
+import ovo.xsvf.patchify.annotation.FieldAccessor;
 
 import java.util.BitSet;
 

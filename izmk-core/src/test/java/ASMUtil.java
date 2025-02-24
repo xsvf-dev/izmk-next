@@ -2,7 +2,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
-import static ovo.xsvf.izmk.misc.ASMUtil.*;
+import static ovo.xsvf.patchify.ASMUtil.*;
 
 public class ASMUtil implements Opcodes {
     public static ClassNode createClassNode(String pkg) {
