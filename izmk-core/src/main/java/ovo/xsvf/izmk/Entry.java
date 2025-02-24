@@ -2,13 +2,11 @@ package ovo.xsvf.izmk;
 
 import ovo.xsvf.izmk.injection.PatchTest;
 import ovo.xsvf.izmk.misc.ClassUtil;
-import ovo.xsvf.izmk.resource.ResourceUtil;
 import ovo.xsvf.logging.Logger;
 import ovo.xsvf.patchify.PatchLoader;
 import ovo.xsvf.patchify.api.IPatchLoader;
 
 import java.lang.instrument.Instrumentation;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class Entry {
@@ -16,7 +14,7 @@ public class Entry {
         ClassUtil.init(inst);
         IZMK.INSTANCE.setLogger(Logger.of("IZMK", logPort));
         IZMK.INSTANCE.setObfuscated(!devMode);
-        ResourceUtil.INSTANCE.init(Paths.get(jar));
+//        ResourceUtil.INSTANCE.init(Paths.get(jar));
 //        ModClientForge.init();
 
         IPatchLoader patchLoader = new PatchLoader();

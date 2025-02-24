@@ -24,10 +24,10 @@ import java.util.jar.JarOutputStream;
 @Builder
 public class AccessorProcessor implements Opcodes {
     private final static String ANNOTATION_PACKAGE = "ovo/xsvf/patchify/annotation";
-    private final static Type ACCESSOR_ANNOTATION = Type.getType(ANNOTATION_PACKAGE + "/Accessor");
-    private final static Type FIELD_ACCESSOR_ANNOTATION = Type.getType(ANNOTATION_PACKAGE + "/FieldAccessor");
-    private final static Type METHOD_ACCESSOR_ANNOTATION = Type.getType(ANNOTATION_PACKAGE + "/MethodAccessor");
-    private final static Type FINAL_ANNOTATION = Type.getType(ANNOTATION_PACKAGE + "/Final");
+    private final static Type ACCESSOR_ANNOTATION = Type.getObjectType(ANNOTATION_PACKAGE + "/Accessor");
+    private final static Type FIELD_ACCESSOR_ANNOTATION = Type.getObjectType(ANNOTATION_PACKAGE + "/FieldAccessor");
+    private final static Type METHOD_ACCESSOR_ANNOTATION = Type.getObjectType(ANNOTATION_PACKAGE + "/MethodAccessor");
+    private final static Type FINAL_ANNOTATION = Type.getObjectType(ANNOTATION_PACKAGE + "/Final");
 
     private final @NotNull File inputJarFile;
     private final @NotNull File outputFile;

@@ -17,7 +17,7 @@ public class InvocationImpl implements Invocation {
         return new InvocationImpl(instance, wrapper);
     }
 
-    public static InvocationImpl createStatic(MethodWrapper wrapper) {
+    public static InvocationImpl create(MethodWrapper wrapper) {
         return new InvocationImpl(null, wrapper);
     }
 
