@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10' apply false
 }
 
 subprojects {
@@ -18,10 +18,16 @@ subprojects {
         maven { url 'https://jitpack.io' }
     }
 
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+
     tasks.withType(JavaCompile).tap {
         configureEach {
             options.encoding = 'UTF-8'
         }
+    }
+
+    kotlin {
+        jvmToolchain(21)
     }
 }
 
@@ -62,16 +68,4 @@ tasks.register('runClient', JavaExec) {
 
     standardOutput = System.out
     errorOutput = System.err
-}
-repositories {
-    mavenCentral()
-    maven { url 'https://maven.luna5ama.dev/'}
-}
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "dev.luna5ama:kmogus-core:1.1-SNAPSHOT"
-    implementation "dev.luna5ama:kmogus-struct-api:1.1-SNAPSHOT"
-}
-kotlin {
-    jvmToolchain(8)
 }

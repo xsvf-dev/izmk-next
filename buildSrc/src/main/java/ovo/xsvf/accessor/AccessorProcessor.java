@@ -1,11 +1,12 @@
 package ovo.xsvf.accessor;
 
-import lombok.Builder;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
+import ovo.xsvf.ASMUtil;
 import ovo.xsvf.JarClassLoader;
 
 import java.io.File;
@@ -22,7 +23,11 @@ import java.util.jar.JarOutputStream;
 
 @Builder
 public class AccessorProcessor implements Opcodes {
-    private final static String ANNOTATION_PACKAGE = "ovo/xsvf/izmk/injection/accessor/annotation";
+    private final static String ANNOTATION_PACKAGE = "ovo/xsvf/patchify/annotation";
+    private final static Type ACCESSOR_ANNOTATION = Type.getType(ANNOTATION_PACKAGE + "/Accessor");
+    private final static Type FIELD_ACCESSOR_ANNOTATION = Type.getType(ANNOTATION_PACKAGE + "/FieldAccessor");
+    private final static Type METHOD_ACCESSOR_ANNOTATION = Type.getType(ANNOTATION_PACKAGE + "/MethodAccessor");
+    private final static Type FINAL_ANNOTATION = Type.getType(ANNOTATION_PACKAGE + "/Final");
 
     private final @NotNull File inputJarFile;
     private final @NotNull File outputFile;
@@ -41,7 +46,7 @@ public class AccessorProcessor implements Opcodes {
             JarEntry entry;
             while ((entry = jarInputStream.getNextJarEntry()) != null) {
                 if (entry.getName().endsWith(".class")) {
-                    classNodes.put(entry.getName(), node(jarInputStream.readAllBytes()));
+                    classNodes.put(entry.getName(), ASMUtil.node(jarInputStream.readAllBytes()));
                 } else {
                     resourceList.put(entry.getName(), jarInputStream.readAllBytes());
                 }
@@ -50,14 +55,13 @@ public class AccessorProcessor implements Opcodes {
         classLoader = new JarClassLoader(libraryJars, this.getClass().getClassLoader(), log);
     }
 
-    private ClassNode node(byte[] bytes) {
-        ClassNode node = new ClassNode();
-        new ClassReader(bytes).accept(node, 0);
-        return node;
-    }
-
     public void preProcess() {
-
+//        for (ClassNode node : classNodes.values()) {
+//            if (node.visibleAnnotations == null || node.visibleAnnotations.stream()
+//                    .noneMatch(a -> a.desc.equals(ACCESSOR_ANNOTATION.getDescriptor())))
+//                continue;
+//            log.accept("find class: " + node.name);
+//        }
     }
 
     public void postProcess() {
@@ -89,5 +93,13 @@ public class AccessorProcessor implements Opcodes {
             log.accept("Error writing to the output JAR file: " + e.getMessage());
             throw e;
         }
+    }
+
+    @Value
+    private static class Method {
+        String accessor;
+        String owner;
+        String name;
+        String desc;
     }
 }

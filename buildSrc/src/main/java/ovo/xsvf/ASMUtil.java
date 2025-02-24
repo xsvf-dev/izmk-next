@@ -1,5 +1,6 @@
 package ovo.xsvf;
 
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
@@ -20,6 +21,12 @@ public class ASMUtil implements Opcodes {
             }
         } catch (Exception e) {
         }
+    }
+
+    public static ClassNode node(byte[] bytes) {
+        ClassNode node = new ClassNode();
+        new ClassReader(bytes).accept(node, 0);
+        return node;
     }
 
     public static void printMethod(MethodNode methodNode, Consumer<String> log) {

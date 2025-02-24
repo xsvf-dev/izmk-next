@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import ovo.xsvf.logging.LogServer;
 import ovo.xsvf.logging.Logger;
-import ovo.xsvf.util.BMWClassLoader;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;

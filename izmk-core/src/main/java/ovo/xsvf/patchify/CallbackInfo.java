@@ -8,7 +8,7 @@ package ovo.xsvf.patchify;
  * </p>
  * <b>Note:</b> All fields' and methods' names are hard-coded in the asm code.DO NOT CHANGE THEM.
  */
-public class CallbackInfo {
+public final class CallbackInfo {
     public Object result;
     public boolean cancelled;
 

@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.injection.accessor.annotation;
+package ovo.xsvf.patchify.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

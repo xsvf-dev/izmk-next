@@ -1,6 +1,6 @@
-package ovo.xsvf.util;
+package ovo.xsvf;
 
-import ovo.xsvf.CoreFileProvider;
+import ovo.xsvf.util.ASMUtil;
 
 import java.nio.file.Path;
 import java.util.HashMap;

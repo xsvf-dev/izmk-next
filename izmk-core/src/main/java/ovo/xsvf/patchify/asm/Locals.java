@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * A local list implementation that stores values in a map.
  */
-public class Locals implements ILocals {
+public final class Locals implements ILocals {
     private final Map<Integer, Object> locals = new HashMap<>();
 
     private Locals() {

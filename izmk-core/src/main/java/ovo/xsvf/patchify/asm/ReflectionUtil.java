@@ -9,7 +9,7 @@ import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 
 @SuppressWarnings("deprecation")
-public class ReflectionUtil {
+public final class ReflectionUtil {
     private static final MethodHandles.Lookup publicLookup = MethodHandles.lookup();
 
     private static final Object2ObjectMap<String, MethodHandles.Lookup> cachedLookups = new Object2ObjectOpenHashMap<>(500);

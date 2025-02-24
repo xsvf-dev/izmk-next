@@ -3,7 +3,6 @@ import ovo.xsvf.task.MergeTask
 plugins {
     id 'java'
     id 'com.gradleup.shadow' version '9.0.0-beta8'
-    id 'org.jetbrains.kotlin.jvm'
 }
 
 group = 'ovo.xsvf'
@@ -49,11 +48,4 @@ tasks.register('merge', MergeTask) {
     loader = tasks.shadowJar.archiveFile.get().asFile
     core = project(':izmk-core').tasks.shadowJar.archiveFile.get().asFile
     output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/merged-loader.jar")
-}
-
-repositories {
-    mavenCentral()
-}
-kotlin {
-    jvmToolchain(21)
 }

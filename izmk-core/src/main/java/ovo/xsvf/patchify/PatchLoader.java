@@ -9,10 +9,9 @@ import ovo.xsvf.patchify.annotation.*;
 import ovo.xsvf.patchify.api.ILocals;
 import ovo.xsvf.patchify.api.IPatchLoader;
 import ovo.xsvf.patchify.api.Invocation;
+import ovo.xsvf.patchify.asm.InvocationImpl;
 import ovo.xsvf.patchify.asm.Locals;
-import ovo.xsvf.patchify.asm.MethodHelper;
-import ovo.xsvf.patchify.asm.StaticInvocation;
-import ovo.xsvf.patchify.asm.VirtualInvocation;
+import ovo.xsvf.patchify.asm.MethodWrapper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -23,7 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class PatchLoader implements IPatchLoader {
+public final class PatchLoader implements IPatchLoader {
     private final Consumer<String> debug;
     private final Consumer<String> info;
     private final Consumer<String> warn;
@@ -416,8 +415,12 @@ public class PatchLoader implements IPatchLoader {
                 throw new IllegalArgumentException("Unsupported method call for " + toWrap.getFirst() + ", wrapper method: " + inject.getName() + " in class " + inject.getDeclaringClass().getName());
             }
             // STACK: [<mInstance>, margs...]
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(MethodHelper.class), "getInstance", "()" + Type.getDescriptor(MethodHelper.class), false));
-            // STACK: [<mInstance>, margs..., MethodHelper]
+            insnList.add(new LdcInsnNode(split.first()));
+            insnList.add(new LdcInsnNode(split.second()));
+            insnList.add(new LdcInsnNode(wrap.second()));
+            // STACK: [<mInstance>, margs..., owner, name, desc]
+            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(MethodWrapper.class), "getInstance", "(" + Type.getDescriptor(String.class) + Type.getDescriptor(String.class) + Type.getDescriptor(String.class) + ")" + Type.getDescriptor(MethodWrapper.class), false));
+            // STACK: [<mInstance>, margs..., MethodWrapper]
             insnList.add(new VarInsnNode(Opcodes.ASTORE, helperIndex));
             // STACK: [<mInstance>, margs...]
             Type[] argTypes = Type.getArgumentTypes(wrap.second());
@@ -426,29 +429,24 @@ public class PatchLoader implements IPatchLoader {
                 insnList.add(ASMUtil.checkcastToObject(argTypes[i]));
                 // STACK: [<mInstance>, margs..., (Object)arg]
                 insnList.add(new VarInsnNode(Opcodes.ALOAD, helperIndex));
-                // STACK: [<mInstance>, margs..., (Object)arg, MethodHelper]
+                // STACK: [<mInstance>, margs..., (Object)arg, MethodWrapper]
                 insnList.add(new InsnNode(Opcodes.SWAP));
-                // STACK: [<mInstance>, margs..., MethodHelper, (Object)arg]
-                insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(MethodHelper.class), "addParam", "("+ Type.getDescriptor(Object.class) + ")" + Type.getDescriptor(MethodHelper.class), false));
-                // STACK: [<mInstance>, margs..., MethodHelper]
+                // STACK: [<mInstance>, margs..., MethodWrapper, (Object)arg]
+                insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(MethodWrapper.class), "addParam", "("+ Type.getDescriptor(Object.class) + ")" + Type.getDescriptor(MethodWrapper.class), false));
+                // STACK: [<mInstance>, margs..., MethodWrapper]
                 insnList.add(new InsnNode(Opcodes.POP));
                 // STACK: [<mInstance>, margs...]
             }
             // STACK: [<mInstance>]
             insnList.add(new VarInsnNode(Opcodes.ALOAD, helperIndex));
-            // STACK: [<mInstance>, MethodHelper]
-            insnList.add(new LdcInsnNode(split.first()));
-            insnList.add(new LdcInsnNode(split.second()));
-            insnList.add(new LdcInsnNode(wrap.second()));
-            // STACK: [<mInstance>, MethodHelper, owner, name, desc]
+            // STACK: [<mInstance>, MethodWrapper]
+
             if (staticCall) {
-                // STACK: [MethodHelper, owner, name, desc]
-                insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(StaticInvocation.class), "create", "(" + Type.getDescriptor(MethodHelper.class) + Type.getDescriptor(String.class) + Type.getDescriptor(String.class) + Type.getDescriptor(String.class) + ")" + Type.getDescriptor(StaticInvocation.class), false));
-                // STACK: [StaticInvocation]
+                // STACK: [MethodWrapper]
+                insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(InvocationImpl.class), "create", "(" + Type.getDescriptor(MethodWrapper.class) + ")" + Type.getDescriptor(InvocationImpl.class), false));
             } else {
-                // STACK: [mInstance, MethodHelper, owner, name, desc]
-                insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(VirtualInvocation.class), "create", "(" + Type.getDescriptor(Object.class) + Type.getDescriptor(MethodHelper.class) + Type.getDescriptor(String.class) + Type.getDescriptor(String.class) + Type.getDescriptor(String.class) + ")" + Type.getDescriptor(VirtualInvocation.class), false));
-                // STACK: [VirtualInvocation]
+                // STACK: [mInstance, MethodWrapper]
+                insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(InvocationImpl.class), "create", "(" + Type.getDescriptor(Object.class) + Type.getDescriptor(MethodWrapper.class) + ")" + Type.getDescriptor(InvocationImpl.class), false));
             }
             // STACK: [Invocation]
             int index = 0;

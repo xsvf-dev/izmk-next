@@ -1,6 +1,6 @@
 package ovo.xsvf.izmk;
 
-import ovo.xsvf.izmk.injection.patch.PatchTest;
+import ovo.xsvf.izmk.injection.PatchTest;
 import ovo.xsvf.izmk.misc.ClassUtil;
 import ovo.xsvf.izmk.resource.ResourceUtil;
 import ovo.xsvf.logging.Logger;

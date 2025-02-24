@@ -1,15 +1,21 @@
 package ovo.xsvf.patchify.api;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * An interface for a callable object that represents an invocation of a method.
- * <p>
- *     <b>Note:</b> All the field and method names are hard-coded
- *     in the ASM code. DO NOT CHANGE THEM.
- * </p>
+ * Interface for a method invocation.
  */
 public interface Invocation extends Callable<Object> {
-    Object[] getArgs();
-    void setArg(int index, Object value);
+    /**
+     * Gets the arguments of the method invocation.
+     * @return the arguments of the method invocation.
+     */
+    List<Object> args();
+
+    /**
+     * Gets the instance of the object on which the method is invoked.
+     * @return the instance of the object on which the method is invoked.
+     */
+    Object instance();
 }

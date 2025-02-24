@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ASMUtil implements Opcodes {
+public final class ASMUtil implements Opcodes {
     private static final Map<Integer, String> OPCODE_NAMES = new HashMap<>();
     static {
         try {
