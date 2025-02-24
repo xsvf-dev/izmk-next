@@ -686,7 +686,6 @@ public final class PatchLoader implements IPatchLoader {
                             BiConsumer<Class<?>, byte[]> classTransformer) throws Exception {
         for (Class<?> patchClass : patchClasses) {
             loadPatch(patchClass, bytesProvider, classTransformer);
-            classTransformer.accept(patchClass, bytesProvider.apply(patchClass));
         }
     }
 }

@@ -7,7 +7,9 @@ import ovo.xsvf.logging.Logger;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class AgentMain {
     private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
@@ -32,13 +34,18 @@ public class AgentMain {
         } while (classLoader == null);
         final ClassLoader finalClassLoader = classLoader;
 
-        Field allParentLoaders = Class.forName("net.minecraftforge.securemodules.SecureModuleClassLoader", true, finalClassLoader)
-                .getDeclaredField("allParentLoaders");
-        allParentLoaders.setAccessible(true);
-        List<ClassLoader> loaderList = (List<ClassLoader>) allParentLoaders.get(finalClassLoader);
-        loaderList.add(new BMWClassLoader((bytes) -> ASMUtil.node(bytes).name,
-                () -> CoreFileProvider.getBinaryFiles(file),
-                (name, b) -> defineClass(name, finalClassLoader, b)));
+        Field packageToParentLoader = Class.forName("net.minecraftforge.securemodules.SecureModuleClassLoader", true, finalClassLoader)
+                .getDeclaredField("packageToParentLoader");
+        packageToParentLoader.setAccessible(true);
+        Map<String, ClassLoader> pkgToParentLoader = (Map<String, ClassLoader>) packageToParentLoader.get(finalClassLoader);
+        Set<String> packages = new HashSet<>();
+
+        BMWClassLoader bmwClassLoader = new BMWClassLoader((bytes) -> {
+            var name = ASMUtil.node(bytes).name;
+            packages.add(classToPackage(name.replace("/", ".")));
+            return name;
+        }, () -> CoreFileProvider.getBinaryFiles(file), (name, b) -> defineClass(name, finalClassLoader, b));
+        packages.forEach(pkg -> pkgToParentLoader.put(pkg, bmwClassLoader));
         Thread.currentThread().setContextClassLoader(finalClassLoader);
         logger.debug("BMWClassLoader added to SecureModuleClassLoader");
 
@@ -70,5 +77,10 @@ public class AgentMain {
                 throw new RuntimeException(e);
             }
         }).start();
+    }
+
+    private static String classToPackage(String name) {
+        int idx = name.lastIndexOf(46);
+        return idx != -1 && idx != name.length() - 1 ? name.substring(0, idx) : "";
     }
 }

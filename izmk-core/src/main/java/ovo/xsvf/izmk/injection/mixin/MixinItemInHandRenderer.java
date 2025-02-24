@@ -26,6 +26,7 @@ public class MixinItemInHandRenderer {
                                           Invocation invocation) throws Exception {
         if (OldAnimations.INSTANCE.getEnabled() && OldAnimations.INSTANCE.getSwordBlocking() &&
                 ((ItemStack) invocation.instance()).getItem() instanceof SwordItem) {
+            IZMK.logger.info("getUseAnimation");
            return UseAnim.BLOCK;
         }
         return (UseAnim) invocation.call();
