@@ -1,24 +1,30 @@
 package ovo.xsvf;
 
-import ovo.xsvf.util.ASMUtil;
-
-import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class BMWClassLoader extends ClassLoader {
-    private final HashMap<String, byte[]> classMap = new HashMap<>();
+    private static final HashMap<String, byte[]> classMap = new HashMap<>();
     private final BiFunction<String, byte[], Class<?>> defineClass;
 
-    public BMWClassLoader(Path jar, Consumer<String> pkgConsumer,
+    public BMWClassLoader(Function<byte[], String> classNameProvider,
+                          Supplier<List<byte[]>> classBytesProvider,
                           BiFunction<String, byte[], Class<?>> defineClass) {
         this.defineClass = defineClass;
-        for (byte[] bytes : CoreFileProvider.getBinaryFiles(jar.toString())) {
-            String replaced = ASMUtil.node(bytes).name.replace('/', '.');
+
+        for (byte[] bytes : classBytesProvider.get()) {
+            String replaced = classNameProvider.apply(bytes).replace('/', '.');
             classMap.put(replaced, bytes);
-            pkgConsumer.accept(classToPackage(replaced));
         }
+    }
+
+    public static Set<Map.Entry<String, byte[]>> getClasses() {
+        return classMap.entrySet();
     }
 
     @Override
@@ -28,10 +34,5 @@ public class BMWClassLoader extends ClassLoader {
             return defineClass.apply(name.replace('.', '/'), bytes);
         }
         throw new ClassNotFoundException(name);
-    }
-
-    private static String classToPackage(String name) {
-        int idx = name.lastIndexOf(46);
-        return idx != -1 && idx != name.length() - 1 ? name.substring(0, idx) : "";
     }
 }

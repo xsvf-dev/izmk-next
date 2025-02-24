@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  *     <b>Note:</b> The annotated class must be an interface.
  * </p>
  */
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface Accessor {
     Class<?> value();

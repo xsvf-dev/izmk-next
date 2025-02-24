@@ -2,11 +2,6 @@ package ovo.xsvf.task;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
 import ovo.xsvf.encrypt.EncryptUtil;
 import ovo.xsvf.encrypt.RandomUtil;
 
@@ -63,7 +58,7 @@ public class EncryptMergeTask2 extends DefaultTask {
                 String name = RandomUtil.generateRandomFileName(2) + ".json";
                 byte[] bytes = EncryptUtil.getRandomBytes(random.nextInt(1024, 4096));
                 coreZipStream.putNextEntry(new ZipEntry(name));
-                coreZipStream.write(0x00); // to make it not start with CA FE BA BE
+                coreZipStream.write(0xA5); // to make it not start with CA FE BA BE
                 coreZipStream.write(bytes);
                 coreZipStream.closeEntry();
             }

@@ -19,7 +19,7 @@ public class ASMUtil implements Opcodes {
                     OPCODE_NAMES.put(field.getInt(null), field.getName());
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -80,9 +80,11 @@ public class ASMUtil implements Opcodes {
     }
 
     public static InsnList checkcastFromObject(String desc) {
-        InsnList insnList = new InsnList();
-        Type type = Type.getType(desc);
+        return checkcastFromObject(Type.getType(desc));
+    }
 
+    public static InsnList checkcastFromObject(Type type) {
+        InsnList insnList = new InsnList();
         if (type.equals(Type.INT_TYPE)) {
             insnList.add(new TypeInsnNode(CHECKCAST, "java/lang/Integer"));
             insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false));
@@ -110,35 +112,11 @@ public class ASMUtil implements Opcodes {
         } else {
             insnList.add(new TypeInsnNode(CHECKCAST, type.getInternalName()));
         }
-
         return insnList;
     }
 
     public static InsnList checkcastToObject(String desc) {
-        InsnList insnList = new InsnList();
-        Type type = Type.getType(desc);
-
-        if (type.getSort() == Type.INT) {
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false));
-        } else if (type.getSort() == Type.BOOLEAN) {
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false));
-        } else if (type.getSort() == Type.CHAR) {
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false));
-        } else if (type.getSort() == Type.BYTE) {
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;", false));
-        } else if (type.getSort() == Type.SHORT) {
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Short", "valueOf", "(S)Ljava/lang/Short;", false));
-        } else if (type.getSort() == Type.LONG) {
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false));
-        } else if (type.getSort() == Type.FLOAT) {
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false));
-        } else if (type.getSort() == Type.DOUBLE) {
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false));
-        } else {
-            insnList.add(new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Object"));
-        }
-
-        return insnList;
+        return checkcastToObject(Type.getType(desc));
     }
 
     public static InsnList checkcastToObject(Type type) {

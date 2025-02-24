@@ -48,9 +48,7 @@ public final class ASMUtil implements Opcodes {
         log.accept("Method: " + methodNode.name);
         int i = 0;
 
-        // 遍历所有字节码指令
         for (AbstractInsnNode abstractInsn : methodNode.instructions) {
-            // 跳过 LineNumberNode 和 LabelNode
             if (abstractInsn instanceof LineNumberNode || abstractInsn instanceof LabelNode) {
                 continue;
             }
@@ -65,7 +63,7 @@ public final class ASMUtil implements Opcodes {
             // 解析并打印参数
             String parameters = parseParameters(abstractInsn);
             if (!parameters.isEmpty()) {
-                sb.append(" Parameters: " + parameters);
+                sb.append(" Parameters: ").append(parameters);
             }
 
             log.accept(sb.toString());
@@ -229,12 +227,25 @@ public final class ASMUtil implements Opcodes {
         return insnList;
     }
 
-
     // owner, name
     public static @NotNull Pair<String, String> splitDesc(@NotNull String desc) {
         String[] descs = desc.split("/");
         StringBuilder name = new StringBuilder();
         for (int i = 0; i < descs.length - 1; ++i) name.append(descs[i]).append("/");
         return Pair.of(name.substring(0, name.length() - 1), descs[descs.length - 1]);
+    }
+
+    public static boolean isVisibleAnnotationPresent(ClassNode node, Type annotationType) {
+        if (node.visibleAnnotations == null) return false;
+        for (AnnotationNode annotation : node.visibleAnnotations) {
+            if (annotation.desc.equals(annotationType.getDescriptor())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isVisibleAnnotationPresent(ClassNode node, Class<?> annotationType) {
+        return isVisibleAnnotationPresent(node, Type.getType(annotationType));
     }
 }
