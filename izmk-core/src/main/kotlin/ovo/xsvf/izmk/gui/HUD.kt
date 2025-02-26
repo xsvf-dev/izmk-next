@@ -2,6 +2,7 @@ package ovo.xsvf.izmk.gui
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.impl.Render2DEvent
+import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.translation.TranslationString
 
 /**
@@ -42,6 +43,6 @@ abstract class HUD(
     open fun render(event: Render2DEvent) {}
 
     fun isMouseOver(mouseX: Float, mouseY: Float): Boolean {
-        return mouseX in x..x1 && mouseY in y..y1
+        return RenderUtils2D.isMouseOver(mouseX,mouseY,x,y,x1,y1)
     }
 }

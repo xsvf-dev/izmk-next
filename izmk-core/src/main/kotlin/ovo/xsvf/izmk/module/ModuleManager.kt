@@ -1,9 +1,6 @@
 package ovo.xsvf.izmk.module
 
-import ovo.xsvf.izmk.module.impl.FPSDisplay
-import ovo.xsvf.izmk.module.impl.NoHurtcam
-import ovo.xsvf.izmk.module.impl.OldAnimations
-import ovo.xsvf.izmk.module.impl.RenderTest
+import ovo.xsvf.izmk.module.impl.*
 
 object ModuleManager {
     val modulesMap = mutableMapOf<String, Module>()
@@ -13,6 +10,7 @@ object ModuleManager {
         addModule(FPSDisplay)
         addModule(RenderTest)
         addModule(OldAnimations)
+        addModule(ClickGUI)
     }
 
     private fun addModule(module: Module) {

@@ -156,4 +156,12 @@ object RenderUtils2D {
         }
     }
 
+    fun isMouseOver(mouseX: Float, mouseY: Float, x: Float, y: Float, width: Float, height: Float): Boolean {
+        return mouseX in x..width && mouseY in y..height
+    }
+
+    fun isMouseOver(mouseX: Int, mouseY: Int, x: Float, y: Float, width: Float, height: Float): Boolean {
+        return isMouseOver(mouseX.toFloat(), mouseY.toFloat(), x, y, width, height)
+    }
+
 }
