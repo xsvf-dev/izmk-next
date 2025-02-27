@@ -48,6 +48,8 @@ tasks.register('runClient', JavaExec) {
             "-Xmx4096m",
             "-Dminecraft.client.jar=$mcDir/1.20.6/1.20.6-Forge.jar",
             "-Djava.library.path=$mcDir/natives",
+            "-Dlog4j.skipJansi=false",
+            "-Dlog4j.configurationFile=$mcDir/log4j.xml",
             "-javaagent:${project(':izmk-loader').tasks.merge.output}=${project(':izmk-loader').projectDir.absolutePath}"
     ]
 

@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk
 
 import net.minecraft.client.Minecraft
+import org.apache.logging.log4j.Logger
 import ovo.xsvf.izmk.config.ConfigManager
 import ovo.xsvf.izmk.event.EventTarget
 import ovo.xsvf.izmk.event.impl.PostInitEvent
@@ -11,7 +12,6 @@ import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
 import ovo.xsvf.izmk.module.ModuleManager
-import ovo.xsvf.logging.Logger
 import kotlin.properties.Delegates
 import com.mojang.blaze3d.systems.RenderSystem as MojangRenderSystem
 

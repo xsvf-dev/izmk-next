@@ -60,9 +60,10 @@ public class Deduplicator {
 
     public static void registerReloadListener() {
         // Register the reload listener s.t. its "sync" part runs after the model loader reload
-        ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(new SimplePreparableReloadListener<Unit>() {
+        ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager())
+                .registerReloadListener(new SimplePreparableReloadListener<Unit>() {
             @Override
-            protected Unit prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
+            protected @NotNull Unit prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
                 return Unit.INSTANCE;
             }
 

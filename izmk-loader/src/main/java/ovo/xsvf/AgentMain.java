@@ -2,8 +2,6 @@ package ovo.xsvf;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import ovo.xsvf.logging.LogServer;
-import ovo.xsvf.logging.Logger;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
@@ -19,8 +17,6 @@ public class AgentMain {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
         String dll = jsonObject.get("dll").getAsString();
         String file = jsonObject.get("file").getAsString();
-        int port = jsonObject.get("port").getAsInt();
-        Logger logger = Logger.of("Agent", port);
         System.load(dll);
 
         ClassLoader classLoader = null;
@@ -41,34 +37,28 @@ public class AgentMain {
         Set<String> packages = new HashSet<>();
 
         BMWClassLoader bmwClassLoader = new BMWClassLoader((bytes) -> {
-            var name = ASMUtil.node(bytes).name;
+            String name = ASMUtil.node(bytes).name;
             packages.add(classToPackage(name.replace("/", ".")));
             return name;
         }, () -> CoreFileProvider.getBinaryFiles(file), (name, b) -> defineClass(name, finalClassLoader, b));
         packages.forEach(pkg -> pkgToParentLoader.put(pkg, bmwClassLoader));
         Thread.currentThread().setContextClassLoader(finalClassLoader);
-        logger.debug("BMWClassLoader added to SecureModuleClassLoader");
 
         try {
             Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)
-                    .getMethod("entry", Instrumentation.class, int.class, String.class, boolean.class)
-                    .invoke(null, inst, port, file, CoreFileProvider.DEV);
-            logger.debug("Entry.entry() called");
+                    .getMethod("entry", Instrumentation.class, String.class, boolean.class)
+                    .invoke(null, inst, file, CoreFileProvider.DEV);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
-            logger.error("Entry class or method not found", e);
+            System.out.println("Entry class not found or entry method not found!!!!");
         }
     }
 
     public static void premain(String loaderSrcPath, Instrumentation inst) throws Exception {
         System.out.println("premain starting..");
-        cn.langya.Logger.setHasColorInfo(true);
-        cn.langya.Logger.setLogLevel(cn.langya.Logger.LogLevel.DEBUG);
-        LogServer.start();
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("dll", loaderSrcPath + "\\src\\main\\resources\\lib.dll");
         jsonObject.addProperty("file", loaderSrcPath + "\\build\\libs\\merged-loader.jar");
-        jsonObject.addProperty("port", LogServer.getPort());
 
         new Thread(() -> {
             try {
@@ -76,7 +66,7 @@ public class AgentMain {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }).start();
+        }, "IZMK Thread").start();
     }
 
     private static String classToPackage(String name) {

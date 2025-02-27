@@ -9,16 +9,8 @@ group = 'ovo.xsvf'
 version = '1.0-SNAPSHOT'
 
 dependencies {
-    // lombok
-    compileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
-
     // gson
     implementation 'com.google.code.gson:gson:2.10.1'
-
-    implementation 'com.github.LangYa466:EasyLog:1.9'
-    implementation 'net.java.dev.jna:jna:5.8.0'
-    implementation 'net.java.dev.jna:jna-platform:5.8.0'
 
     // asm
     implementation 'org.ow2.asm:asm:9.2'
@@ -27,7 +19,6 @@ dependencies {
     implementation 'org.ow2.asm:asm-analysis:9.2'
 
     implementation project(':izmk-common')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 jar {

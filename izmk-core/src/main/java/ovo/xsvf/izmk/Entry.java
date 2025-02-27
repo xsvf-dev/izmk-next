@@ -1,11 +1,11 @@
 package ovo.xsvf.izmk;
 
 import malte0811.ferritecore.ModClientForge;
+import org.apache.logging.log4j.LogManager;
 import ovo.xsvf.BMWClassLoader;
 import ovo.xsvf.izmk.event.impl.EntryEvent;
 import ovo.xsvf.izmk.misc.ClassUtil;
 import ovo.xsvf.izmk.resource.ResourceUtil;
-import ovo.xsvf.logging.Logger;
 import ovo.xsvf.patchify.ASMUtil;
 import ovo.xsvf.patchify.PatchLoader;
 import ovo.xsvf.patchify.annotation.Patch;
@@ -19,9 +19,9 @@ import java.util.List;
 public class Entry {
     private static final List<Class<?>> PATCHES = new ArrayList<>();
 
-    public static void entry(Instrumentation inst, int logPort, String jar, boolean devMode) throws Throwable {
+    public static void entry(Instrumentation inst, String jar, boolean devMode) throws Throwable {
         ClassUtil.init(inst);
-        IZMK.INSTANCE.setLogger(Logger.of("IZMK", logPort));
+        IZMK.INSTANCE.setLogger(LogManager.getLogger(IZMK.class));
         IZMK.INSTANCE.setObfuscated(!devMode);
         ResourceUtil.INSTANCE.init(Paths.get(jar));
 
