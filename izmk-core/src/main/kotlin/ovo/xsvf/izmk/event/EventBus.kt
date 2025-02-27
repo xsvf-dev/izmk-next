@@ -1,8 +1,10 @@
 package ovo.xsvf.izmk.event
 
+import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.command.CommandManager
-import ovo.xsvf.izmk.gui.HUDManager
+import ovo.xsvf.izmk.module.ModuleManager
 import java.lang.invoke.MethodHandles
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 object EventBus {
@@ -11,7 +13,8 @@ object EventBus {
 
     init {
         register(CommandManager)
-        register(HUDManager)
+        register(ModuleManager)
+        register(IZMK)
     }
 
     @Suppress("unchecked_cast")
@@ -57,5 +60,17 @@ data class Listener(val clazz: Class<*>,
                     val method: (Event) -> Unit,
                     val priority: Int = 0,
                     val alwaysListening: Boolean = false) {
+    val uuid: UUID = UUID.randomUUID()
+
     fun handle(event: Event) = method(event)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Listener) return false
+        return other.uuid == uuid
+    }
+
+    override fun hashCode(): Int {
+        return uuid.hashCode()
+    }
 }

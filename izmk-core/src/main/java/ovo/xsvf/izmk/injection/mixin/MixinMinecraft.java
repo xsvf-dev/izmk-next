@@ -2,7 +2,9 @@ package ovo.xsvf.izmk.injection.mixin;
 
 import net.minecraft.client.Minecraft;
 import ovo.xsvf.izmk.IZMK;
-import ovo.xsvf.izmk.event.impl.TickEvents;
+import ovo.xsvf.izmk.event.impl.PostTickEvent;
+import ovo.xsvf.izmk.event.impl.PreTickEvent;
+import ovo.xsvf.izmk.event.impl.ShutdownEvent;
 import ovo.xsvf.patchify.CallbackInfo;
 import ovo.xsvf.patchify.annotation.At;
 import ovo.xsvf.patchify.annotation.Inject;
@@ -23,22 +25,16 @@ public class MixinMinecraft {
             initialized = true;
         }
 
-        TickEvents.Pre.INSTANCE.post();
+        new PreTickEvent().post();
     }
 
     @Inject(method = "tick", desc = "()V", at = @At(At.Type.TAIL))
     public static void onTickPost(Minecraft minecraft, CallbackInfo callbackInfo) throws Throwable {
-        if (!initialized) {
-            IZMK.INSTANCE.setMc(Minecraft.getInstance());
-            IZMK.INSTANCE.init();
-            initialized = true;
-        }
-
-        TickEvents.Post.INSTANCE.post();
+        new PostTickEvent().post();
     }
 
     @Inject(method = "destroy",desc = "()V")
     public static void destroy(Minecraft minecraft, CallbackInfo callbackInfo) throws Throwable {
-        IZMK.INSTANCE.shutdown();
+        new ShutdownEvent().post();
     }
 }

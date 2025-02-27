@@ -17,7 +17,9 @@ class ModuleConfig : Config("Module") {
     }
 
     override fun loadConfig(jsonObject: JsonObject) {
-        ModuleManager.modules().forEach { module ->
+        ModuleManager.modules()
+            .filter { it.loadFromConfig }
+            .forEach { module ->
             jsonObject.getAsJsonObject(module.name)?.let { moduleObject ->
                 module.enabled = moduleObject["enabled"].asBoolean
                 module.keyCode = moduleObject["keyCode"].asInt

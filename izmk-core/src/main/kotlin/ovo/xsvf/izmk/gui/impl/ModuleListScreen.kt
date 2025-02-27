@@ -1,11 +1,10 @@
-package ovo.xsvf.izmk.gui.screen.impl
+package ovo.xsvf.izmk.gui.impl
 
 import net.minecraft.client.gui.GuiGraphics
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
-import ovo.xsvf.izmk.gui.HUDManager
-import ovo.xsvf.izmk.gui.screen.GuiScreen
+import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.module.ModuleManager
 
 class ModuleListScreen: GuiScreen("ModuleList") {
@@ -44,7 +43,6 @@ class ModuleListScreen: GuiScreen("ModuleList") {
 
         // 渲染所有模块
         ModuleManager.modulesMap.values.forEach { drawModule(it.enabled, it.getDisplayName()) }
-        HUDManager.hUDs.forEach { drawModule(it.enabled, it.getDisplayName()) }
     }
 
     override fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {
@@ -60,6 +58,5 @@ class ModuleListScreen: GuiScreen("ModuleList") {
                 .also { offsetY += entryHeight + 5f }
 
         ModuleManager.modulesMap.values.firstOrNull { toggleModule { it.toggle() } }
-        HUDManager.hUDs.firstOrNull { toggleModule { it.toggle() } }
     }
 }

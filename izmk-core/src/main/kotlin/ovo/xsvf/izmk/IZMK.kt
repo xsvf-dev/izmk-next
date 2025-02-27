@@ -2,11 +2,14 @@ package ovo.xsvf.izmk
 
 import net.minecraft.client.Minecraft
 import ovo.xsvf.izmk.config.ConfigManager
+import ovo.xsvf.izmk.event.EventTarget
+import ovo.xsvf.izmk.event.impl.PostInitEvent
+import ovo.xsvf.izmk.event.impl.PreInitEvent
+import ovo.xsvf.izmk.event.impl.ShutdownEvent
 import ovo.xsvf.izmk.graphics.RenderSystem
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
-import ovo.xsvf.izmk.gui.HUDManager
 import ovo.xsvf.izmk.module.ModuleManager
 import ovo.xsvf.logging.Logger
 import kotlin.properties.Delegates
@@ -21,10 +24,10 @@ object IZMK {
 
     fun init() {
         logger.info("Start initializing IZMK...")
+        PreInitEvent().post()
 
         ModuleManager.init()
         ConfigManager.init()
-        HUDManager.init()
 
         MojangRenderSystem.recordRenderCall {
             // Systems
@@ -35,9 +38,13 @@ object IZMK {
             // Utils
             RenderUtils
         }
+
+        PostInitEvent().post()
+        logger.info("IZMK has been successfully initialized!")
     }
 
-    fun shutdown() {
+    @EventTarget
+    fun onShutdown(event: ShutdownEvent) {
         ConfigManager.shutdown()
     }
 

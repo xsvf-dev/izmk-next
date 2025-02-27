@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.gui.screen
+package ovo.xsvf.izmk.gui
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
@@ -16,7 +16,8 @@ open class GuiScreen(private val name: String) {
     private var mouseX = 0
     private var mouseY = 0
     private var screen: Screen? = null
-    val mc = IZMK.mc
+
+    val mc by lazy { IZMK.mc }
 
     open fun drawScreen(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {}
     open fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {}
@@ -44,8 +45,6 @@ open class GuiScreen(private val name: String) {
 
                 @EventTarget
                 private fun onRender2D(event: Render2DEvent) {
-                    // test
-                    // this.renderBackground(event.guiGraphics, mouseX, mouseY, event.partialTick)
                     drawScreen(event.guiGraphics, mouseX, mouseY, event.partialTick)
                 }
             }

@@ -2,6 +2,7 @@ package ovo.xsvf.izmk;
 
 import malte0811.ferritecore.ModClientForge;
 import ovo.xsvf.BMWClassLoader;
+import ovo.xsvf.izmk.event.impl.EntryEvent;
 import ovo.xsvf.izmk.misc.ClassUtil;
 import ovo.xsvf.izmk.resource.ResourceUtil;
 import ovo.xsvf.logging.Logger;
@@ -23,6 +24,7 @@ public class Entry {
         IZMK.INSTANCE.setLogger(Logger.of("IZMK", logPort));
         IZMK.INSTANCE.setObfuscated(!devMode);
         ResourceUtil.INSTANCE.init(Paths.get(jar));
+
         ModClientForge.init();
 
         BMWClassLoader.getClasses().stream()
@@ -33,5 +35,7 @@ public class Entry {
         IZMK.INSTANCE.getLogger().info("Loaded {} patches", PATCHES.size());
         new PatchLoader(IZMK.INSTANCE.getLogger()::debug, IZMK.INSTANCE.getLogger()::info, IZMK.INSTANCE.getLogger()::warn)
                 .loadPatches(PATCHES, ClassUtil::getClassBytes, ClassUtil::redefineClass);
+
+        new EntryEvent().post();
     }
 }

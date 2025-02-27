@@ -51,11 +51,8 @@ object ImageFileUtils {
         val height = IntArray(1)
         val channels = IntArray(1)
 
-        val imageData = STBImage.stbi_load(path, width, height, channels, 4)
-
-        if (imageData == null) {
-            throw Exception("Failed to load image: $path")
-        }
+        val imageData = STBImage.stbi_load(path, width, height, channels, 4) ?:
+            throw IllegalArgumentException("Failed to load image: $path")
 
         tex.width = width[0]
         tex.height = height[0]
@@ -87,10 +84,7 @@ object ImageFileUtils {
         val channels = IntArray(1)
 
         val imageData = STBImage.stbi_load_from_memory(bytes, width, height, channels, 4)
-
-        if (imageData == null) {
-            throw Exception("Failed to load image from bytes")
-        }
+            ?: throw IllegalArgumentException("Failed to load image from bytes")
 
         tex.width = width[0]
         tex.height = height[0]

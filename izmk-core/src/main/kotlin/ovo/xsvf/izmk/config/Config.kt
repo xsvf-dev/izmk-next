@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.config
 
 import com.google.gson.JsonObject
+
 open class Config(val name: String) {
 
     open fun saveConfig(): JsonObject {
@@ -9,5 +10,5 @@ open class Config(val name: String) {
         }
     }
 
-    open fun loadConfig(jsonObject: JsonObject) { }
+    open fun loadConfig(jsonObject: JsonObject) {}
 }

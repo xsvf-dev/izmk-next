@@ -1,26 +1,24 @@
 package ovo.xsvf.izmk.module.impl
 
-import ovo.xsvf.izmk.gui.screen.impl.ModuleListScreen
+import ovo.xsvf.izmk.gui.impl.ModuleListScreen
 import ovo.xsvf.izmk.module.Module
 
 /**
  * @author LangYa466
  * @since 2/27/2025
  */
-object ClickGUI : Module("ClickGUI", "Open click-gui module") {
+object ClickGUI : Module("ClickGUI", "Open click-gui module", loadFromConfig = false) {
     private val screen = ModuleListScreen()
+
+    override fun onLoad() {
+        enabled = false
+    }
 
     override fun onEnable() {
         screen.openScreen()
-        super.onEnable()
     }
 
     override fun onDisable() {
         screen.closeScreen()
-        super.onDisable()
-    }
-
-    init {
-        enabled = false
     }
 }
