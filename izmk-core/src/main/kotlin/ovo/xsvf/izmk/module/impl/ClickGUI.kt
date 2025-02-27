@@ -14,4 +14,13 @@ object ClickGUI : Module("ClickGUI", "Open click-gui module") {
         screen.openScreen()
         super.onEnable()
     }
+
+    override fun onDisable() {
+        screen.closeScreen()
+        super.onDisable()
+    }
+
+    init {
+        enabled = false
+    }
 }

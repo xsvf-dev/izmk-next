@@ -48,4 +48,8 @@ abstract class Module(val name: String,
         settings.add(setting)
         return setting
     }
+
+    fun getDisplayName(): String {
+        return translation.translation
+    }
 }

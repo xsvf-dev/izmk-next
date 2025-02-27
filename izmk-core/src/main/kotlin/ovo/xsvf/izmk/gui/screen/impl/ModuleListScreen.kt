@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphics
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
+import ovo.xsvf.izmk.gui.HUDManager
 import ovo.xsvf.izmk.gui.screen.GuiScreen
 import ovo.xsvf.izmk.module.ModuleManager
 
@@ -13,33 +14,37 @@ class ModuleListScreen: GuiScreen("ModuleList") {
         val listY = 50f
         val listWidth = 300f
         val listHeight = 400f
+        val entryHeight = 20f
 
-        // 列表背景
+        // 绘制列表背景
         RenderUtils2D.drawRectFilled(listX, listY, listWidth, listHeight, ColorRGB(0.15f, 0.15f, 0.15f))
 
         var offsetY = listY + 10f
-        val entryHeight = 20f
 
-        for (module in ModuleManager.modulesMap.values) {
+        fun drawModule(enabled: Boolean, name: String) {
+            val moduleX = listX + 5f
+            val moduleY = offsetY
+
             // 背景渐变
             RenderUtils2D.drawRectGradientH(
-                listX + 5f,
-                y = offsetY,
-                listWidth - 10f,
-                height = entryHeight,
-                startColor = ColorRGB(0.2f, 0.2f, 0.2f),
-                endColor = ColorRGB(0.25f, 0.25f, 0.25f)
+                moduleX, moduleY, listWidth - 10f, entryHeight,
+                ColorRGB(0.2f, 0.2f, 0.2f), ColorRGB(0.25f, 0.25f, 0.25f)
             )
 
-            // 开关状态
-            val color = if (module.enabled) ColorRGB(0f, 1f, 0f) else ColorRGB(1f, 0f, 0f)
-            RenderUtils2D.drawCircleFilled(listX + 15f, offsetY + entryHeight / 2, 5f, segments = 16, color)
+            // 开关状态指示
+            RenderUtils2D.drawCircleFilled(moduleX + 10f, moduleY + entryHeight / 2, 5f, 16,
+                if (enabled) ColorRGB(0f, 1f, 0f) else ColorRGB(1f, 0f, 0f)
+            )
 
             // 模块名称
-            FontRenderers.drawString(module.name, listX + 30f, offsetY + 5f, ColorRGB.WHITE)
+            FontRenderers.drawString(name, moduleX + 25f, moduleY + 5f, ColorRGB.WHITE)
 
             offsetY += entryHeight + 5f
         }
+
+        // 渲染所有模块
+        ModuleManager.modulesMap.values.forEach { drawModule(it.enabled, it.getDisplayName()) }
+        HUDManager.hUDs.forEach { drawModule(it.enabled, it.getDisplayName()) }
     }
 
     override fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {
@@ -49,17 +54,12 @@ class ModuleListScreen: GuiScreen("ModuleList") {
         var offsetY = listY + 10f
         val entryHeight = 20f
 
-        for (module in ModuleManager.modulesMap.values) {
-            val x = listX + 5f
-            val y = offsetY
-            val width = x + listWidth - 10f
-            val height = y + entryHeight
+        fun toggleModule(toggle: () -> Unit) =
+            RenderUtils2D.isMouseOver(mouseX.toFloat(), mouseY.toFloat(), listX + 5f, offsetY, listX + listWidth - 5f, offsetY + entryHeight)
+                .also { if (it) toggle() }
+                .also { offsetY += entryHeight + 5f }
 
-            if (RenderUtils2D.isMouseOver(mouseX.toFloat(), mouseY.toFloat(), x, y, width, height)) {
-                module.toggle()
-                break
-            }
-            offsetY += entryHeight + 5f
-        }
+        ModuleManager.modulesMap.values.firstOrNull { toggleModule { it.toggle() } }
+        HUDManager.hUDs.firstOrNull { toggleModule { it.toggle() } }
     }
 }

@@ -45,7 +45,7 @@ open class GuiScreen(private val name: String) {
                 @EventTarget
                 private fun onRender2D(event: Render2DEvent) {
                     // test
-                    this.renderBackground(event.guiGraphics, mouseX, mouseY, event.partialTick)
+                    // this.renderBackground(event.guiGraphics, mouseX, mouseY, event.partialTick)
                     drawScreen(event.guiGraphics, mouseX, mouseY, event.partialTick)
                 }
             }

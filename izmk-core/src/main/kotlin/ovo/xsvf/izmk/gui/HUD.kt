@@ -3,7 +3,10 @@ package ovo.xsvf.izmk.gui
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
+import ovo.xsvf.izmk.settings.AbstractSetting
+import ovo.xsvf.izmk.settings.SettingsDesigner
 import ovo.xsvf.izmk.translation.TranslationString
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @author xiaojiang233
@@ -15,7 +18,8 @@ abstract class HUD(
     y: Float,
     var width: Float,
     var height: Float
-) {
+): SettingsDesigner<HUD> {
+    private val settings = CopyOnWriteArrayList<AbstractSetting<*>>()
     val translation = TranslationString("hud", name)
 
     var x: Float = x
@@ -44,5 +48,19 @@ abstract class HUD(
 
     fun isMouseOver(mouseX: Float, mouseY: Float): Boolean {
         return RenderUtils2D.isMouseOver(mouseX,mouseY,x,y,x1,y1)
+    }
+
+    override fun <S : AbstractSetting<*>> HUD.setting(setting: S): S {
+        setting.key.key.prefix = "huds.$name"
+        settings.add(setting)
+        return setting
+    }
+
+    fun toggle() {
+        enabled = !enabled
+    }
+
+    fun getDisplayName(): String {
+        return translation.translation
     }
 }

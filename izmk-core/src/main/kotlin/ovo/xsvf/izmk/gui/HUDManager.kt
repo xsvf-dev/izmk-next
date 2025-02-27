@@ -27,7 +27,7 @@ object HUDManager {
     private var dragOffsetY = 0f
 
     fun init() {
-        registerHUD(NeneHud())
+        registerHUD(NeneHud)
         hudMap["NeneHud"]?.enabled = true
     }
 
