@@ -67,6 +67,8 @@ object GlHelper {
         MojangRenderSystem.defaultBlendFunc()
         MojangRenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
 
+        glActiveTexture(GlStateManager._getActiveTexture())
+        GlStateManager._bindTexture(0)
         GlStateManager._activeTexture(GL_TEXTURE0)
         GlStateManager._bindTexture(0)
     }

@@ -23,7 +23,7 @@ class ModuleConfig : Config("Module") {
                             is FloatSetting -> addProperty(setting.key.key.key, setting.value)
                             is DoubleSetting -> addProperty(setting.key.key.key, setting.value)
                             is BooleanSetting -> addProperty(setting.key.key.key, setting.value)
-                            is KeyBindSetting -> addProperty(setting.key.key.key, setting.value.keyCode)
+                            is KeyBindSetting -> addProperty(setting.key.key.key, setting.value.valueToString())
                             is ColorSetting -> addProperty(setting.key.key.key, setting.value.rgba)
                             is EnumSetting<*> -> addProperty(setting.key.key.key, setting.value.name)
                         }
@@ -44,7 +44,7 @@ class ModuleConfig : Config("Module") {
                             module.y = moduleObject.get("y").asFloat
                         }
                     } catch (e: Exception) {
-                        IZMK.logger.error("Failed to load module config for ${module.name}", e)
+                        IZMK.logger.warn("Failed to load module config for ${module.name}", e)
                     }
 
                     module.settings.forEach { setting ->
@@ -53,7 +53,7 @@ class ModuleConfig : Config("Module") {
 
                             setting.setWithJson(moduleObject.get(setting.key.key.key))
                         } catch (e: Exception) {
-                            IZMK.logger.error("Failed to load setting ${setting.key.key.key} for ${module.name}", e)
+                            IZMK.logger.warn("Failed to load setting ${setting.key.key.key} for ${module.name}", e)
                         }
                     }
                 }

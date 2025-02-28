@@ -50,7 +50,7 @@ object RenderSystem {
     fun onRender2d(partialTick: Float) {
         if (mc.options.hideGui) return
         preRender()
-        GlHelper.depth = true
+        GlHelper.depth = false
 
         MatrixStack.scope {
             val projection = Matrix4f(RenderSystem.getProjectionMatrix())
