@@ -1,5 +1,7 @@
 modules.fps-display=FPS Display
 modules.fps-display.draw-string=Draw String
+modules.fps-display.font-scale=Font Scale
+modules.fps-display.string-color=String Color
 
 modules.no-hurtcam=No HurtCam
 
@@ -10,3 +12,6 @@ modules.test-hud=Test HUD
 modules.click-gui=Click GUI
 
 modules.nene-hud=Nene HUD
+
+modules.old-animations=Old Animations
+modules.old-animations.sword-blocking=Sword Blocking

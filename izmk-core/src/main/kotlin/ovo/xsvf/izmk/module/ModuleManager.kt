@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.module
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap
 import net.minecraft.client.gui.screens.ChatScreen
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.IZMK
@@ -13,7 +14,7 @@ import ovo.xsvf.izmk.module.impl.*
 import java.util.concurrent.ConcurrentHashMap
 
 object ModuleManager {
-    val modulesMap = mutableMapOf<String, Module>()
+    val modulesMap = Object2ObjectAVLTreeMap<String, Module>()
 
     private val fadeAnimations = ConcurrentHashMap<String, AnimationFlag>()
     private val mc by lazy { IZMK.mc }
@@ -32,6 +33,7 @@ object ModuleManager {
         /* render modules */
         addModule(TestHud)
         addModule(NeneHud)
+        addModule(PotionStatus)
     }
 
     private fun addModule(module: Module) {
@@ -41,18 +43,6 @@ object ModuleManager {
 
     operator fun get(name: String): Module? {
         return modulesMap[name]
-    }
-
-    fun getOrThrow(name: String): Module {
-        return modulesMap[name]!!
-    }
-
-    fun getOrElse(name: String, default: () -> Module): Module {
-        return modulesMap.getOrDefault(name, default())
-    }
-
-    fun getOrElse(name: String, default: Module): Module {
-        return modulesMap.getOrDefault(name, default)
     }
 
     inline fun <reified T: Module> get(): T {

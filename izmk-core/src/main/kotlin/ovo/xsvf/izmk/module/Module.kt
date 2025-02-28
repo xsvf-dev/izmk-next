@@ -72,8 +72,8 @@ abstract class RenderableModule(
     description: String = "",
     defaultX: Float,
     defaultY: Float,
-    var width: Float,
-    var height: Float
+    var width: Float = 0f,
+    var height: Float  = 0f
 ): Module(name, description) {
     var x: Float = defaultX
         set(value) {
@@ -84,11 +84,11 @@ abstract class RenderableModule(
             field = value.coerceIn(0f, mc.window.height - height)
         }
 
-    val y1: Float
-        get() = y + height
-
     val x1: Float
         get() = x + width
+
+    val y1: Float
+        get() = y + height
 
     open fun render(event: Render2DEvent) {}
 
