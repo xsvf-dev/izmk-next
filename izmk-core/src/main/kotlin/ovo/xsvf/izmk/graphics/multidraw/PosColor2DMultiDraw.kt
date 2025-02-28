@@ -16,11 +16,28 @@ class PosColor2DMultiDraw {
         val y: Float,
         val width: Float,
         val height: Float,
-        val color: ColorRGB,
+        val color00: ColorRGB,  // top left
+        val color10: ColorRGB,  // top right
+        val color01: ColorRGB,  // bottom left
+        val color11: ColorRGB,  // bottom right
     )
 
     fun addRect(x: Float, y: Float, width: Float, height: Float, color: ColorRGB) {
-        rect.add(Rect(x, y, width, height, color))
+        rect.add(Rect(x, y, width, height, color, color, color, color))
+    }
+
+    fun addRectGradientHorizontal(
+        x: Float, y: Float, width: Float, height: Float,
+        color0: ColorRGB, color1: ColorRGB
+    ) {
+        rect.add(Rect(x, y, width, height, color0, color1, color0, color1))
+    }
+
+    fun addRectGradientVertical(
+        x: Float, y: Float, width: Float, height: Float,
+        color0: ColorRGB, color1: ColorRGB
+    ) {
+        rect.add(Rect(x, y, width, height, color0, color0, color1, color1))
     }
 
     fun draw() {
@@ -49,10 +66,10 @@ class PosColor2DMultiDraw {
                 val endX = startX + rect.width
                 val endY = startY + rect.height
 
-                vertex(endX, startY, rect.color)
-                vertex(startX, startY, rect.color)
-                vertex(endX, endY, rect.color)
-                vertex(startX, endY, rect.color)
+                vertex(endX, startY, rect.color10)
+                vertex(startX, startY, rect.color00)
+                vertex(endX, endY, rect.color11)
+                vertex(startX, endY, rect.color01)
             }
         }
         rect.clear()

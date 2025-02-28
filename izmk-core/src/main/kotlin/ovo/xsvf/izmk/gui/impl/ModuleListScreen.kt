@@ -1,12 +1,15 @@
 package ovo.xsvf.izmk.gui.impl
 
 import ovo.xsvf.izmk.graphics.color.ColorRGB
-import ovo.xsvf.izmk.graphics.font.FontRenderers
+import ovo.xsvf.izmk.graphics.multidraw.*
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.module.ModuleManager
 
 class ModuleListScreen: GuiScreen("ModuleList") {
+    private val rectMulti = PosColor2DMultiDraw()
+    private val fontMulti = FontMultiDraw()
+
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         val listX = 50f
         val listY = 50f
@@ -15,7 +18,7 @@ class ModuleListScreen: GuiScreen("ModuleList") {
         val entryHeight = 20f
 
         // 绘制列表背景
-        RenderUtils2D.drawRectFilled(listX, listY, listWidth, listHeight, ColorRGB(0.15f, 0.15f, 0.15f))
+        rectMulti.addRect(listX, listY, listWidth, listHeight, ColorRGB(0.15f, 0.15f, 0.15f))
 
         var offsetY = listY + 10f
 
@@ -24,24 +27,22 @@ class ModuleListScreen: GuiScreen("ModuleList") {
             val moduleY = offsetY
 
             // 背景渐变
-            RenderUtils2D.drawRectGradientH(
+            rectMulti.addRectGradientHorizontal(
                 moduleX, moduleY, listWidth - 10f, entryHeight,
                 ColorRGB(0.2f, 0.2f, 0.2f), ColorRGB(0.25f, 0.25f, 0.25f)
             )
 
-            // 开关状态指示
-            RenderUtils2D.drawCircleFilled(moduleX + 10f, moduleY + entryHeight / 2, 5f, 16,
-                if (enabled) ColorRGB(0f, 1f, 0f) else ColorRGB(1f, 0f, 0f)
-            )
-
             // 模块名称
-            FontRenderers.drawString(name, moduleX + 25f, moduleY + 5f, ColorRGB.WHITE)
+            fontMulti.addText(name, moduleX + 7f, moduleY + 5f, if (enabled) ColorRGB.WHITE else ColorRGB.GRAY)
 
             offsetY += entryHeight + 5f
         }
 
         // 渲染所有模块
         ModuleManager.modulesMap.values.forEach { drawModule(it.enabled, it.getDisplayName()) }
+
+        rectMulti.draw()
+        fontMulti.draw()
     }
 
     override fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {

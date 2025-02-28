@@ -43,7 +43,7 @@ open class GuiScreen(private val name: String) {
                     super.onClose()
                 }
 
-                @EventTarget
+                @EventTarget(priority = 1000)
                 private fun onRender2D(event: Render2DEvent) {
                     drawScreen(mouseX, mouseY, event.partialTick)
                 }
