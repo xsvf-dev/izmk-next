@@ -19,7 +19,7 @@ open class GuiScreen(private val name: String) {
 
     val mc by lazy { IZMK.mc }
 
-    open fun drawScreen(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {}
+    open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {}
     open fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {}
 
     fun openScreen() {
@@ -45,7 +45,7 @@ open class GuiScreen(private val name: String) {
 
                 @EventTarget
                 private fun onRender2D(event: Render2DEvent) {
-                    drawScreen(event.guiGraphics, mouseX, mouseY, event.partialTick)
+                    drawScreen(mouseX, mouseY, event.partialTick)
                 }
             }
         }

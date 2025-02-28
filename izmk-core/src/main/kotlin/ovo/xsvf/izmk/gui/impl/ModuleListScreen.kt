@@ -1,6 +1,5 @@
 package ovo.xsvf.izmk.gui.impl
 
-import net.minecraft.client.gui.GuiGraphics
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
@@ -8,7 +7,7 @@ import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.module.ModuleManager
 
 class ModuleListScreen: GuiScreen("ModuleList") {
-    override fun drawScreen(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
+    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         val listX = 50f
         val listY = 50f
         val listWidth = 300f

@@ -46,7 +46,8 @@ object RenderSystem {
         OTHER
     }
 
-    fun onRender2d(guiGraphics: GuiGraphics, partialTick: Float) {
+    fun onRender2d(partialTick: Float) {
+        if (mc.options.hideGui) return
         preRender()
         GlHelper.depth = true
 
@@ -54,13 +55,14 @@ object RenderSystem {
             val projection = Matrix4f(RenderSystem.getProjectionMatrix())
             val modelView = Matrix4f(RenderSystem.getModelViewMatrix())
             updateMvpMatrix(projection.mul(modelView))
-            Render2DEvent(guiGraphics, partialTick).post()
+            Render2DEvent(partialTick).post()
         }
 
         postRender()
     }
 
     fun onRender3d(guiGraphics: GuiGraphics, partialTick: Float) {
+        if (mc.options.hideGui) return
         preRender()
 
         GlHelper.depth = false

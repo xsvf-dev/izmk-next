@@ -12,6 +12,6 @@ import ovo.xsvf.patchify.annotation.Patch;
 public class GuiPatch {
     @Inject(method = "render", desc = "(Lnet/minecraft/client/gui/GuiGraphics;F)V", at = @At(At.Type.TAIL))
     public static void renderGui(GuiGraphics pGuiGraphics, float pPartialTick, CallbackInfo callbackInfo) {
-        RenderSystem.INSTANCE.onRender2d(pGuiGraphics, pPartialTick);
+        RenderSystem.INSTANCE.onRender2d(pPartialTick);
     }
 }

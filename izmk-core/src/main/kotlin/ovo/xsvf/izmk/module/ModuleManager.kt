@@ -90,17 +90,17 @@ object ModuleManager {
                     fadeAnimation.update(targetFade)
                     val currentFade = fadeAnimation.get()
                     if (currentFade > 0) {
-                        drawHUDBorder(event.guiGraphics.pose(), hud, currentFade)
+                        drawHUDBorder(hud, currentFade)
                     }
                 }
             }
 
         if (mc.screen is ChatScreen) {
-            onMouseInput(mouseX, mouseY, event.guiGraphics.pose())
+            onMouseInput(mouseX, mouseY)
         }
     }
 
-    private fun onMouseInput(mouseX: Float, mouseY: Float, stack: PoseStack) {
+    private fun onMouseInput(mouseX: Float, mouseY: Float) {
         val window = mc.window.window
         val isMousePressed = GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS
         val screenWidth = mc.window.guiScaledWidth.toFloat()
@@ -128,14 +128,14 @@ object ModuleManager {
                     hud.y = newY
                 }
 
-                drawHUDBorder(stack, hud, 1f)
+                drawHUDBorder(hud, 1f)
             }
         } else {
             draggingHUD = null
         }
     }
 
-    private fun drawHUDBorder(stack: PoseStack, hud: RenderableModule, alpha: Float) {
+    private fun drawHUDBorder(hud: RenderableModule, alpha: Float) {
         val borderColor = ColorRGB(255, 255, 255, (150 * alpha).toInt())
         val outlineWidth = 1f
 
