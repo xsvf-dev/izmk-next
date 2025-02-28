@@ -18,7 +18,7 @@ object ClickGUI : Module(
     }
 
     override fun onEnable() {
-        screen.openScreen()
+        screen.openScreen(null)
     }
 
     override fun onDisable() {

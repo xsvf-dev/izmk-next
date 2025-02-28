@@ -7,18 +7,18 @@ import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.module.Module
 import ovo.xsvf.izmk.settings.*
-
-// 需要引入 Java AWT 用于 HSBtoRGB
 import java.awt.Color
 
+/**
+ * ValueListScreen 修改后，增加了 window 变量。
+ */
 class ValueListScreen(val module: Module) : GuiScreen("value-list") {
+    // 用于控制整个设置列表的拖拽和位置
+    private val window: DragWindow = DragWindow(80, 50, 300, 400)
+
     private val rectMulti = PosColor2DMultiDraw()
     private val fontMulti = FontMultiDraw()
 
-    private val listX = 50f
-    private val listY = 50f
-    private val listWidth = 300f
-    private val listHeight = 400f
     private val entryHeight = 20f
     private val padding = 5f
 
@@ -26,11 +26,20 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
     private val colorPickerStates = mutableMapOf<ColorSetting, ColorPickerData>()
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        window.drag(mouseX, mouseY)
+
+        // 使用 window 的位置和尺寸作为绘制区域
+        val listX = window.x.toFloat()
+        val listY = (window.y + 35f)
+        val listWidth = window.width.toFloat()
+        val listHeight = window.height.toFloat()
+
         rectMulti.clear()
         fontMulti.clear()
 
         // 绘制整体背景
-        rectMulti.addRect(listX, listY, listWidth, listHeight, ColorRGB(0.15f, 0.15f, 0.15f))
+        rectMulti.addRect(listX, window.y.toFloat(), listWidth, listHeight, ColorRGB(0.15f, 0.15f, 0.15f))
+        fontMulti.addText("${module.getDisplayName()} Value List",window.x.toFloat() + 5f, window.y.toFloat() + 5f,ColorRGB.WHITE,false,2f)
 
         var offsetY = listY + padding
 
@@ -63,7 +72,7 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
                 }
                 is NumberSetting<*> -> {
                     fontMulti.addText(
-                        String.format("${setting.name.translation}: %.2f",setting.value),
+                        String.format("${setting.name.translation}: %.2f", setting.value),
                         settingX + padding + 2f,
                         settingY + padding - 3f,
                         ColorRGB.WHITE
@@ -94,7 +103,7 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
                     if (cpData.isOpen) {
                         val pickerY = settingY + rowHeight // 紧接在本行下面
                         val pickerWidth = listWidth - 2 * padding
-                        val pickerHeight = 80f  // 可以自定义
+                        val pickerHeight = 80f  // 自定义高度
 
                         // 绘制 ColorPicker 背景
                         rectMulti.addRect(
@@ -111,33 +120,22 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
                         val sbY = pickerY + 5f
 
                         // 第一次：水平渐变(左：纯黑->右：与 hue 相同的亮色)
-                        val leftColor = hsbToColorRGB(cpData.hue, 0f, 1f)   // 饱和度=0 -> 白灰
-                        val rightColor = hsbToColorRGB(cpData.hue, 1f, 1f)  // 饱和度=1 -> 色相色
-                        rectMulti.addRectGradientHorizontal(
-                            sbX, sbY, sbWidth, sbHeight,
-                            leftColor, rightColor
-                        )
+                        val leftColor = hsbToColorRGB(cpData.hue, 0f, 1f)
+                        val rightColor = hsbToColorRGB(cpData.hue, 1f, 1f)
+                        rectMulti.addRectGradientHorizontal(sbX, sbY, sbWidth, sbHeight, leftColor, rightColor)
                         // 第二次：垂直渐变(上：透明->下：黑)
-                        rectMulti.addRectGradientVertical(
-                            sbX, sbY, sbWidth, sbHeight,
-                            ColorRGB(1f, 1f, 1f, 0f),  // 透明白
-                            ColorRGB(0f, 0f, 0f, 1f)   // 黑
-                        )
+                        rectMulti.addRectGradientVertical(sbX, sbY, sbWidth, sbHeight,
+                            ColorRGB(1f, 1f, 1f, 0f), ColorRGB(0f, 0f, 0f, 1f))
 
-                        // 绘制当前 (saturation, brightness) 位置的小圆点(这里简单用 addRect 代替)
+                        // 绘制当前 (saturation, brightness) 位置的小圆点（用 addRect 简单表示）
                         val sbCursorX = sbX + cpData.saturation * sbWidth
                         val sbCursorY = sbY + (1f - cpData.brightness) * sbHeight
-                        rectMulti.addRect(
-                            sbCursorX - 2, sbCursorY - 2,
-                            4f, 4f,
-                            ColorRGB.WHITE
-                        )
+                        rectMulti.addRect(sbCursorX - 2, sbCursorY - 2, 4f, 4f, ColorRGB.WHITE)
 
                         // 2) Hue 条
                         val hueX = sbX + sbWidth + 2f
                         val hueWidth = 10f
-                        val hueHeight = sbHeight / 6f  // 我们分6段
-                        // 这里做 6 段矩形拼接
+                        val hueHeight = sbHeight / 6f
                         for (i in 0..5) {
                             val segY = sbY + i * hueHeight
                             val c1 = hsbToColorRGB(i / 6f, 1f, 1f)
@@ -151,25 +149,13 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
                         // 3) Alpha 条
                         val alphaX = hueX + hueWidth + 3f
                         val alphaWidth = 10f
-                        // 背板(先画白色，再画当前颜色->透明渐变)
                         rectMulti.addRect(alphaX, sbY, alphaWidth, sbHeight, ColorRGB.WHITE)
-                        // 计算基色时固定 alpha 为 1
                         val baseColor = hsbToColorRGB(cpData.hue, cpData.saturation, cpData.brightness, 1f)
-                        val topAlphaColor = baseColor  // 全不透明
-                        // 构造全透明颜色（RGB保持不变）
-                        val bottomAlphaColor = ColorRGB(baseColor.r.toFloat(), baseColor.g.toFloat(), baseColor.b.toFloat(), 0f)
-
                         rectMulti.addRectGradientVertical(
-                            alphaX,
-                            sbY,
-                            alphaWidth,
-                            sbHeight,
-                            topAlphaColor,
-                            bottomAlphaColor
+                            alphaX, sbY, alphaWidth, sbHeight,
+                            baseColor,
+                            ColorRGB(baseColor.r.toFloat(), baseColor.g.toFloat(), baseColor.b.toFloat(), 0f)
                         )
-
-
-                        // 绘制 alpha 光标
                         val alphaCursorY = sbY + (1f - cpData.alpha) * sbHeight
                         rectMulti.addRect(alphaX - 2, alphaCursorY - 1, alphaWidth + 4, 2f, ColorRGB.WHITE)
 
@@ -190,12 +176,21 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
             offsetY += rowHeight + padding
         }
 
-        // 绘制
         rectMulti.draw()
         fontMulti.draw()
     }
 
     override fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {
+        // 如果点击在窗口标题区域（这里假定标题区域高度为 20），则启动拖拽
+        if (window.isHoveringHeader(mouseX.toInt(), mouseY.toInt(), 20)) {
+            window.startDrag(mouseX.toInt(), mouseY.toInt())
+            return
+        }
+
+        val listX = window.x.toFloat()
+        val listY = (window.y + 35f)
+        val listWidth = window.width.toFloat()
+
         var offsetY = listY + padding
 
         module.settings.forEach { setting ->
@@ -205,11 +200,10 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
             val settingY = offsetY
             var rowHeight = entryHeight
 
-            // 如果是 ColorSetting 并且处于展开，则行高度要加上 picker
             if (setting is ColorSetting && colorPickerStates.containsKey(setting)) {
                 val cpData = colorPickerStates[setting]!!
                 if (cpData.isOpen) {
-                    rowHeight += 80f // 你在上面绘制了 80f 的 picker
+                    rowHeight += 80f
                 }
             }
 
@@ -222,19 +216,12 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
 
             if (isMouseOverRow) {
                 when (setting) {
-                    is BooleanSetting -> {
-                        // 左/右键都 toggle
-                        setting.toggle()
-                    }
+                    is BooleanSetting -> setting.toggle()
                     is NumberSetting<*> -> {
-                        if (buttonID == 0) {
-                            incrementNumber(setting)
-                        } else if (buttonID == 1) {
-                            decrementNumber(setting)
-                        }
+                        if (buttonID == 0) incrementNumber(setting)
+                        else if (buttonID == 1) decrementNumber(setting)
                     }
                     is ColorSetting -> {
-                        //切换展开/收起
                         val cpData = colorPickerStates.getOrPut(setting) {
                             val (h, s, b, a) = colorRGBToHSB(setting.value)
                             ColorPickerData(false, h, s, b, a)
@@ -245,66 +232,31 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
                 }
             }
 
-            // 如果行是 ColorSetting & 已展开，就要判断点击是否在 Hue/SB/Alpha 区域
             if (setting is ColorSetting && colorPickerStates.containsKey(setting)) {
                 val cpData = colorPickerStates[setting]!!
                 if (cpData.isOpen) {
-                    // 计算 picker 各区域的坐标
                     val pickerX = settingX
                     val pickerY = settingY + entryHeight
                     val pickerWidth = listWidth - 2 * padding
                     val pickerHeight = 80f
 
-                    // SB 区域
                     val sbX = pickerX + 5f
                     val sbY = pickerY + 5f
                     val sbWidth = pickerWidth - 30f
                     val sbHeight = pickerHeight - 10f
 
-                    // Hue 条
                     val hueX = sbX + sbWidth + 2f
                     val hueWidth = 10f
 
-                    // Alpha 条
                     val alphaX = hueX + hueWidth + 3f
                     val alphaWidth = 10f
 
-                    // 左键按下时，如果点击在这三块区域里，就更新颜色
                     if (buttonID == 0) {
-                        // Saturation-Brightness
-                        if (RenderUtils2D.isMouseOver(
-                                mouseX.toFloat(),
-                                mouseY.toFloat(),
-                                sbX,
-                                sbY,
-                                sbX + sbWidth,
-                                sbY + sbHeight
-                            )
-                        ) {
+                        if (RenderUtils2D.isMouseOver(mouseX.toFloat(), mouseY.toFloat(), sbX, sbY, sbX + sbWidth, sbY + sbHeight)) {
                             updateSB(cpData, mouseX.toFloat(), mouseY.toFloat(), sbX, sbY, sbWidth, sbHeight, setting)
-                        }
-                        // Hue
-                        else if (RenderUtils2D.isMouseOver(
-                                mouseX.toFloat(),
-                                mouseY.toFloat(),
-                                hueX,
-                                sbY,
-                                hueX + hueWidth,
-                                sbY + sbHeight
-                            )
-                        ) {
+                        } else if (RenderUtils2D.isMouseOver(mouseX.toFloat(), mouseY.toFloat(), hueX, sbY, hueX + hueWidth, sbY + sbHeight)) {
                             updateHue(cpData, mouseY.toFloat(), sbY, sbHeight, setting)
-                        }
-                        // Alpha
-                        else if (RenderUtils2D.isMouseOver(
-                                mouseX.toFloat(),
-                                mouseY.toFloat(),
-                                alphaX,
-                                sbY,
-                                alphaX + alphaWidth,
-                                sbY + sbHeight
-                            )
-                        ) {
+                        } else if (RenderUtils2D.isMouseOver(mouseX.toFloat(), mouseY.toFloat(), alphaX, sbY, alphaX + alphaWidth, sbY + sbHeight)) {
                             updateAlpha(cpData, mouseY.toFloat(), sbY, sbHeight, setting)
                         }
                     }
@@ -315,9 +267,10 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
         }
     }
 
-    /**
-     * 更新饱和度与亮度
-     */
+    override fun mouseReleased(buttonID: Int, mouseX: Double, mouseY: Double) {
+        window.stopDrag()
+    }
+
     private fun updateSB(cpData: ColorPickerData, mouseX: Float, mouseY: Float, sbX: Float, sbY: Float, sbW: Float, sbH: Float, setting: ColorSetting) {
         val relX = (mouseX - sbX).coerceIn(0f, sbW)
         val relY = (mouseY - sbY).coerceIn(0f, sbH)
@@ -325,69 +278,38 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
         cpData.saturation = relX / sbW
         cpData.brightness = 1f - (relY / sbH)
 
-        // 应用到 ColorSetting
         setting.value = hsbToColorRGB(cpData.hue, cpData.saturation, cpData.brightness, cpData.alpha)
     }
 
-    /**
-     * 更新 Hue
-     */
     private fun updateHue(cpData: ColorPickerData, mouseY: Float, hueY: Float, hueH: Float, setting: ColorSetting) {
         val relY = (mouseY - hueY).coerceIn(0f, hueH)
         cpData.hue = relY / hueH
 
-        // 应用到 ColorSetting
         setting.value = hsbToColorRGB(cpData.hue, cpData.saturation, cpData.brightness, cpData.alpha)
     }
 
-    /**
-     * 更新 Alpha
-     */
     private fun updateAlpha(cpData: ColorPickerData, mouseY: Float, alphaY: Float, alphaH: Float, setting: ColorSetting) {
         val relY = (mouseY - alphaY).coerceIn(0f, alphaH)
         cpData.alpha = 1f - (relY / alphaH)
 
-        // 应用到 ColorSetting
         setting.value = hsbToColorRGB(cpData.hue, cpData.saturation, cpData.brightness, cpData.alpha)
     }
 
-    /**
-     * NumberSetting 增加 step
-     */
     private fun incrementNumber(setting: NumberSetting<*>) {
         when (setting) {
-            is IntSetting -> {
-                setting.value = (setting.value + setting.step).coerceIn(setting.minValue, setting.maxValue)
-            }
-            is FloatSetting -> {
-                setting.value = (setting.value + setting.step).coerceIn(setting.minValue, setting.maxValue)
-            }
-            is DoubleSetting -> {
-                setting.value = (setting.value + setting.step).coerceIn(setting.minValue, setting.maxValue)
-            }
-            is LongSetting -> {
-                setting.value = (setting.value + setting.step).coerceIn(setting.minValue, setting.maxValue)
-            }
+            is IntSetting -> setting.value = (setting.value + setting.step).coerceIn(setting.minValue, setting.maxValue)
+            is FloatSetting -> setting.value = (setting.value + setting.step).coerceIn(setting.minValue, setting.maxValue)
+            is DoubleSetting -> setting.value = (setting.value + setting.step).coerceIn(setting.minValue, setting.maxValue)
+            is LongSetting -> setting.value = (setting.value + setting.step).coerceIn(setting.minValue, setting.maxValue)
         }
     }
 
-    /**
-     * NumberSetting 减少 step
-     */
     private fun decrementNumber(setting: NumberSetting<*>) {
         when (setting) {
-            is IntSetting -> {
-                setting.value = (setting.value - setting.step).coerceIn(setting.minValue, setting.maxValue)
-            }
-            is FloatSetting -> {
-                setting.value = (setting.value - setting.step).coerceIn(setting.minValue, setting.maxValue)
-            }
-            is DoubleSetting -> {
-                setting.value = (setting.value - setting.step).coerceIn(setting.minValue, setting.maxValue)
-            }
-            is LongSetting -> {
-                setting.value = (setting.value - setting.step).coerceIn(setting.minValue, setting.maxValue)
-            }
+            is IntSetting -> setting.value = (setting.value - setting.step).coerceIn(setting.minValue, setting.maxValue)
+            is FloatSetting -> setting.value = (setting.value - setting.step).coerceIn(setting.minValue, setting.maxValue)
+            is DoubleSetting -> setting.value = (setting.value - setting.step).coerceIn(setting.minValue, setting.maxValue)
+            is LongSetting -> setting.value = (setting.value - setting.step).coerceIn(setting.minValue, setting.maxValue)
         }
     }
 }
@@ -398,16 +320,15 @@ class ValueListScreen(val module: Module) : GuiScreen("value-list") {
 data class ColorPickerData(
     var isOpen: Boolean = true,
     var hue: Float,
-    var saturation: Float,
-    var brightness: Float,
+    var saturation: Float = 1f,
+    var brightness: Float = 1f,
     var alpha: Float
 ) {
-    // 方便取当前颜色
     fun value(): ColorRGB = hsbToColorRGB(hue, saturation, brightness, alpha)
 }
 
 /**
- * 将 ColorRGB -> (H, S, B, A)
+ * 将 ColorRGB 转换为 (H, S, B, A)
  */
 fun colorRGBToHSB(color: ColorRGB): FloatArray {
     val rInt = (color.r * 255).coerceIn(0, 255)
@@ -418,17 +339,12 @@ fun colorRGBToHSB(color: ColorRGB): FloatArray {
 }
 
 /**
- * (H, S, B, A) -> ColorRGB
+ * 将 (H, S, B, A) 转换为 ColorRGB
  */
 fun hsbToColorRGB(hue: Float, saturation: Float, brightness: Float, alpha: Float = 1f): ColorRGB {
     val rgbInt = Color.HSBtoRGB(hue, saturation, brightness)
     val rInt = (rgbInt shr 16) and 0xFF
     val gInt = (rgbInt shr 8) and 0xFF
-    val bInt = (rgbInt) and 0xFF
-    return ColorRGB(
-        rInt / 255f,
-        gInt / 255f,
-        bInt / 255f,
-        alpha
-    )
+    val bInt = rgbInt and 0xFF
+    return ColorRGB(rInt / 255f, gInt / 255f, bInt / 255f, alpha)
 }

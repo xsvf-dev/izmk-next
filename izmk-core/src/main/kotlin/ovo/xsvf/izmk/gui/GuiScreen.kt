@@ -16,13 +16,16 @@ open class GuiScreen(private val name: String) {
     private var mouseX = 0
     private var mouseY = 0
     private var screen: Screen? = null
+    private var tempScreen: GuiScreen? = null
 
     val mc by lazy { IZMK.mc }
 
     open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {}
     open fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {}
+    open fun mouseReleased(buttonID: Int, mouseX: Double, mouseY: Double) {}
 
-    fun openScreen() {
+    fun openScreen(lastScreen: GuiScreen?) {
+        tempScreen = lastScreen
         if (screen == null) {
             screen = object : Screen(Component.literal("izmk-$name")) {
                 override fun shouldCloseOnEsc() = true
@@ -38,9 +41,14 @@ open class GuiScreen(private val name: String) {
                     return super.mouseClicked(pMouseX, pMouseY, pButton)
                 }
 
+                override fun mouseReleased(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+                    mouseReleased(pButton, pMouseX, pMouseY)
+                    return super.mouseReleased(pMouseX, pMouseY, pButton)
+                }
+
                 override fun onClose() {
-                    closeScreen()
                     super.onClose()
+                    closeScreen()
                 }
 
                 @EventTarget(priority = 1000)
@@ -55,6 +63,7 @@ open class GuiScreen(private val name: String) {
 
     fun closeScreen() {
         EventBus.unregister(screen!!)
-        mc.setScreen(null)
+        if (tempScreen != null) tempScreen!!.openScreen(null)
+        else mc.setScreen(null)
     }
 }
