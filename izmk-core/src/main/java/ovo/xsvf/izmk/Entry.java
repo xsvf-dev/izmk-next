@@ -32,7 +32,7 @@ public class Entry {
                         ASMUtil.isVisibleAnnotationPresent(ASMUtil.node(entry.getValue()), Patch.class))
                 .forEach(entry ->
                         PATCHES.add(ReflectionUtil.forName(entry.getKey().replace("/", "."))));
-        IZMK.INSTANCE.getLogger().info("Loaded {} patches", PATCHES.size());
+        IZMK.INSTANCE.getLogger().info("Loaded {} patch", PATCHES.size());
         new PatchLoader(IZMK.INSTANCE.getLogger()::debug, IZMK.INSTANCE.getLogger()::info, IZMK.INSTANCE.getLogger()::warn)
                 .loadPatches(PATCHES, ClassUtil::getClassBytes, ClassUtil::redefineClass);
 

@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.injection.mixin;
+package ovo.xsvf.izmk.injection.patch;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;

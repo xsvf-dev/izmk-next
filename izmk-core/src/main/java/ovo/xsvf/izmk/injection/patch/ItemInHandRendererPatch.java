@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.injection.mixin;
+package ovo.xsvf.izmk.injection.patch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.AbstractClientPlayer;

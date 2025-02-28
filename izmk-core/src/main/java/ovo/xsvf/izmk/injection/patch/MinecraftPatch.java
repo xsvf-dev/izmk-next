@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.injection.mixin;
+package ovo.xsvf.izmk.injection.patch;
 
 import net.minecraft.client.Minecraft;
 import ovo.xsvf.izmk.IZMK;
