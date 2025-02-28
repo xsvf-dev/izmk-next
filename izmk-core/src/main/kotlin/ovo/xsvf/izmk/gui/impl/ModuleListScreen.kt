@@ -2,7 +2,8 @@ package ovo.xsvf.izmk.gui.impl
 
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.graphics.color.ColorRGB
-import ovo.xsvf.izmk.graphics.multidraw.*
+import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
+import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.module.Module
