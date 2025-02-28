@@ -15,7 +15,6 @@ object ClickGUI : Module(
     private val screen = ModuleListScreen()
 
     override fun onLoad() {
-        enabled = false
     }
 
     override fun onEnable() {
