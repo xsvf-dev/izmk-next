@@ -6,7 +6,10 @@ import net.minecraft.util.Mth
 import net.minecraft.world.entity.HumanoidArm
 import ovo.xsvf.izmk.module.Module
 
-object OldAnimations: Module("OldAnimations", "旧版本动画效果") {
+object OldAnimations: Module(
+    name = "OldAnimations",
+    description = "旧版本动画效果",
+) {
     val swordBlocking by setting("swordBlocking")
 
     fun transform(matrices: PoseStack, arm: HumanoidArm, equipProgress: Float, swingProgress: Float) {

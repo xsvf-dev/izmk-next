@@ -7,8 +7,11 @@ import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.module.Module
 
-object FPSDisplay: Module("fps-display", "Displays the FPS on the screen") {
-    private val drawString by setting("draw-string")
+object FPSDisplay: Module(
+    name = "fps-display",
+    description = "Displays the FPS on the screen",
+) {
+    private val drawString by setting("draw-string", true)
 
     @EventTarget
     fun onRender2D(event: Render2DEvent) {

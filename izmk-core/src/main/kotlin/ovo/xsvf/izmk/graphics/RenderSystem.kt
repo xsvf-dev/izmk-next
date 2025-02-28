@@ -82,13 +82,13 @@ object RenderSystem {
         postRender()
     }
 
-    fun preRender() {
+    private fun preRender() {
         GlHelper.reset()
         VertexBufferObjects.sync()
         GlHelper.blend = true
     }
 
-    fun postRender() {
+    private fun postRender() {
         GlHelper.syncWithMinecraft()
     }
 

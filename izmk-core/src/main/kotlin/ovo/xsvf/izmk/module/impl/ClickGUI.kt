@@ -7,7 +7,11 @@ import ovo.xsvf.izmk.module.Module
  * @author LangYa466
  * @since 2/27/2025
  */
-object ClickGUI : Module("click-gui", "Open click-gui module", loadFromConfig = false) {
+object ClickGUI : Module(
+    name = "click-gui",
+    description = "Open click-gui module",
+    loadFromConfig = false,
+) {
     private val screen = ModuleListScreen()
 
     override fun onLoad() {

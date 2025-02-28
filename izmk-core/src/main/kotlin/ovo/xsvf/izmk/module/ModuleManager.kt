@@ -75,8 +75,8 @@ object ModuleManager {
         val mouseX = xpos[0].toFloat() / mc.window.guiScale.toFloat()
         val mouseY = ypos[0].toFloat() / mc.window.guiScale.toFloat()
 
-        modules().
-            filterIsInstance<RenderableModule>()
+        modules()
+            .filterIsInstance<RenderableModule>()
             .filter { it.enabled }
             .forEach { hud ->
                 hud.render(event)

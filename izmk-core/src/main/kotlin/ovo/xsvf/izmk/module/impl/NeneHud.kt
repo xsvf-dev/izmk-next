@@ -9,8 +9,12 @@ import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.module.RenderableModule
 import ovo.xsvf.izmk.resource.Resource
 
-object NeneHud : RenderableModule("nene-hud", "", -1,
-    0f, 0f, 300f, 120f) {
+object NeneHud : RenderableModule(
+    name = "nene-hud",
+    description = "",
+    defaultX = 0f, defaultY = 0f,
+    width = 300f, height = 120f,
+) {
     private val imageTexture: Texture = ImageFileUtils.loadTextureFromResource(Resource("image/nene.png"))
 
     override fun render(event: Render2DEvent) {
