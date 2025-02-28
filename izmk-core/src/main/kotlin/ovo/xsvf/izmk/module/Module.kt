@@ -57,7 +57,7 @@ abstract class Module(val name: String,
     open fun onLoad() {}
 
     override fun <S : AbstractSetting<*>> Module.setting(setting: S): S {
-        setting.key.key.prefix = "modules.$name"
+        setting.name.key.prefix = "modules.$name"
         settings.add(setting)
         return setting
     }

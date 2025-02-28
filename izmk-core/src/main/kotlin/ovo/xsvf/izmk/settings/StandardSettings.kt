@@ -9,7 +9,11 @@ class BooleanSetting @JvmOverloads constructor(
     name: TranslationString,
     value: Boolean = false,
     visibility: () -> Boolean = { true }
-) : AbstractSetting<Boolean>(name, value, visibility)
+) : AbstractSetting<Boolean>(name, value, visibility) {
+    fun toggle() {
+        value = !value
+    }
+}
 
 class TextSetting @JvmOverloads constructor(
     name: TranslationString,

@@ -18,14 +18,14 @@ class ModuleConfig : Config("Module") {
                     }
                     module.settings.forEach { setting ->
                         when (setting) {
-                            is IntSetting -> addProperty(setting.key.key.key, setting.value)
-                            is LongSetting -> addProperty(setting.key.key.key, setting.value)
-                            is FloatSetting -> addProperty(setting.key.key.key, setting.value)
-                            is DoubleSetting -> addProperty(setting.key.key.key, setting.value)
-                            is BooleanSetting -> addProperty(setting.key.key.key, setting.value)
-                            is KeyBindSetting -> addProperty(setting.key.key.key, setting.value.valueToString())
-                            is ColorSetting -> addProperty(setting.key.key.key, setting.value.rgba)
-                            is EnumSetting<*> -> addProperty(setting.key.key.key, setting.value.name)
+                            is IntSetting -> addProperty(setting.name.key.key, setting.value)
+                            is LongSetting -> addProperty(setting.name.key.key, setting.value)
+                            is FloatSetting -> addProperty(setting.name.key.key, setting.value)
+                            is DoubleSetting -> addProperty(setting.name.key.key, setting.value)
+                            is BooleanSetting -> addProperty(setting.name.key.key, setting.value)
+                            is KeyBindSetting -> addProperty(setting.name.key.key, setting.value.keyCode)
+                            is ColorSetting -> addProperty(setting.name.key.key, setting.value.rgba)
+                            is EnumSetting<*> -> addProperty(setting.name.key.key, setting.value.name)
                         }
                     }
                 })
@@ -44,16 +44,16 @@ class ModuleConfig : Config("Module") {
                             module.y = moduleObject.get("y").asFloat
                         }
                     } catch (e: Exception) {
-                        IZMK.logger.warn("Failed to load module config for ${module.name}", e)
+                        IZMK.logger.error("Failed to load module config for ${module.name}", e)
                     }
 
                     module.settings.forEach { setting ->
                         try {
                             if (!module.loadFromConfig) return@forEach
 
-                            setting.setWithJson(moduleObject.get(setting.key.key.key))
+                            setting.setWithJson(moduleObject.get(setting.name.key.key))
                         } catch (e: Exception) {
-                            IZMK.logger.warn("Failed to load setting ${setting.key.key.key} for ${module.name}", e)
+                            IZMK.logger.error("Failed to load setting ${setting.name.key.key} for ${module.name}", e)
                         }
                     }
                 }

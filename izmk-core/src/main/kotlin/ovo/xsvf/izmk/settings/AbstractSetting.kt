@@ -8,7 +8,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 abstract class AbstractSetting<T>(
-    var key: TranslationString,
+    var name: TranslationString,
     var value: T,
     var visibility: () -> Boolean
 ) : ReadWriteProperty<Any, T> {
@@ -18,7 +18,7 @@ abstract class AbstractSetting<T>(
     private val changeValueConsumers = CopyOnWriteArrayList<() -> Unit>()
 
     val settingId: String
-        get() = "$key@${this::class.simpleName}"
+        get() = "$name@${this::class.simpleName}"
 
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         return value
@@ -38,7 +38,7 @@ abstract class AbstractSetting<T>(
 
     //Builder
     fun key(key: TranslationString): AbstractSetting<T> {
-        this.key = key
+        this.name = key
         return this
     }
 
