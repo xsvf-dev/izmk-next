@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.graphics.buffer
 
+import dev.luna5ama.kmogus.Arr
 import ovo.xsvf.izmk.graphics.GlHelper
 import ovo.xsvf.izmk.graphics.shader.Shader
 import org.lwjgl.opengl.GL45.*
@@ -53,7 +54,7 @@ open class VertexMode(
         vertexSize = 0
     }
 
-    fun multiDrawArrays(shader: Shader, counts: IntArray, mode: Int) {
+    fun multiDrawArrays(shader: Shader, first: Arr, counts: Arr, drawCount: Int, mode: Int) {
         if (vertexSize == 0) return
 
         shader.bind()
@@ -62,14 +63,7 @@ open class VertexMode(
         glVertexArrayVertexBuffer(vao, 0, vbo.id, this.vbo.offset * attribute.stride, attribute.stride)
         GlHelper.vertexArray = this.vao
 
-        val first = IntArray(counts.size)
-        var offset = 0
-        for (i in counts.indices) {
-            first[i] = offset
-            offset += counts[i]
-        }
-
-        glMultiDrawArrays(mode, first, counts)
+        nglMultiDrawArrays(mode, first.ptr.address, counts.ptr.address, drawCount)
 
         vbo.end()
         vertexSize = 0

@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.graphics.buffer
 
+import dev.luna5ama.kmogus.Arr
 import ovo.xsvf.izmk.graphics.GlDataType
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.matrix.MatrixStack
@@ -156,7 +157,10 @@ inline fun <reified T: VertexMode> T.drawElements(mode: Int, ebo: ElementBufferO
     this.drawElements(shader, ebo, mode)
 }
 
-inline fun <reified T: VertexMode> T.multiDrawArrays(mode: Int, count: IntArray, shader: Shader = this.shader, block: T.() -> Unit) {
+inline fun <reified T: VertexMode> T.multiDrawArrays(
+    mode: Int, first: Arr, count: Arr, drawCount: Int,
+    shader: Shader = this.shader, block: T.() -> Unit
+) {
     this.block()
-    this.multiDrawArrays(shader, count, mode)
+    this.multiDrawArrays(shader, first, count, drawCount, mode)
 }

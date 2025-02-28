@@ -1,5 +1,7 @@
 package ovo.xsvf.izmk.graphics.multidraw
 
+import dev.luna5ama.kmogus.Arr
+import dev.luna5ama.kmogus.asMutable
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.buffer.multiDrawArrays
@@ -30,11 +32,27 @@ class FontMultiDraw {
     }
 
     fun draw() {
+        countArr.pos = 0L
+        if (countArr.len < texts.size * 4) countArr.realloc(texts.size * 4L, false)
+        texts.forEach { text ->
+            countArr.ptr[0] = if (text.shadow) 12 else 6
+            countArr.pos += 4L
+        }
+        countArr.flip()
+
+        firstArr.pos = 0L
+        if (firstArr.len < texts.size * 4) firstArr.realloc(texts.size * 4L, false)
+        var offset = 0
+        texts.forEach { text ->
+            firstArr.ptr[0] = offset
+            firstArr.pos += 4L
+            offset += if (text.shadow) 12 else 6
+        }
+        firstArr.flip()
+        
         when (FontRenderers.fontMode) {
             FontMode.SPARSE -> {
-                VertexBufferObjects.RenderFont.multiDrawArrays(GL_TRIANGLES, IntArray(texts.size) {
-                    if (texts[it].shadow) 12 else 6
-                }) {
+                VertexBufferObjects.RenderFont.multiDrawArrays(GL_TRIANGLES, firstArr, countArr, texts.size) {
                     texts.forEach { text ->
                         val font = FontRenderers.default.font
 
@@ -128,6 +146,11 @@ class FontMultiDraw {
         texture(endX, endY, endU, endV, chunk, color)
 
         return width
+    }
+    
+    companion object {
+        private val countArr = Arr.malloc(0).asMutable()
+        private val firstArr = Arr.malloc(0).asMutable()
     }
 
 }
