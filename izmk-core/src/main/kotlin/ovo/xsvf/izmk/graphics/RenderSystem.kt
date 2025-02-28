@@ -89,9 +89,6 @@ object RenderSystem {
     }
 
     fun postRender() {
-        GlHelper.blend = true
-        GlHelper.depth = true
-        GlHelper.cull = true
         GlHelper.syncWithMinecraft()
     }
 

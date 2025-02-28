@@ -5,4 +5,8 @@ modules.no-hurtcam=无受伤抖动
 
 modules.render-test=渲染测试
 
-hud.nene-hud=Nene HUD
+modules.test-hud=测试HUD
+
+modules.click-gui=Click GUI
+
+modules.nene-hud=Nene HUD

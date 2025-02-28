@@ -5,4 +5,8 @@ modules.no-hurtcam=No HurtCam
 
 modules.render-test=Render Test
 
-hud.nene-hud=Nene HUD
+modules.test-hud=Test HUD
+
+modules.click-gui=Click GUI
+
+modules.nene-hud=Nene HUD

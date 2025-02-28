@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager
 import org.lwjgl.opengl.GL45.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import com.mojang.blaze3d.systems.RenderSystem as MojangRenderSystem
 
 object GlHelper {
 
@@ -57,12 +58,14 @@ object GlHelper {
     }
 
     fun syncWithMinecraft() {
-        GlStateManager._disableBlend()
+        GlStateManager._enableBlend()
         GlStateManager._disableDepthTest()
         GlStateManager._disableCull()
         GlStateManager._glBindVertexArray(0)
         GlStateManager._glUseProgram(0)
         GlStateManager._disableScissorTest()
+        MojangRenderSystem.defaultBlendFunc()
+        MojangRenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
 
         GlStateManager._activeTexture(GL_TEXTURE0)
         GlStateManager._bindTexture(0)

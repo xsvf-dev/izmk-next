@@ -9,7 +9,7 @@ import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.module.RenderableModule
 import ovo.xsvf.izmk.resource.Resource
 
-object NeneHud : RenderableModule("NeneHud", "", -1,
+object NeneHud : RenderableModule("nene-hud", "", -1,
     0f, 0f, 300f, 120f) {
     private val imageTexture: Texture = ImageFileUtils.loadTextureFromResource(Resource("image/nene.png"))
 
