@@ -1,16 +1,14 @@
 package ovo.xsvf.izmk.graphics.font.sparse
 
+import org.lwjgl.opengl.ARBSparseTexture.GL_TEXTURE_SPARSE_ARB
+import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.graphics.font.CharData
 import ovo.xsvf.izmk.graphics.texture.BindLessTexture
 import ovo.xsvf.izmk.graphics.texture.ImageUtils
-import org.lwjgl.opengl.ARBSparseTexture.*
-import org.lwjgl.opengl.GL45.*
 import java.awt.Color
 import java.awt.Font
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
 
 class SparseFontGlyph(
     val font: Font,

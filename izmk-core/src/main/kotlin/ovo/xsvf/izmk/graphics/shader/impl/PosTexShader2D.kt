@@ -1,9 +1,9 @@
 package ovo.xsvf.izmk.graphics.shader.impl
 
-import ovo.xsvf.izmk.graphics.matrix.MatrixStack
-import ovo.xsvf.izmk.graphics.shader.Shader
 import org.lwjgl.opengl.GL45
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.graphics.matrix.MatrixStack
+import ovo.xsvf.izmk.graphics.shader.Shader
 
 object PosTexShader2D: Shader(
     "${IZMK.ASSETS_DIRECTORY}/shader/general/PosTex2D.vert",

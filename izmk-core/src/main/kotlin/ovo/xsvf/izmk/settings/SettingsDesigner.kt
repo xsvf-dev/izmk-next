@@ -1,9 +1,9 @@
 package ovo.xsvf.izmk.settings
 
-import ovo.xsvf.izmk.util.input.KeyBind
-import ovo.xsvf.izmk.translation.TranslationString
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.graphics.color.ColorRGB
+import ovo.xsvf.izmk.translation.TranslationString
+import ovo.xsvf.izmk.util.input.KeyBind
 
 interface SettingsDesigner<T : Any> {
 

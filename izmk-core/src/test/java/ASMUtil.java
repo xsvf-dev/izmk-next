@@ -2,7 +2,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
-import static ovo.xsvf.patchify.ASMUtil.*;
+import static ovo.xsvf.patchify.ASMUtil.checkcastFromObject;
 
 public class ASMUtil implements Opcodes {
     public static ClassNode createClassNode(String pkg) {

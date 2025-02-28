@@ -1,10 +1,10 @@
 package ovo.xsvf.izmk.graphics.buffer
 
-import ovo.xsvf.izmk.graphics.GlObject
-import ovo.xsvf.izmk.graphics.glNamedBufferStorage
 import dev.luna5ama.kmogus.Arr
 import dev.luna5ama.kmogus.asMutable
 import org.lwjgl.opengl.GL45
+import ovo.xsvf.izmk.graphics.GlObject
+import ovo.xsvf.izmk.graphics.glNamedBufferStorage
 import java.nio.ByteBuffer
 import kotlin.math.abs
 

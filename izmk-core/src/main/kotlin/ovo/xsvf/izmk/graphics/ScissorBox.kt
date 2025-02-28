@@ -1,7 +1,7 @@
 package ovo.xsvf.izmk.graphics
 
 import net.minecraft.client.Minecraft
-import org.lwjgl.opengl.GL45.*
+import org.lwjgl.opengl.GL45.glScissor
 
 class ScissorBox(
     var x: Int = 0,

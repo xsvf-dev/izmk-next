@@ -1,9 +1,9 @@
 package ovo.xsvf.izmk.graphics.shader.impl
 
-import ovo.xsvf.izmk.graphics.matrix.MatrixStack
-import ovo.xsvf.izmk.graphics.shader.Shader
 import org.lwjgl.opengl.GL20.glGetUniformLocation
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.graphics.matrix.MatrixStack
+import ovo.xsvf.izmk.graphics.shader.Shader
 
 object PosColorShader2D: Shader(
     vertShaderPath = "${IZMK.ASSETS_DIRECTORY}/shader/general/PosColor2D.vert",

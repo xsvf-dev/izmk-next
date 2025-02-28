@@ -1,9 +1,9 @@
 package ovo.xsvf.izmk.command.impl
 
+import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.command.Command
 import ovo.xsvf.izmk.module.ModuleManager
 import ovo.xsvf.izmk.util.ChatUtil
-import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.util.input.KeyBind
 
 class BindCommand : Command("bind", ".bind 模块名称 按键名称") {

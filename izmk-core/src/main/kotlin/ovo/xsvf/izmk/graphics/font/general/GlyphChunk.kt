@@ -1,9 +1,9 @@
 package ovo.xsvf.izmk.graphics.font.general
 
+import org.lwjgl.opengl.GL45
 import ovo.xsvf.izmk.graphics.font.CharData
 import ovo.xsvf.izmk.graphics.texture.ImageUtils
 import ovo.xsvf.izmk.graphics.texture.Texture
-import org.lwjgl.opengl.GL45
 import java.awt.Color
 import java.awt.Font
 import java.awt.RenderingHints

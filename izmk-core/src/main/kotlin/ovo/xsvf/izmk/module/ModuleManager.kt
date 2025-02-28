@@ -1,6 +1,5 @@
 package ovo.xsvf.izmk.module
 
-import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.screens.ChatScreen
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.IZMK

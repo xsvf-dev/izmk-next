@@ -1,11 +1,10 @@
 package ovo.xsvf.izmk.graphics.texture
 
-import com.mojang.datafixers.kinds.ListBox.flip
-import ovo.xsvf.izmk.graphics.RenderSystem
-import ovo.xsvf.izmk.util.timing.Timer
-import org.lwjgl.opengl.ARBSparseTexture.*
+import org.lwjgl.opengl.ARBSparseTexture.glTexturePageCommitmentEXT
 import org.lwjgl.opengl.GL45.*
+import ovo.xsvf.izmk.graphics.RenderSystem
 import ovo.xsvf.izmk.util.memory.MemoryUtil.createDirectByteBuffer
+import ovo.xsvf.izmk.util.timing.Timer
 import java.awt.image.BufferedImage
 import java.nio.IntBuffer
 

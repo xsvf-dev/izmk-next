@@ -2,13 +2,14 @@ package ovo.xsvf.izmk.graphics
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.math.Axis
-import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
-import ovo.xsvf.izmk.graphics.matrix.MatrixStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL45.*
-import ovo.xsvf.izmk.event.impl.*
+import ovo.xsvf.izmk.event.impl.Render2DEvent
+import ovo.xsvf.izmk.event.impl.Render3DEvent
+import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
+import ovo.xsvf.izmk.graphics.matrix.MatrixStack
 
 object RenderSystem {
 

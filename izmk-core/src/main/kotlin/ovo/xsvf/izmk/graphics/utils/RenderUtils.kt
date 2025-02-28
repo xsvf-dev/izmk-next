@@ -1,7 +1,8 @@
 package ovo.xsvf.izmk.graphics.utils
 
+import org.lwjgl.opengl.GL45.GL_STATIC_DRAW
+import org.lwjgl.opengl.GL45.glNamedBufferData
 import ovo.xsvf.izmk.graphics.buffer.ElementBufferObject
-import org.lwjgl.opengl.GL45.*
 
 object RenderUtils {
 

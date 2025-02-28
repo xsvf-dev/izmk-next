@@ -1,8 +1,8 @@
 package ovo.xsvf.izmk.graphics.buffer
 
-import ovo.xsvf.izmk.graphics.GlObject
 import net.minecraft.client.Minecraft
 import org.lwjgl.opengl.GL45.*
+import ovo.xsvf.izmk.graphics.GlObject
 
 class FrameBuffer : GlObject {
 

@@ -1,13 +1,13 @@
 package ovo.xsvf.izmk.graphics.font
 
+import org.lwjgl.opengl.GL45.GL_TRIANGLES
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.buffer.drawArrays
 import ovo.xsvf.izmk.graphics.color.ColorRGB
+import ovo.xsvf.izmk.graphics.font.FontRenderers.fontMode
 import ovo.xsvf.izmk.graphics.font.general.GlyphChunk
 import ovo.xsvf.izmk.graphics.shader.impl.FontShader
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
-import org.lwjgl.opengl.GL45.*
-import ovo.xsvf.izmk.graphics.font.FontRenderers.fontMode
 
 class FontRenderer(
     internal val font: FontAdapter

@@ -1,10 +1,10 @@
 package ovo.xsvf.izmk.graphics.shader.impl
 
-import ovo.xsvf.izmk.graphics.matrix.MatrixStack
-import ovo.xsvf.izmk.graphics.shader.Shader
 import org.lwjgl.opengl.ARBBindlessTexture.glProgramUniformHandleui64ARB
 import org.lwjgl.opengl.GL45
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.graphics.matrix.MatrixStack
+import ovo.xsvf.izmk.graphics.shader.Shader
 
 // Only for sparse font mode
 object FontShader: Shader(

@@ -1,7 +1,7 @@
 package ovo.xsvf.izmk.graphics.buffer
 
-import ovo.xsvf.izmk.graphics.GlDataType
 import org.lwjgl.opengl.GL45.*
+import ovo.xsvf.izmk.graphics.GlDataType
 
 class VertexAttribute private constructor(val stride: Int, private val entries: List<Entry>) {
     fun apply(vao: Int) {

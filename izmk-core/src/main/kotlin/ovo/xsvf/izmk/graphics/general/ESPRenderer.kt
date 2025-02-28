@@ -1,10 +1,10 @@
 package ovo.xsvf.izmk.graphics.general
 
-import ovo.xsvf.izmk.graphics.GlHelper
-import ovo.xsvf.izmk.graphics.utils.RenderUtils3D
-import ovo.xsvf.izmk.graphics.color.ColorRGB
 import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.AABB
+import ovo.xsvf.izmk.graphics.GlHelper
+import ovo.xsvf.izmk.graphics.color.ColorRGB
+import ovo.xsvf.izmk.graphics.utils.RenderUtils3D
 
 class ESPRenderer {
     private var toRender0: MutableList<Info> = ArrayList()

@@ -2,7 +2,7 @@ package ovo.xsvf.izmk.graphics.multidraw
 
 import dev.luna5ama.kmogus.Arr
 import dev.luna5ama.kmogus.asMutable
-import org.lwjgl.opengl.GL46.*
+import org.lwjgl.opengl.GL46.GL_TRIANGLE_STRIP
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.buffer.multiDrawArrays
 import ovo.xsvf.izmk.graphics.color.ColorRGB

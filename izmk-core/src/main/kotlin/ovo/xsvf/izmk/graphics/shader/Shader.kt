@@ -1,11 +1,11 @@
 package ovo.xsvf.izmk.graphics.shader
 
-import ovo.xsvf.izmk.graphics.GlHelper
-import ovo.xsvf.izmk.graphics.GlObject
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.IZMK
+import ovo.xsvf.izmk.graphics.GlHelper
+import ovo.xsvf.izmk.graphics.GlObject
 import ovo.xsvf.izmk.resource.ResourceUtil
 import java.io.InputStream
 import java.io.StringWriter

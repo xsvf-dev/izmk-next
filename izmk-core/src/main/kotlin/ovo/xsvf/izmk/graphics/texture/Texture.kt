@@ -1,8 +1,8 @@
 package ovo.xsvf.izmk.graphics.texture
 
+import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.graphics.GlHelper
 import ovo.xsvf.izmk.graphics.GlObject
-import org.lwjgl.opengl.GL45.*
 
 open class Texture(type: Int = GL_TEXTURE_2D): GlObject {
 

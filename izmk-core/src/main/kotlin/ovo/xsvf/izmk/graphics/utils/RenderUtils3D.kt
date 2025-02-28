@@ -1,16 +1,16 @@
 package ovo.xsvf.izmk.graphics.utils
 
-import ovo.xsvf.izmk.graphics.GlHelper
-import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
-import ovo.xsvf.izmk.graphics.buffer.drawArrays
-import ovo.xsvf.izmk.graphics.color.ColorRGB
-import ovo.xsvf.izmk.util.math.vectors.Vec3f
 import net.minecraft.client.Minecraft
 import net.minecraft.world.phys.AABB
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.joml.Vector4f
 import org.lwjgl.opengl.GL45.*
+import ovo.xsvf.izmk.graphics.GlHelper
+import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
+import ovo.xsvf.izmk.graphics.buffer.drawArrays
+import ovo.xsvf.izmk.graphics.color.ColorRGB
+import ovo.xsvf.izmk.util.math.vectors.Vec3f
 
 object RenderUtils3D {
 

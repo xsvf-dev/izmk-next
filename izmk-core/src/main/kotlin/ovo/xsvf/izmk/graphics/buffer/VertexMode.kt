@@ -1,9 +1,9 @@
 package ovo.xsvf.izmk.graphics.buffer
 
 import dev.luna5ama.kmogus.Arr
+import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.graphics.GlHelper
 import ovo.xsvf.izmk.graphics.shader.Shader
-import org.lwjgl.opengl.GL45.*
 
 open class VertexMode(
     val shader: Shader,
