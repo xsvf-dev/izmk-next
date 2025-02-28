@@ -14,7 +14,7 @@ import ovo.xsvf.patchify.annotation.Patch;
  * @author xsvf
  */
 @Patch(Minecraft.class)
-public class MixinMinecraft {
+public class MinecraftPatch {
     private static boolean initialized = false;
 
     @Inject(method = "tick", desc = "()V")

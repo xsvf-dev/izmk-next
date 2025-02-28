@@ -7,7 +7,7 @@ import ovo.xsvf.patchify.annotation.Inject;
 import ovo.xsvf.patchify.annotation.Patch;
 
 @Patch(ClientPacketListener.class)
-public class MixinClientPacketListener {
+public class ClientPacketListenerPatch {
     @Inject(method = "sendChat", desc = "(Ljava/lang/String;)V")
     public static void sendChat(ClientPacketListener instance, String message, CallbackInfo ci) {
         ci.cancelled = new SendMessageEvent(message).post().isCancelled();

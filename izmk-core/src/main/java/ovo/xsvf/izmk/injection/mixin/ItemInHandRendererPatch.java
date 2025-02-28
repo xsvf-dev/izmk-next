@@ -16,7 +16,7 @@ import ovo.xsvf.patchify.annotation.*;
 import ovo.xsvf.patchify.api.Invocation;
 
 @Patch(ItemInHandRenderer.class)
-public class MixinItemInHandRenderer {
+public class ItemInHandRendererPatch {
     @WrapInvoke(method = "renderArmWithItem", desc = "(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
                 target = "net/minecraft/world/item/ItemStack/getUseAnimation", targetDesc = "()Lnet/minecraft/world/item/UseAnim;")
     public static UseAnim getUseAnimation(ItemInHandRenderer self, AbstractClientPlayer pPlayer,

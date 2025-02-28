@@ -8,7 +8,7 @@ import ovo.xsvf.patchify.annotation.Inject;
 import ovo.xsvf.patchify.annotation.Patch;
 
 @Patch(GameRenderer.class)
-public class MixinGameRenderer {
+public class GameRendererPatch {
     @Inject(method = "bobHurt", desc = "(Lcom/mojang/blaze3d/vertex/PoseStack;F)V")
     public static void bobHurt(GameRenderer instance, PoseStack poseStack, float f, CallbackInfo callbackInfo) {
         callbackInfo.cancelled = NoHurtcam.INSTANCE.getEnabled();
