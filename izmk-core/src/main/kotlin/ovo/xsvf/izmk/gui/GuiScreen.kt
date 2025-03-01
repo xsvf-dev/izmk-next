@@ -7,12 +7,13 @@ import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventBus
 import ovo.xsvf.izmk.event.EventTarget
 import ovo.xsvf.izmk.event.impl.Render2DEvent
+import ovo.xsvf.izmk.module.Module
 
 /**
  * @author LangYa466
  * @since 2/27/2025
  */
-open class GuiScreen(private val name: String) {
+open class GuiScreen(private val name: String, private val module: Module? = null) {
     private var mouseX = 0
     private var mouseY = 0
     private var screen: Screen? = null
@@ -49,6 +50,7 @@ open class GuiScreen(private val name: String) {
                 override fun onClose() {
                     super.onClose()
                     closeScreen()
+                    if (module != null) module.enabled = false
                 }
 
                 @EventTarget(priority = 1000)

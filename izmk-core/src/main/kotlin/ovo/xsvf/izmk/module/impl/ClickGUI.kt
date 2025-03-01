@@ -14,14 +14,7 @@ object ClickGUI : Module(
 ) {
     private val screen = ModuleListScreen()
 
-    override fun onLoad() {
-    }
-
     override fun onEnable() {
         screen.openScreen(null)
-    }
-
-    override fun onDisable() {
-        screen.closeScreen()
     }
 }
