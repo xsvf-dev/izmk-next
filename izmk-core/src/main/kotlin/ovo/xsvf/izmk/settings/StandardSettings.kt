@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.settings
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.AbstractSettingWidget
@@ -18,7 +19,11 @@ class BooleanSetting @JvmOverloads constructor(
         value = !value
     }
 
-    override fun setWithJson(json: JsonElement) {
+    override fun toJson(): JsonElement {
+        return JsonPrimitive(value)
+    }
+
+    override fun fromJson(json: JsonElement) {
         value(json.asBoolean)
     }
 
@@ -32,7 +37,11 @@ class TextSetting @JvmOverloads constructor(
     value: String = "",
     visibility: () -> Boolean = { true }
 ) : AbstractSetting<String>(name, value, visibility) {
-    override fun setWithJson(json: JsonElement) {
+    override fun toJson(): JsonElement {
+        return JsonPrimitive(value)
+    }
+
+    override fun fromJson(json: JsonElement) {
         value(json.asString)
     }
 
@@ -46,7 +55,11 @@ class ColorSetting @JvmOverloads constructor(
     value: ColorRGB = ColorRGB.WHITE,
     visibility: () -> Boolean = { true }
 ) : AbstractSetting<ColorRGB>(name, value, visibility) {
-    override fun setWithJson(json: JsonElement) {
+    override fun toJson(): JsonElement {
+        return JsonPrimitive(value.rgba)
+    }
+
+    override fun fromJson(json: JsonElement) {
         value(ColorRGB(json.asInt))
     }
 
@@ -70,7 +83,11 @@ class EnumSetting<E: Enum<E>> @JvmOverloads constructor(
         }
     }
 
-    override fun setWithJson(json: JsonElement) {
+    override fun toJson(): JsonElement {
+        return JsonPrimitive(value.name)
+    }
+
+    override fun fromJson(json: JsonElement) {
         setWithName(json.asString)
     }
 
@@ -87,9 +104,12 @@ class KeyBindSetting @JvmOverloads constructor(
     private val pressConsumer = CopyOnWriteArrayList<() -> Unit>()
 
     fun onPress(run: () -> Unit) = pressConsumer.add(run)
+    override fun toJson(): JsonElement {
+        return JsonPrimitive(value.valueToString())
+    }
 
-    override fun setWithJson(json: JsonElement) {
-        value.valueFromString(json.asString)
+    override fun fromJson(json: JsonElement) {
+        value = KeyBind.fromString(json.asString)
     }
 
     override fun createWidget(screen: GuiScreen): AbstractSettingWidget {

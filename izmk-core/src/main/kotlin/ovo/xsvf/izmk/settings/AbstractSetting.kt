@@ -54,7 +54,8 @@ abstract class AbstractSetting<T>(
         return this
     }
 
-    abstract fun setWithJson(json: JsonElement)
+    abstract fun toJson(): JsonElement
+    abstract fun fromJson(json: JsonElement)
 
     abstract fun createWidget(screen: GuiScreen): AbstractSettingWidget
 }

@@ -12,6 +12,11 @@ data class KeyBind @JvmOverloads constructor(
         get() = getKeyName(keyCode, scanCode)
 
     companion object {
+        @JvmStatic
+        fun fromString(string: String): KeyBind {
+            return KeyBind().apply { valueFromString(string) }
+        }
+
         fun getKeyName(key: Int, scanCode: Int): String {
             return when (key) {
                 GLFW.GLFW_KEY_UNKNOWN -> "None"

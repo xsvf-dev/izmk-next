@@ -6,10 +6,7 @@ import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventBus
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
-import ovo.xsvf.izmk.settings.AbstractSetting
-import ovo.xsvf.izmk.settings.BooleanSetting
-import ovo.xsvf.izmk.settings.KeyBindSetting
-import ovo.xsvf.izmk.settings.SettingsDesigner
+import ovo.xsvf.izmk.settings.*
 import ovo.xsvf.izmk.translation.TranslationString
 import ovo.xsvf.izmk.util.input.KeyBind
 import java.util.concurrent.CopyOnWriteArrayList
@@ -59,7 +56,7 @@ abstract class Module(val name: String,
     open fun onDisable() {}
     open fun onLoad() {}
 
-    override fun <S : AbstractSetting<*>> Module.setting(setting: S): S {
+    final override fun <S : AbstractSetting<*>> Module.setting(setting: S): S {
         setting.name.key.prefix = "modules.$name"
         settings.add(setting)
         return setting
@@ -78,14 +75,17 @@ abstract class RenderableModule(
     var width: Float = 0f,
     var height: Float  = 0f
 ): Module(name, description) {
-    var x: Float = defaultX
-        set(value) {
-            field = value.coerceIn(0f, mc.window.width - width)
-        }
-    var y: Float = defaultY
-        set(value) {
-            field = value.coerceIn(0f, mc.window.height - height)
-        }
+    var x by setting(FloatSetting(
+        TranslationString("modules.renderable", "x"), defaultX,
+        minValue = 0f, maxValue = mc.window.width.toFloat(), step = mc.window.width / 500f,
+        visibility = { true }
+    ))
+
+    var y by setting(FloatSetting(
+        TranslationString("modules.renderable", "y"), defaultY,
+        minValue = 0f, maxValue = mc.window.height.toFloat(), step = mc.window.height / 500f,
+        visibility = { true }
+    ))
 
     val x1: Float
         get() = x + width

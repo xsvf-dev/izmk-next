@@ -15,3 +15,6 @@ modules.nene-hud=Nene HUD
 
 modules.old-animations=Old Animations
 modules.old-animations.sword-blocking=Sword Blocking
+
+modules.renderable.x=X Position
+modules.renderable.y=Y Position

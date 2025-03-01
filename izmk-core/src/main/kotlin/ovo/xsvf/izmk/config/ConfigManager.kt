@@ -8,7 +8,6 @@ import ovo.xsvf.izmk.IZMK.mc
 import ovo.xsvf.izmk.config.impl.ModuleConfig
 import java.io.File
 import java.nio.charset.StandardCharsets
-import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -39,8 +38,7 @@ object ConfigManager {
             if (file.exists()) {
                 runCatching {
                     val base64Text = file.readText(StandardCharsets.UTF_8)
-                    val decodedJson = String(Base64.getDecoder().decode(base64Text), StandardCharsets.UTF_8)
-                    gson.fromJson(decodedJson, JsonObject::class.java)
+                    gson.fromJson(base64Text, JsonObject::class.java)
                 }.onSuccess { json ->
                     configs.find { it.name == name }?.loadConfig(json ?: JsonObject())
                     logConfigAction(name, "Loaded successfully")
@@ -68,8 +66,7 @@ object ConfigManager {
             configs.find { it.name == name }?.let { config ->
                 runCatching {
                     val jsonData = gson.toJson(config.saveConfig())
-                    val base64Data = Base64.getEncoder().encodeToString(jsonData.toByteArray(StandardCharsets.UTF_8))
-                    file.writeText(base64Data, StandardCharsets.UTF_8)
+                    file.writeText(jsonData, StandardCharsets.UTF_8)
                 }.onSuccess {
                     logConfigAction(name, "Saved successfully")
                 }.onFailure {

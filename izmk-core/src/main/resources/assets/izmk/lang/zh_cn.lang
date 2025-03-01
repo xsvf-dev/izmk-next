@@ -15,3 +15,6 @@ modules.nene-hud=Nene HUD
 
 modules.old-animations=旧版本动画
 modules.old-animations.sword-blocking=防砍
+
+modules.renderable.x=X坐标
+modules.renderable.y=Y坐标

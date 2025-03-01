@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk.settings
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.AbstractSettingWidget
 import ovo.xsvf.izmk.gui.widget.impl.setting.NumberSettingWidget
@@ -17,6 +18,10 @@ abstract class NumberSetting<N: Number>(
     override fun createWidget(screen: GuiScreen): AbstractSettingWidget {
         return NumberSettingWidget(screen, this)
     }
+
+    override fun toJson(): JsonElement {
+        return JsonPrimitive(value)
+    }
 }
 
 class IntSetting(
@@ -27,7 +32,7 @@ class IntSetting(
     step: Int,
     visibility: () -> Boolean
 ) : NumberSetting<Int>(name, value, minValue, maxValue, step, visibility) {
-    override fun setWithJson(json: JsonElement) {
+    override fun fromJson(json: JsonElement) {
         value(json.asInt)
     }
 }
@@ -40,7 +45,7 @@ class LongSetting(
     step: Long,
     visibility: () -> Boolean
 ) : NumberSetting<Long>(name, value, minValue, maxValue, step, visibility) {
-    override fun setWithJson(json: JsonElement) {
+    override fun fromJson(json: JsonElement) {
         value(json.asLong)
     }
 }
@@ -53,7 +58,7 @@ class FloatSetting(
     step: Float,
     visibility: () -> Boolean
 ) : NumberSetting<Float>(name, value, minValue, maxValue, step, visibility) {
-    override fun setWithJson(json: JsonElement) {
+    override fun fromJson(json: JsonElement) {
         value(json.asFloat)
     }
 }
@@ -66,7 +71,7 @@ class DoubleSetting(
     step: Double,
     visibility: () -> Boolean
 ) : NumberSetting<Double>(name, value, minValue, maxValue, step, visibility) {
-    override fun setWithJson(json: JsonElement) {
+    override fun fromJson(json: JsonElement) {
         value(json.asDouble)
     }
 }
