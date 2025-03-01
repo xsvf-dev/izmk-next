@@ -14,7 +14,7 @@ public class ASMTest {
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static final Object o = new Object();
 
-    private static final long TEST_TIMES = 10_000_000;
+    private static final long TEST_TIMES = 100_000_000;
 
     private static final ASMTest INSTANCE = new ASMTest();
 

@@ -34,11 +34,12 @@ object ModuleManager {
         addModule(TestHud)
         addModule(NeneHud)
         addModule(PotionStatus)
+
+        modules().forEach { it.onLoad() }
     }
 
     private fun addModule(module: Module) {
         modulesMap[module.name] = module
-        module.onLoad()
     }
 
     operator fun get(name: String): Module? {

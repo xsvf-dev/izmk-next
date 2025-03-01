@@ -12,9 +12,10 @@ import ovo.xsvf.izmk.event.impl.Render2DEvent
  * @author LangYa466
  * @since 2/27/2025
  */
-open class GuiScreen(private val name: String) {
+abstract class GuiScreen(private val name: String) {
     private var mouseX = 0
     private var mouseY = 0
+
     private var screen: Screen? = null
     private var tempScreen: GuiScreen? = null
 

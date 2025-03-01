@@ -1,6 +1,6 @@
 package ovo.xsvf.izmk.module.impl
 
-import ovo.xsvf.izmk.gui.impl.ModuleListScreen
+import ovo.xsvf.izmk.gui.screen.ModuleListScreen
 import ovo.xsvf.izmk.module.Module
 
 /**
@@ -12,9 +12,10 @@ object ClickGUI : Module(
     description = "Open click-gui module",
     loadFromConfig = false,
 ) {
-    private val screen = ModuleListScreen()
+    private lateinit var screen: ModuleListScreen
 
     override fun onLoad() {
+        screen = ModuleListScreen()
     }
 
     override fun onEnable() {

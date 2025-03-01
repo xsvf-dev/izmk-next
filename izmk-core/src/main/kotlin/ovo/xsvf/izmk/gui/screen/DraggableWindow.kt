@@ -1,10 +1,10 @@
-package ovo.xsvf.izmk.gui.impl
+package ovo.xsvf.izmk.gui.screen
 
 /**
  * @author LangYa466
  * @since 2/15/2025
  */
-open class DragWindow(var x: Int, var y: Int, var width: Int, var height: Int) {
+class DraggableWindow(var x: Int, var y: Int, var width: Int, var height: Int) {
     private var dragging: Boolean = false
     private var dragOffsetX: Int = 0
     private var dragOffsetY: Int = 0
@@ -12,7 +12,7 @@ open class DragWindow(var x: Int, var y: Int, var width: Int, var height: Int) {
     /**
      * 判断鼠标是否在窗口标题区域（高度 headerHeight 内）
      */
-    fun isHoveringHeader(mouseX: Int, mouseY: Int, headerHeight: Int): Boolean {
+    fun shouldDrag(mouseX: Int, mouseY: Int, headerHeight: Int): Boolean {
         return mouseX in x..(x + width) && mouseY in y..(y + headerHeight)
     }
 
@@ -28,7 +28,7 @@ open class DragWindow(var x: Int, var y: Int, var width: Int, var height: Int) {
     /**
      * 拖拽中，更新窗口位置
      */
-    fun drag(mouseX: Int, mouseY: Int) {
+    fun update(mouseX: Int, mouseY: Int) {
         if (dragging) {
             x = mouseX - dragOffsetX
             y = mouseY - dragOffsetY
