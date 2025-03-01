@@ -1,9 +1,10 @@
 package ovo.xsvf.izmk.misc;
 
 import it.unimi.dsi.fastutil.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
-import ovo.xsvf.izmk.IZMK;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.ClassFileTransformer;
@@ -17,6 +18,7 @@ public class ClassUtil implements Opcodes {
     private static final HashMap<Class<?>, byte[]> classMap = new HashMap<>();
     private static final HashMap<Class<?>, byte[]> modifiedClasses = new HashMap<>();
     private static final HashMap<Pair<String,String>, Method> cachedMethods = new HashMap<>();
+    private static final Logger log = LogManager.getLogger(ClassUtil.class);
     private static Instrumentation instrumentation;
 
     public static Instrumentation getInstrumentation() {
@@ -32,7 +34,7 @@ public class ClassUtil implements Opcodes {
         try {
             instrumentation.retransformClasses(clazz);
         } catch (Exception e) {
-            IZMK.INSTANCE.getLogger().error(e);
+            log.error(e);
             throw new RuntimeException(e);
         }
     }
@@ -44,7 +46,7 @@ public class ClassUtil implements Opcodes {
             }
             instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
         } catch (Exception e) {
-            IZMK.INSTANCE.getLogger().error(e);
+            log.error(e);
             throw new RuntimeException(e);
         }
     }
@@ -57,7 +59,7 @@ public class ClassUtil implements Opcodes {
         modifiedClasses.forEach((clazz, bytes) -> {
             try {
                 instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
-                IZMK.INSTANCE.getLogger().info("Restored class {}", clazz);
+                log.info("Restored class {}", clazz);
             } catch (ClassNotFoundException | UnmodifiableClassException ignored) {}
         });
         System.gc();

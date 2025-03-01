@@ -9,6 +9,8 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.UseAnim;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.izmk.module.impl.OldAnimations;
 import ovo.xsvf.patchify.CallbackInfo;
@@ -17,6 +19,8 @@ import ovo.xsvf.patchify.api.Invocation;
 
 @Patch(ItemInHandRenderer.class)
 public class ItemInHandRendererPatch {
+    private static final Logger log = LogManager.getLogger(ItemInHandRendererPatch.class);
+
     @WrapInvoke(method = "renderArmWithItem", desc = "(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
                 target = "net/minecraft/world/item/ItemStack/getUseAnimation", targetDesc = "()Lnet/minecraft/world/item/UseAnim;")
     public static UseAnim getUseAnimation(ItemInHandRenderer self, AbstractClientPlayer pPlayer,
@@ -26,7 +30,6 @@ public class ItemInHandRendererPatch {
                                           Invocation invocation) throws Exception {
         if (OldAnimations.INSTANCE.getEnabled() && OldAnimations.INSTANCE.getSwordBlocking() &&
                 ((ItemStack) invocation.instance()).getItem() instanceof SwordItem) {
-            IZMK.logger.info("getUseAnimation");
            return UseAnim.BLOCK;
         }
         return (UseAnim) invocation.call();

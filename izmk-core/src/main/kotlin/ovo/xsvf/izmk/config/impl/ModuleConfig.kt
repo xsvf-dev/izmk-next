@@ -1,7 +1,6 @@
 package ovo.xsvf.izmk.config.impl
 
 import com.google.gson.JsonObject
-import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.config.Config
 import ovo.xsvf.izmk.module.ModuleManager
 import ovo.xsvf.izmk.module.RenderableModule
@@ -44,16 +43,14 @@ class ModuleConfig : Config("Module") {
                             module.y = moduleObject.get("y").asFloat
                         }
                     } catch (e: Exception) {
-                        IZMK.logger.error("Failed to load module config for ${module.name}", e)
+                        log.error("Failed to load module config for ${module.name}", e)
                     }
 
                     module.settings.forEach { setting ->
                         try {
-                            if (!module.loadFromConfig) return@forEach
-
-                            setting.setWithJson(moduleObject.get(setting.name.key.key))
+                            if (module.loadFromConfig) setting.setWithJson(moduleObject.get(setting.name.key.key))
                         } catch (e: Exception) {
-                            IZMK.logger.error("Failed to load setting ${setting.name.key.key} for ${module.name}", e)
+                            log.error("Failed to load setting ${setting.name.key.key} for ${module.name}", e)
                         }
                     }
                 }

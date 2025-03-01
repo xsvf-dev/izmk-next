@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.resource
 
+import org.apache.logging.log4j.LogManager
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.util.EncryptUtil
 import java.io.InputStream
@@ -7,9 +8,10 @@ import java.nio.file.Path
 
 object ResourceUtil {
     private val resources = HashMap<Path, ByteArray>()
+    private val log = LogManager.getLogger(ResourceUtil::class.java)
 
     fun init(jar: Path) {
-        IZMK.logger.info("Loading resources from ${jar.toAbsolutePath()}")
+        log.info("Loading resources from ${jar.toAbsolutePath()}")
         val func: (String, ByteArray) -> Unit = { name, data ->
             resources[Path.of(name)] = data
         }

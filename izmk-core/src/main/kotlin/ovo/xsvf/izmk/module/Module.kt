@@ -1,5 +1,7 @@
 package ovo.xsvf.izmk.module
 
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventBus
 import ovo.xsvf.izmk.event.impl.Render2DEvent
@@ -46,7 +48,7 @@ abstract class Module(val name: String,
     }
 
     protected val mc by lazy { IZMK.mc }
-    protected val logger by lazy { IZMK.logger }
+    protected val logger: Logger by lazy { LogManager.getLogger(javaClass) }
 
     fun toggle() {
         enabled = !enabled
@@ -61,6 +63,8 @@ abstract class Module(val name: String,
         settings.add(setting)
         return setting
     }
+
+
 
     fun getDisplayName(): String {
         return translation.translation

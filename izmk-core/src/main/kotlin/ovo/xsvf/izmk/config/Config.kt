@@ -1,14 +1,11 @@
 package ovo.xsvf.izmk.config
 
 import com.google.gson.JsonObject
+import org.apache.logging.log4j.LogManager
 
-open class Config(val name: String) {
+abstract class Config(val name: String) {
+    val log = LogManager.getLogger(javaClass)
 
-    open fun saveConfig(): JsonObject {
-        return JsonObject().apply {
-            addProperty("exampleKey", "exampleValue")
-        }
-    }
-
-    open fun loadConfig(jsonObject: JsonObject) {}
+    abstract fun saveConfig(): JsonObject
+    abstract fun loadConfig(jsonObject: JsonObject)
 }
