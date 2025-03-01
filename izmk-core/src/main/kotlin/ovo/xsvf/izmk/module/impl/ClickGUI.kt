@@ -1,6 +1,6 @@
 package ovo.xsvf.izmk.module.impl
 
-import ovo.xsvf.izmk.gui.impl.ModuleListScreen
+import ovo.xsvf.izmk.gui.screen.ModuleListScreen
 import ovo.xsvf.izmk.module.Module
 
 /**
