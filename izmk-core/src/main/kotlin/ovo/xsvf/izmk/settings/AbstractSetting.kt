@@ -1,7 +1,8 @@
 package ovo.xsvf.izmk.settings
 
 import com.google.gson.JsonElement
-import ovo.xsvf.izmk.graphics.color.ColorRGB
+import ovo.xsvf.izmk.gui.GuiScreen
+import ovo.xsvf.izmk.gui.widget.AbstractSettingWidget
 import ovo.xsvf.izmk.translation.TranslationString
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.properties.ReadWriteProperty
@@ -53,21 +54,7 @@ abstract class AbstractSetting<T>(
         return this
     }
 
-    fun setWithJson(v: JsonElement) {
-        when (this) {
-            is BooleanSetting -> this.value(v.asBoolean)
-            is TextSetting -> this.value(v.asString)
-            is ColorSetting -> this.value(ColorRGB(v.asInt))
-            is EnumSetting<*> -> this.setWithName(v.asString)
-            is KeyBindSetting -> this.value.valueFromString(v.asString)
-            is NumberSetting<*> -> {
-                when (this) {
-                    is IntSetting -> this.value(v.asInt)
-                    is LongSetting -> this.value(v.asLong)
-                    is FloatSetting -> this.value(v.asFloat)
-                    is DoubleSetting -> this.value(v.asDouble)
-                }
-            }
-        }
-    }
+    abstract fun setWithJson(json: JsonElement)
+
+    abstract fun createWidget(screen: GuiScreen): AbstractSettingWidget
 }

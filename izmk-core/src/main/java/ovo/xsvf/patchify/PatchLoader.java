@@ -1,10 +1,11 @@
 package ovo.xsvf.patchify;
 
 import it.unimi.dsi.fastutil.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
-import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.patchify.annotation.*;
 import ovo.xsvf.patchify.api.ILocals;
 import ovo.xsvf.patchify.api.IPatchLoader;
@@ -18,24 +19,11 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class PatchLoader implements IPatchLoader {
-    private final Consumer<String> debug;
-    private final Consumer<String> info;
-    private final Consumer<String> warn;
-
-    public PatchLoader(Consumer<String> debug, Consumer<String> info, Consumer<String> warn) {
-        this.debug = debug;
-        this.info = info;
-        this.warn = warn;
-    }
-
-    public PatchLoader() {
-        this((s) -> {}, (s) -> {}, (s) -> {});
-    }
+    private static final Logger log = LogManager.getLogger(PatchLoader.class);
 
     private static Inject getInject(Class<?> patchClass, Method method) {
         Inject inject = method.getAnnotation(Inject.class);
@@ -75,7 +63,7 @@ public final class PatchLoader implements IPatchLoader {
     private static List<AbstractInsnNode> getInjectionPoints(InsnList insnList, Slice slice, Predicate<AbstractInsnNode> filter) {
         final List<AbstractInsnNode> injectionPoints = new ArrayList<>();
         if (slice.start().value() == At.Type.HEAD && slice.end().value() == At.Type.TAIL && slice.startIndex() == -1 && slice.endIndex() == -1) {
-            IZMK.INSTANCE.getLogger().debug("head-tail slice injection point found!");
+            log.debug("head-tail slice injection point found!");
             injectionPoints.addAll(Arrays.stream(insnList.toArray()).filter(filter).toList());
         } else if (slice.startIndex() != -1 || slice.endIndex() != -1) {
             // This is an index-based slice
@@ -85,9 +73,9 @@ public final class PatchLoader implements IPatchLoader {
             for (AbstractInsnNode insnNode : insnList) {
                 if (filter.test(insnNode)) {
                     count++;
-                    IZMK.INSTANCE.getLogger().debug("index-based slice match found!, count = " + count);
+                    log.debug("index-based slice match found!, count = " + count);
                     if (count >= slice.startIndex() && count <= endIndex) {
-                        IZMK.INSTANCE.getLogger().debug("index-based slice injection point found!");
+                        log.debug("index-based slice injection point found!");
                         injectionPoints.add(insnNode);
                     } else if (count > endIndex) {
                         break;
@@ -95,7 +83,7 @@ public final class PatchLoader implements IPatchLoader {
                 }
             }
         } else {
-            IZMK.INSTANCE.getLogger().debug("method/head-tail before/after slice injection point found!");
+            log.debug("method/head-tail before/after slice injection point found!");
             // this is a method-based slice
             boolean head = slice.start().value() == At.Type.HEAD;
             boolean tail = slice.end().value() == At.Type.TAIL;
@@ -111,7 +99,7 @@ public final class PatchLoader implements IPatchLoader {
                     break;
                 }
                 if (foundStart) {
-                    IZMK.INSTANCE.getLogger().debug("method-based slice injection point found!");
+                    log.debug("method-based slice injection point found!");
                     injectionPoints.add(insnNode);
                 }
             }
@@ -265,7 +253,7 @@ public final class PatchLoader implements IPatchLoader {
                         m.name.equals(split.second()) && m.desc.equals(invoke.second()));
 
         if (toInject.isEmpty()) {
-            IZMK.INSTANCE.getLogger().warn("method invocation with name = {}, desc = {} cannot be found in target method", invoke.first(), invoke.second());
+            log.warn("method invocation with name = {}, desc = {} cannot be found in target method", invoke.first(), invoke.second());
             return;
         }
 
@@ -390,7 +378,7 @@ public final class PatchLoader implements IPatchLoader {
                         m.name.equals(split.second()) && m.desc.equals(wrap.second()));
 
         if (toWrap.isEmpty()) {
-            IZMK.INSTANCE.getLogger().warn("method invocation with name = {}, desc = {} cannot be found in target method", wrap.first(), wrap.second());
+            log.warn("method invocation with name = {}, desc = {} cannot be found in target method", wrap.first(), wrap.second());
             return;
         }
 
@@ -584,7 +572,7 @@ public final class PatchLoader implements IPatchLoader {
         if (!patchClass.isAnnotationPresent(Patch.class))
             throw new IllegalArgumentException("Class " + patchClass.getName() + " is not annotated with @Patch");
 
-        IZMK.INSTANCE.getLogger().debug("loading patch {}", patchClass.getName());
+        log.debug("loading patch {}", patchClass.getName());
 
         Class<?> targetClass = patchClass.getAnnotation(Patch.class).value();
         ClassNode targetNode = ASMUtil.node(bytesProvider.apply(targetClass));
@@ -639,7 +627,7 @@ public final class PatchLoader implements IPatchLoader {
                 var injectMethods = injectMap.get(Pair.of(targetNode.name + "/" + method.name, method.desc));
 
                 for (var injectMethod : injectMethods) {
-                    IZMK.INSTANCE.getLogger().info("processing method " + method.name + " in class " + targetClass.getName() + " with patch method " + injectMethod.getName() + " in class " + patchClass.getName());
+                    log.info("processing method " + method.name + " in class " + targetClass.getName() + " with patch method " + injectMethod.getName() + " in class " + patchClass.getName());
                     if (injectMethod.isAnnotationPresent(Inject.class)) {
                         At at = injectMethod.getAnnotation(Inject.class).at();
                         switch (at.value()) {
@@ -658,7 +646,7 @@ public final class PatchLoader implements IPatchLoader {
                     } else if (injectMethod.isAnnotationPresent(Overwrite.class)) {
                         overwrite(method, injectMethod);
                     } else if (injectMethod.isAnnotationPresent(Transform.class)) {
-                        IZMK.INSTANCE.getLogger().debug("transforming method " + method.name + " in class " + targetClass.getName());
+                        log.debug("transforming method " + method.name + " in class " + targetClass.getName());
                         injectMethod.invoke(null, method);
                     } else if (injectMethod.isAnnotationPresent(WrapInvoke.class)) {
                         int index = Modifier.isStatic(method.access) ? 0 : 1;

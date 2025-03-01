@@ -1,6 +1,7 @@
 package ovo.xsvf.izmk
 
 import net.minecraft.client.Minecraft
+import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import ovo.xsvf.izmk.config.ConfigManager
 import ovo.xsvf.izmk.event.EventTarget
@@ -16,14 +17,14 @@ import kotlin.properties.Delegates
 import com.mojang.blaze3d.systems.RenderSystem as MojangRenderSystem
 
 object IZMK {
-    lateinit var logger: Logger
+    val log: Logger = LogManager.getLogger(javaClass)
     lateinit var mc: Minecraft
     var obfuscated by Delegates.notNull<Boolean>()
 
     const val ASSETS_DIRECTORY = "assets/izmk"
 
     fun init() {
-        logger.info("Start initializing IZMK...")
+        log.info("Start initializing IZMK...")
         PreInitEvent().post()
 
         ModuleManager.init()
@@ -40,7 +41,7 @@ object IZMK {
         }
 
         PostInitEvent().post()
-        logger.info("IZMK has been successfully initialized!")
+        log.info("IZMK has been successfully initialized!")
     }
 
     @EventTarget

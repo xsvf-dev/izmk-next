@@ -3,7 +3,7 @@ package ovo.xsvf.izmk.config
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import ovo.xsvf.izmk.IZMK
+import org.apache.logging.log4j.LogManager
 import ovo.xsvf.izmk.IZMK.mc
 import ovo.xsvf.izmk.config.impl.ModuleConfig
 import java.io.File
@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 object ConfigManager {
+    private val log = LogManager.getLogger(javaClass)
     private val configs = CopyOnWriteArrayList<Config>()
     private val dir = File(mc.gameDirectory, "IZMK")
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
@@ -44,10 +45,10 @@ object ConfigManager {
                     configs.find { it.name == name }?.loadConfig(json ?: JsonObject())
                     logConfigAction(name, "Loaded successfully")
                 }.onFailure {
-                    IZMK.logger.error("Failed to load config $name: ${it.message}")
+                    log.error("Failed to load config $name: ${it.message}")
                 }
             } else {
-                IZMK.logger.warn("Config $name doesn't exist, creating a new one...")
+                log.warn("Config $name doesn't exist, creating a new one...")
                 saveConfig(name)
             }
         }
@@ -56,7 +57,7 @@ object ConfigManager {
     @Synchronized
     private fun saveConfig(name: String) {
         if (executor.isShutdown) {
-            IZMK.logger.warn("Attempted to save config $name but executor is shut down!")
+            log.warn("Attempted to save config $name but executor is shut down!")
             return
         }
 
@@ -72,15 +73,15 @@ object ConfigManager {
                 }.onSuccess {
                     logConfigAction(name, "Saved successfully")
                 }.onFailure {
-                    IZMK.logger.error("Failed to save config $name: ${it.message}")
+                    log.error("Failed to save config $name: ${it.message}")
                 }
-            } ?: IZMK.logger.error("Config $name not found!")
+            } ?: log.error("Config $name not found!")
         }
     }
 
     fun loadAllConfig() {
         if (executor.isShutdown) {
-            IZMK.logger.warn("Attempted to load all configs but executor is shut down!")
+            log.warn("Attempted to load all configs but executor is shut down!")
             return
         }
 
@@ -92,7 +93,7 @@ object ConfigManager {
 
     fun saveAllConfig() {
         if (executor.isShutdown) {
-            IZMK.logger.warn("Attempted to save all configs but executor is shut down!")
+            log.warn("Attempted to save all configs but executor is shut down!")
             return
         }
 
@@ -103,7 +104,7 @@ object ConfigManager {
     }
 
     private fun logConfigAction(name: String, message: String) {
-        IZMK.logger.info("$message: $name")
+        log.info("$message: $name")
     }
 
     fun shutdown() {

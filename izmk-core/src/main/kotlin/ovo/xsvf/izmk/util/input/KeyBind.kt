@@ -81,6 +81,7 @@ data class KeyBind @JvmOverloads constructor(
     }
 
     fun valueToString(): String = "${type.name}:$keyCode:$scanCode"
+
     fun valueFromString(string: String) {
         val split = string.split(":")
         this.type = Type.valueOf(split[0])
