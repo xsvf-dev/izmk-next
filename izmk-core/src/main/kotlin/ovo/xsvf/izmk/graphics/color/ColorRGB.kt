@@ -141,6 +141,7 @@ data class ColorRGB(val rgba: Int) {
         val GREEN = ColorRGB(0, 255, 0)
         val BLACK = ColorRGB(0, 0, 0)
         val GRAY = ColorRGB(128, 128, 128)
+        val RED = ColorRGB(255, 0, 0)
 
         val EMPTY = BLACK.alpha(0)
     }

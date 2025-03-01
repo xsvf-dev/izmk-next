@@ -6,28 +6,19 @@ import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.GuiScreen
-import ovo.xsvf.izmk.gui.widget.impl.ModuleWidget
-import ovo.xsvf.izmk.module.ModuleManager
+import ovo.xsvf.izmk.gui.widget.AbstractWidget
 
-class ModuleListScreen : GuiScreen("module-list") {
+class SimpleListScreen(val widgets: MutableList<AbstractWidget>, name: String) : GuiScreen(name) {
     private val rectMulti = PosColor2DMultiDraw()
     private val fontMulti = FontMultiDraw()
-
-    private val widgets = mutableListOf<ModuleWidget>()
 
     private val window = DraggableWindow(50, 50, 300, 400)
     private val padding = 35f
 
-    init {
-        ModuleManager.modules().forEach {
-            widgets.add(ModuleWidget(this, it))
-        }
-    }
-
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         window.update(mouseX, mouseY)
 
-        fontMulti.addText("IZMK-Next",
+        fontMulti.addText(name,
             window.x.toFloat() + 5f,
             window.y.toFloat() + 5f,
             ColorRGB.WHITE,
@@ -78,6 +69,15 @@ class ModuleListScreen : GuiScreen("module-list") {
 
             offsetY += it.getHeight() + 5f
         }
+    }
+
+    override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
+        widgets.forEach {
+            if (it.keyPressed(keyCode, scanCode)) {
+                return true
+            }
+        }
+        return false
     }
 
     override fun mouseReleased(buttonID: Int, mouseX: Double, mouseY: Double) {

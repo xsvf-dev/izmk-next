@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screens.ChatScreen
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventTarget
+import ovo.xsvf.izmk.event.impl.KeyEvent
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.easing.AnimationFlag
@@ -136,5 +137,14 @@ object ModuleManager {
             hud.height + (outlineWidth * 2),
             borderColor
         )
+    }
+
+    @EventTarget
+    fun onKey(event: KeyEvent) {
+        if (event.action == GLFW.GLFW_PRESS) {
+            modules()
+                .filter { it.keyBind.keyCode == event.keyCode && it.keyBind.scanCode == event.scanCode }
+                .forEach { it.toggle() }
+        }
     }
 }

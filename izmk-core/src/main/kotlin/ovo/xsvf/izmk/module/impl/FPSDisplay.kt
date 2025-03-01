@@ -14,8 +14,8 @@ object FPSDisplay: RenderableModule(
     width = 40f, height = 15f
 ) {
     private val drawString by setting("draw-string", true)
-//    private val fontScale by setting("font-scale",1f,1f..3f)
-//    private val stringColor by setting("string-color", ColorRGB.WHITE)
+    private val fontScale by setting("font-scale",1f,1f..3f)
+    private val stringColor by setting("string-color", ColorRGB.WHITE)
 
     @EventTarget
     fun onRender2D(event: Render2DEvent) {

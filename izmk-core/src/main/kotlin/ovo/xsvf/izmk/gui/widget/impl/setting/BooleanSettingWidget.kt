@@ -14,11 +14,12 @@ class BooleanSettingWidget(screen: GuiScreen, override val setting: BooleanSetti
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
     ) {
+        drawDefaultBackground(rectMulti, renderX, renderY, screenWidth)
         fontMulti.addText(
-            "${setting.name.translation} ${if (setting.value) "(ON)" else "(OFF)"}",
+            setting.name.translation,
             renderX + 2f,
             renderY + 3f,
-            if (setting.value) ColorRGB.WHITE else ColorRGB.GRAY
+            if (setting.value) ColorRGB.GREEN else ColorRGB.RED
         )
     }
 

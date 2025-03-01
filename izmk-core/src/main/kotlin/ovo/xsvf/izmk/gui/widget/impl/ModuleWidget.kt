@@ -4,12 +4,14 @@ import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.gui.GuiScreen
-import ovo.xsvf.izmk.gui.screen.ValueListScreen
+import ovo.xsvf.izmk.gui.screen.SimpleListScreen
 import ovo.xsvf.izmk.gui.widget.AbstractWidget
 import ovo.xsvf.izmk.module.Module
 
 class ModuleWidget(screen: GuiScreen, val module: Module) : AbstractWidget(screen) {
-    private val valueListScreen = ValueListScreen(module)
+    private val valueListScreen = SimpleListScreen(module.settings
+        .map { it.createWidget(screen) }.
+        toMutableList(), module.getDisplayName())
 
     override fun draw(
         screenWidth: Int, screenHeight: Int,

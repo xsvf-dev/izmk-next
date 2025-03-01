@@ -1,6 +1,5 @@
 package ovo.xsvf.izmk.gui.widget
 
-import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.gui.GuiScreen
@@ -10,12 +9,14 @@ abstract class AbstractSettingWidget(
     screen: GuiScreen,
     open val setting: AbstractSetting<*>
 ): AbstractWidget(screen) {
-    abstract fun draw0(
+    open fun draw0(
         screenWidth: Int, screenHeight: Int,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
-    )
+    ) {
+        drawDefaultBackground(rectMulti, renderX, renderY, screenWidth)
+    }
 
     final override fun draw(
         screenWidth: Int, screenHeight: Int,
@@ -24,14 +25,10 @@ abstract class AbstractSettingWidget(
         partialTicks: Float
     ) {
         if (!setting.visibility()) return
-        rectMulti.addRectGradientHorizontal(
-            renderX, renderY,
-            screenWidth - 2 * 5f, getHeight().toFloat(),
-            ColorRGB(0.2f, 0.2f, 0.2f),
-            ColorRGB(0.25f, 0.25f, 0.25f)
-        )
         draw0(screenWidth, screenHeight, renderX, renderY, fontMulti, rectMulti, partialTicks)
     }
+
+
 
     open fun getHeight0() : Int {
         return 20

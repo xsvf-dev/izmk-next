@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.gui.widget.impl.setting
 
+import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.gui.GuiScreen
@@ -14,7 +15,13 @@ class ColorSettingWidget(screen: GuiScreen, override val setting: ColorSetting):
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
     ) {
-        TODO("Not yet implemented")
+        drawDefaultBackground(rectMulti, renderX, renderY, screenWidth)
+        fontMulti.addText(
+            "${setting.name.translation}: ${setting.value}",
+            renderX + 2f,
+            renderY + 3f,
+            ColorRGB.WHITE
+        )
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, isLeftClick: Boolean) {

@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.gui.widget.impl.setting
 
+import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.gui.GuiScreen
@@ -14,10 +15,11 @@ class TextSettingWidget(screen: GuiScreen, override val setting: TextSetting):
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
     ) {
-        TODO("Not yet implemented")
-    }
-
-    override fun mouseClicked(mouseX: Double, mouseY: Double, isLeftClick: Boolean) {
-        TODO("Not yet implemented")
+        fontMulti.addText(
+            "TEXT: ${setting.name.translation}",
+            renderX + 2f,
+            renderY + 3f,
+            ColorRGB.WHITE
+        )
     }
 }

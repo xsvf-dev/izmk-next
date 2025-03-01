@@ -20,7 +20,8 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 abstract class Module(val name: String,
                       val description: String = "",
-                      val loadFromConfig: Boolean = true
+                      val loadFromConfig: Boolean = true,
+                      val showInGui: Boolean = true
 ): SettingsDesigner<Module> {
     internal val settings = CopyOnWriteArrayList<AbstractSetting<*>>()
 
@@ -63,8 +64,6 @@ abstract class Module(val name: String,
         settings.add(setting)
         return setting
     }
-
-
 
     fun getDisplayName(): String {
         return translation.translation
