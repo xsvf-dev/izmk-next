@@ -29,6 +29,7 @@ object ModuleManager {
         addModule(FPSDisplay)
         addModule(RenderTest)
         addModule(OldAnimations)
+        addModule(ChatCopy)
         addModule(ClickGUI)
 
         /* render modules */
@@ -143,7 +144,7 @@ object ModuleManager {
     fun onKey(event: KeyEvent) {
         if (event.action == GLFW.GLFW_PRESS) {
             modules()
-                .filter { it.keyBind.keyCode == event.keyCode && it.keyBind.scanCode == event.scanCode }
+                .filter { it.keyBind.keyCode == event.keyCode || it.keyBind.scanCode == event.scanCode }
                 .forEach { it.toggle() }
         }
     }

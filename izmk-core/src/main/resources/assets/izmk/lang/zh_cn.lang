@@ -10,8 +10,8 @@ modules.render-test=渲染测试
 modules.test-hud=测试HUD
 
 modules.click-gui=Click GUI
-
-modules.nene-hud=Nene HUD
+modules.chat-copy=聊天复制
+modules.nene-hud=柚子厨滚出本客户端
 
 modules.old-animations=旧版本动画
 modules.old-animations.sword-blocking=防砍

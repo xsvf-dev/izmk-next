@@ -20,7 +20,6 @@ class BindCommand : Command("bind", ".bind 模块名称 按键名称") {
         if (keyCode == -1) {
             return ChatUtil.addMessageWithClient("找不到有这个名字的按键: $keyName")
         }
-
         module.keyBind = KeyBind(KeyBind.Type.KEYBOARD, keyCode, 0)
         ChatUtil.addMessageWithClient("绑定按键成功: $keyName")
     }

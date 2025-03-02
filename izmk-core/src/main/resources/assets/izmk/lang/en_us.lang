@@ -10,7 +10,7 @@ modules.render-test=Render Test
 modules.test-hud=Test HUD
 
 modules.click-gui=Click GUI
-
+modules.chat-copy=Chat Copy
 modules.nene-hud=Nene HUD
 
 modules.old-animations=Old Animations
