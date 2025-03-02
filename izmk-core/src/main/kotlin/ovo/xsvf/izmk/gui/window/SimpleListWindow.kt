@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.gui.screen
+package ovo.xsvf.izmk.gui.window
 
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.graphics.color.ColorRGB
@@ -8,21 +8,23 @@ import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.AbstractWidget
 
-class SimpleListScreen(val widgets: MutableList<AbstractWidget>, name: String) : GuiScreen(name) {
+class SimpleListWindow(val widgets: MutableList<AbstractWidget>, title: String = ""): AbstractWindow(
+    title, 50f, 50f, 300f, 400f,
+) {
     private val rectMulti = PosColor2DMultiDraw()
     private val fontMulti = FontMultiDraw()
 
-    private val window = DraggableWindow(50, 50, 300, 400)
+    private val window = DraggableWindow(x, y, width, height)
     private val padding = 35f
 
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+    override fun draw(mouseX: Float, mouseY: Float, partialTicks: Float) {
         window.update(mouseX, mouseY)
 
-        fontMulti.addText(name,
+        fontMulti.addText(title,
             window.x.toFloat() + 5f,
             window.y.toFloat() + 5f,
             ColorRGB.WHITE,
-            false,2f
+            false, 2f
         )
 
         // 绘制列表背景
@@ -43,10 +45,10 @@ class SimpleListScreen(val widgets: MutableList<AbstractWidget>, name: String) :
         fontMulti.draw()
     }
 
-    override fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {
-        if (window.shouldDrag(mouseX.toInt(), mouseY.toInt(), 20)) {
-            window.startDrag(mouseX.toInt(), mouseY.toInt())
-            return
+    override fun mouseClicked(buttonID: Int, mouseX: Float, mouseY: Float): Boolean {
+        if (window.shouldDrag(mouseX, mouseY, padding)) {
+            window.startDrag(mouseX, mouseY)
+            return true
         }
 
         var offsetY = window.y + padding
@@ -64,11 +66,13 @@ class SimpleListScreen(val widgets: MutableList<AbstractWidget>, name: String) :
 
             if (isMouseOver) {
                 it.mouseClicked(mouseX, mouseY, buttonID == GLFW.GLFW_MOUSE_BUTTON_LEFT)
-                return
+                return true
             }
 
             offsetY += it.getHeight() + 5f
         }
+
+        return false
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
@@ -80,7 +84,7 @@ class SimpleListScreen(val widgets: MutableList<AbstractWidget>, name: String) :
         return false
     }
 
-    override fun mouseReleased(buttonID: Int, mouseX: Double, mouseY: Double) {
-        window.stopDrag()
+    override fun mouseReleased(buttonID: Int, mouseX: Float, mouseY: Float): Boolean {
+        return window.stopDrag()
     }
 }

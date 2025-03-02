@@ -1,3 +1,10 @@
+modules.key-bind=Key Bind
+modules.enabled=Enabled
+
+modules.renderable.x=X Position
+modules.renderable.y=Y Position
+
+# Modules
 modules.fps-display=FPS Display
 modules.fps-display.draw-string=Draw String
 modules.fps-display.font-scale=Font Scale
@@ -16,5 +23,3 @@ modules.nene-hud=Nene HUD
 modules.old-animations=Old Animations
 modules.old-animations.sword-blocking=Sword Blocking
 
-modules.renderable.x=X Position
-modules.renderable.y=Y Position

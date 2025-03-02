@@ -13,37 +13,37 @@ import ovo.xsvf.izmk.event.impl.Render2DEvent
  * @since 2/27/2025
  */
 open class GuiScreen(val name: String) {
-    private var mouseX = 0
-    private var mouseY = 0
+    private var mouseX = 0f
+    private var mouseY = 0f
     private var screen: Screen? = null
-    private var tempScreen: GuiScreen? = null
 
     val mc by lazy { IZMK.mc }
 
-    open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {}
-    open fun mouseClicked(buttonID: Int, mouseX: Double, mouseY: Double) {}
-    open fun mouseReleased(buttonID: Int, mouseX: Double, mouseY: Double) {}
+    open fun drawScreen(mouseX: Float, mouseY: Float, partialTicks: Float) {}
+    open fun mouseClicked(buttonID: Int, mouseX: Float, mouseY: Float) {}
+    open fun mouseReleased(buttonID: Int, mouseX: Float, mouseY: Float) {}
     open fun keyPressed(keyCode: Int, scanCode: Int): Boolean { return false }
 
-    fun openScreen(lastScreen: GuiScreen?) {
-        tempScreen = lastScreen
+    open fun shouldCloseOnEsc(): Boolean = true
+
+    fun openScreen() {
         if (screen == null) {
             screen = object : Screen(Component.literal("izmk-$name")) {
                 override fun shouldCloseOnEsc() = true
                 override fun isPauseScreen() = false
 
                 override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-                    mouseX = pMouseX
-                    mouseY = pMouseY
+                    mouseX = pMouseX.toFloat()
+                    mouseY = pMouseY.toFloat()
                 }
 
                 override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
-                    mouseClicked(pButton, pMouseX, pMouseY)
+                    mouseClicked(pButton, pMouseX.toFloat(), pMouseY.toFloat())
                     return super.mouseClicked(pMouseX, pMouseY, pButton)
                 }
 
                 override fun mouseReleased(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
-                    mouseReleased(pButton, pMouseX, pMouseY)
+                    mouseReleased(pButton, pMouseX.toFloat(), pMouseY.toFloat())
                     return super.mouseReleased(pMouseX, pMouseY, pButton)
                 }
 
@@ -63,13 +63,12 @@ open class GuiScreen(val name: String) {
                 }
             }
         }
-        EventBus.register(screen!!)
+        screen?.let { EventBus.register(it) }
         mc.setScreen(screen)
     }
 
     fun closeScreen() {
-        EventBus.unregister(screen!!)
-        if (tempScreen != null) tempScreen!!.openScreen(null)
-        else mc.setScreen(null)
+        screen?.let { EventBus.unregister(it) }
+        mc.setScreen(null)
     }
 }

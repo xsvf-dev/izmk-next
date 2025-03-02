@@ -16,29 +16,31 @@ class KeybindSettingWidget(
     private var binding = false
 
     override fun draw0(
-        screenWidth: Int, screenHeight: Int,
+        screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
     ) {
         drawDefaultBackground(rectMulti, renderX, renderY, screenWidth)
         fontMulti.addText(
-            if (binding) "Press a key to bind" else
-                if (setting.value.keyCode == -1) "Not bound" else "Bound to ${setting.value.keyName.uppercase()}",
+            "${setting.name.translation}: " +
+                if (binding) "Press a key to bind"
+                else if (setting.value.keyCode == -1) "Not bound"
+                else "Bound to ${setting.value.keyName.uppercase()}",
             renderX + 2f,
             renderY + 3f,
             ColorRGB.WHITE
         )
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, isLeftClick: Boolean) {
+    override fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {
         binding = !binding
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
         if (binding) {
             binding = false
-            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (keyCode == GLFW.GLFW_KEY_DELETE) {
                 setting.value = KeyBind(KeyBind.Type.KEYBOARD, -1, -1)
                 return true
             }

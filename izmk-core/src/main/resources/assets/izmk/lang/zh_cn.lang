@@ -1,3 +1,10 @@
+modules.key-bind=按键绑定
+modules.enabled=启用
+
+modules.renderable.x=X坐标
+modules.renderable.y=Y坐标
+
+# Modules
 modules.fps-display=帧数显示
 modules.fps-display.draw-string=绘制字符串
 modules.fps-display.font-scale=字体缩放
@@ -16,5 +23,3 @@ modules.nene-hud=柚子厨滚出本客户端
 modules.old-animations=旧版本动画
 modules.old-animations.sword-blocking=防砍
 
-modules.renderable.x=X坐标
-modules.renderable.y=Y坐标

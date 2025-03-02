@@ -75,23 +75,30 @@ abstract class RenderableModule(
     var width: Float = 0f,
     var height: Float  = 0f
 ): Module(name, description) {
-    var x by setting(FloatSetting(
+    private val x0 = FloatSetting(
         TranslationString("modules.renderable", "x"), defaultX,
         minValue = 0f, maxValue = mc.window.width.toFloat(), step = mc.window.width / 500f,
-        visibility = { true }
-    ))
+        visibility = { false }
+    )
+    var x by x0
 
-    var y by setting(FloatSetting(
+    private val y0 = FloatSetting(
         TranslationString("modules.renderable", "y"), defaultY,
         minValue = 0f, maxValue = mc.window.height.toFloat(), step = mc.window.height / 500f,
-        visibility = { true }
-    ))
+        visibility = { false }
+    )
+    var y by y0
 
     val x1: Float
         get() = x + width
 
     val y1: Float
         get() = y + height
+
+    init {
+        settings.add(x0)
+        settings.add(y0)
+    }
 
     open fun render(event: Render2DEvent) {}
 

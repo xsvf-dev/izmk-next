@@ -9,7 +9,7 @@ import ovo.xsvf.izmk.settings.BooleanSetting
 
 class BooleanSettingWidget(screen: GuiScreen, override val setting: BooleanSetting): AbstractSettingWidget(screen, setting) {
     override fun draw0(
-        screenWidth: Int, screenHeight: Int,
+        screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
@@ -23,7 +23,7 @@ class BooleanSettingWidget(screen: GuiScreen, override val setting: BooleanSetti
         )
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, isLeftClick: Boolean) {
+    override fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {
         setting.toggle()
     }
 }

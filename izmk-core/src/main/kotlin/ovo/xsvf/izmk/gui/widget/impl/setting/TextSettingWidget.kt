@@ -10,7 +10,7 @@ import ovo.xsvf.izmk.settings.TextSetting
 class TextSettingWidget(screen: GuiScreen, override val setting: TextSetting):
     AbstractSettingWidget(screen, setting) {
     override fun draw0(
-        screenWidth: Int, screenHeight: Int,
+        screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float

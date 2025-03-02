@@ -12,6 +12,7 @@ import ovo.xsvf.izmk.graphics.RenderSystem
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.utils.RenderUtils
+import ovo.xsvf.izmk.gui.screen.ClickGUIScreen
 import ovo.xsvf.izmk.module.ModuleManager
 import kotlin.properties.Delegates
 import com.mojang.blaze3d.systems.RenderSystem as MojangRenderSystem
@@ -31,6 +32,8 @@ object IZMK {
         ConfigManager.init()
 
         MojangRenderSystem.recordRenderCall {
+            // GUI
+            ClickGUIScreen
             // Systems
             VertexBufferObjects
             RenderSystem

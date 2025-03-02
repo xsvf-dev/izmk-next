@@ -10,7 +10,7 @@ abstract class AbstractSettingWidget(
     open val setting: AbstractSetting<*>
 ): AbstractWidget(screen) {
     open fun draw0(
-        screenWidth: Int, screenHeight: Int,
+        screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
@@ -19,7 +19,7 @@ abstract class AbstractSettingWidget(
     }
 
     final override fun draw(
-        screenWidth: Int, screenHeight: Int,
+        screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
@@ -30,11 +30,11 @@ abstract class AbstractSettingWidget(
 
 
 
-    open fun getHeight0() : Int {
-        return 20
+    open fun getHeight0(): Float {
+        return 20f
     }
 
-    final override fun getHeight(): Int {
-        return if (setting.visibility()) getHeight0() else 0
+    final override fun getHeight(): Float {
+        return if (setting.visibility()) getHeight0() else 0f
     }
 }

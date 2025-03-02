@@ -10,7 +10,7 @@ import ovo.xsvf.izmk.settings.NumberSetting
 class NumberSettingWidget<N: Number>(screen: GuiScreen, override val setting: NumberSetting<N>):
     AbstractSettingWidget(screen, setting) {
     override fun draw0(
-        screenWidth: Int, screenHeight: Int,
+        screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float

@@ -1,25 +1,25 @@
-package ovo.xsvf.izmk.gui.screen
+package ovo.xsvf.izmk.gui.window
 
 /**
  * @author LangYa466
  * @since 2/15/2025
  */
-class DraggableWindow(var x: Int, var y: Int, var width: Int, var height: Int) {
+class DraggableWindow(var x: Float, var y: Float, var width: Float, var height: Float) {
     private var dragging: Boolean = false
-    private var dragOffsetX: Int = 0
-    private var dragOffsetY: Int = 0
+    private var dragOffsetX: Float = 0f
+    private var dragOffsetY: Float = 0f
 
     /**
      * 判断鼠标是否在窗口标题区域（高度 headerHeight 内）
      */
-    fun shouldDrag(mouseX: Int, mouseY: Int, headerHeight: Int): Boolean {
+    fun shouldDrag(mouseX: Float, mouseY: Float, headerHeight: Float): Boolean {
         return mouseX in x..(x + width) && mouseY in y..(y + headerHeight)
     }
 
     /**
      * 开始拖拽，并记录初始偏移量
      */
-    fun startDrag(mouseX: Int, mouseY: Int) {
+    fun startDrag(mouseX: Float, mouseY: Float) {
         dragging = true
         dragOffsetX = mouseX - x
         dragOffsetY = mouseY - y
@@ -28,7 +28,7 @@ class DraggableWindow(var x: Int, var y: Int, var width: Int, var height: Int) {
     /**
      * 拖拽中，更新窗口位置
      */
-    fun update(mouseX: Int, mouseY: Int) {
+    fun update(mouseX: Float, mouseY: Float) {
         if (dragging) {
             x = mouseX - dragOffsetX
             y = mouseY - dragOffsetY
@@ -38,7 +38,11 @@ class DraggableWindow(var x: Int, var y: Int, var width: Int, var height: Int) {
     /**
      * 停止拖拽
      */
-    fun stopDrag() {
-        dragging = false
+    fun stopDrag(): Boolean {
+        if (dragging) {
+            dragging = false
+            return true
+        }
+        return false
     }
 }

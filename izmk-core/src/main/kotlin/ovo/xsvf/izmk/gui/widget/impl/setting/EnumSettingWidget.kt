@@ -10,7 +10,7 @@ import ovo.xsvf.izmk.settings.EnumSetting
 class EnumSettingWidget<E: Enum<E>>(screen: GuiScreen, override val setting: EnumSetting<E>):
     AbstractSettingWidget(screen, setting) {
     override fun draw0(
-        screenWidth: Int, screenHeight: Int,
+        screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
@@ -24,7 +24,7 @@ class EnumSettingWidget<E: Enum<E>>(screen: GuiScreen, override val setting: Enu
         )
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, isLeftClick: Boolean) {
+    override fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {
         setting.forwardLoop()
     }
 }

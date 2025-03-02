@@ -1,6 +1,5 @@
 package ovo.xsvf.izmk.settings
 
-import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.translation.TranslationString
 import ovo.xsvf.izmk.util.input.KeyBind

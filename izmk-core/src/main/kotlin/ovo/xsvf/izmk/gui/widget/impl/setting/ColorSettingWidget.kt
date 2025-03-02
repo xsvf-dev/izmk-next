@@ -7,10 +7,14 @@ import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.AbstractSettingWidget
 import ovo.xsvf.izmk.settings.ColorSetting
 
-class ColorSettingWidget(screen: GuiScreen, override val setting: ColorSetting):
-    AbstractSettingWidget(screen, setting) {
+class ColorSettingWidget(
+    screen: GuiScreen,
+    override val setting: ColorSetting
+): AbstractSettingWidget(screen, setting) {
+    private var isExtended = false
+
     override fun draw0(
-        screenWidth: Int, screenHeight: Int,
+        screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
@@ -24,7 +28,12 @@ class ColorSettingWidget(screen: GuiScreen, override val setting: ColorSetting):
         )
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, isLeftClick: Boolean) {
-        TODO("Not yet implemented")
+    override fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {
+        if (!isLeftClick) {
+            isExtended = !isExtended
+        }
     }
+
+    override fun getHeight0(): Float =
+        if (isExtended) 50f else 20f
 }
