@@ -14,7 +14,7 @@ class BindCommand : Command("bind", ".bind 模块名称 按键名称") {
         }
 
         val (moduleName, keyName) = args[1] to args[2].uppercase()
-        val module = ModuleManager[moduleName] ?: return ChatUtil.addMessageWithClient("找不到有这个名字的模块")
+        val module = ModuleManager.getNullable(moduleName) ?: return ChatUtil.addMessageWithClient("找不到有这个名字的模块")
 
         val keyCode = keyNameToGLFWKeyCode(keyName)
         if (keyCode == -1) {

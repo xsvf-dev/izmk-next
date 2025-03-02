@@ -32,6 +32,7 @@ object ModuleManager {
         addModule(OldAnimations)
         addModule(ChatCopy)
         addModule(ClickGUI)
+        addModule(ItemPhysics)
 
         /* render modules */
         addModule(TestHud)
@@ -47,6 +48,10 @@ object ModuleManager {
 
     operator fun get(name: String): Module {
         return modulesMap[name]!!
+    }
+
+    fun getNullable(name: String): Module? {
+        return modulesMap[name]
     }
 
     inline fun <reified T: Module> get(): T {
