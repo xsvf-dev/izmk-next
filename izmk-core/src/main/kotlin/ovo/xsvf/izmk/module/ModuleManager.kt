@@ -45,8 +45,8 @@ object ModuleManager {
         modulesMap[module.name] = module
     }
 
-    operator fun get(name: String): Module? {
-        return modulesMap[name]
+    operator fun get(name: String): Module {
+        return modulesMap[name]!!
     }
 
     inline fun <reified T: Module> get(): T {
