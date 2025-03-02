@@ -25,6 +25,7 @@ open class GuiScreen(val name: String) {
     open fun keyPressed(keyCode: Int, scanCode: Int): Boolean { return false }
 
     open fun shouldCloseOnEsc(): Boolean = true
+    open fun onClose() {}
 
     fun openScreen() {
         if (screen == null) {
@@ -68,7 +69,8 @@ open class GuiScreen(val name: String) {
     }
 
     fun closeScreen() {
+        onClose()
         screen?.let { EventBus.unregister(it) }
-        mc.setScreen(null)
+        if (mc.screen?.title == screen?.title) mc.setScreen(null)
     }
 }

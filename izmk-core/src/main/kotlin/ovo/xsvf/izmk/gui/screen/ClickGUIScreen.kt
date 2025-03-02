@@ -5,6 +5,7 @@ import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.impl.ModuleWidget
 import ovo.xsvf.izmk.gui.window.SimpleListWindow
 import ovo.xsvf.izmk.module.ModuleManager
+import ovo.xsvf.izmk.module.impl.ClickGUI
 
 object ClickGUIScreen: GuiScreen("ClickGUI") {
     private val modulesWindow = SimpleListWindow(
@@ -45,6 +46,11 @@ object ClickGUIScreen: GuiScreen("ClickGUI") {
     override fun shouldCloseOnEsc(): Boolean {
         // If settings window is open, don't close the screen
         return settingsWindow == null
+    }
+
+    override fun onClose() {
+        settingsWindow = null
+        ClickGUI.enabled = false
     }
 
 }

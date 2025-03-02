@@ -13,13 +13,15 @@ import ovo.xsvf.izmk.module.ModuleManager
 object ClickGUI : Module(
     name = "click-gui",
     description = "Open click-gui module",
-    loadFromConfig = false
 ) {
     override fun onLoad() {
     }
 
     override fun onEnable() {
-        enabled = false
+        if (mc.screen != null) {
+            toggle()
+            return
+        }
         ClickGUIScreen.openScreen()
     }
 }
