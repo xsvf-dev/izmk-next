@@ -33,10 +33,10 @@ interface SettingsDesigner<T : Any> {
 
     fun T.setting(
         name: CharSequence,
-        value: Int = GLFW.GLFW_KEY_UNKNOWN,
-        type: KeyBind.Type = KeyBind.Type.KEYBOARD,
+        value: KeyBind,
+        method: () -> Unit = {},
         visibility: () -> Boolean = { true }
-    ) = setting(KeyBindSetting(TranslationString("", name.toString()), KeyBind(type, value), visibility))
+    ) = setting(KeyBindSetting(TranslationString("", name.toString()), value, method, visibility))
 
     fun T.setting(
         name: CharSequence,

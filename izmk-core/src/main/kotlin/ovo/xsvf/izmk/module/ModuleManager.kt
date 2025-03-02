@@ -12,6 +12,7 @@ import ovo.xsvf.izmk.graphics.easing.AnimationFlag
 import ovo.xsvf.izmk.graphics.easing.Easing
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.module.impl.*
+import ovo.xsvf.izmk.settings.KeyBindSetting
 import java.util.concurrent.ConcurrentHashMap
 
 object ModuleManager {
@@ -143,9 +144,23 @@ object ModuleManager {
     @EventTarget
     fun onKey(event: KeyEvent) {
         if (event.action == GLFW.GLFW_PRESS) {
+            if (mc.screen != null) return
+
             modules()
-                .filter { it.keyBind.keyCode == event.keyCode || it.keyBind.scanCode == event.scanCode }
+                .filter { it.keyBind.keyCode == event.keyCode }
                 .forEach { it.toggle() }
+
+            modules()
+                .filter { it.enabled }
+                .forEach { module ->
+                    module.settings.forEach { setting ->
+                        if (setting is KeyBindSetting) {
+                            if (setting.value.keyCode == event.keyCode) {
+                                setting.method()
+                            }
+                        }
+                    }
+                }
         }
     }
 }

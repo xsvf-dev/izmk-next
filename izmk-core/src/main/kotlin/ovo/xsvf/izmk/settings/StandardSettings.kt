@@ -99,11 +99,9 @@ class EnumSetting<E: Enum<E>> @JvmOverloads constructor(
 class KeyBindSetting @JvmOverloads constructor(
     name: TranslationString,
     value: KeyBind = KeyBind(KeyBind.Type.KEYBOARD, -1, 1),
+    val method: () -> Unit = {},
     visibility: () -> Boolean = { true }
 ) : AbstractSetting<KeyBind>(name, value, visibility) {
-    private val pressConsumer = CopyOnWriteArrayList<() -> Unit>()
-
-    fun onPress(run: () -> Unit) = pressConsumer.add(run)
     override fun toJson(): JsonElement {
         return JsonPrimitive(value.valueToString())
     }

@@ -10,12 +10,8 @@ class ModuleConfig : Config("Module") {
         return JsonObject().apply {
             ModuleManager.modules().forEach { module ->
                 add(module.name, JsonObject().apply {
-                    if (module is RenderableModule) {
-                        addProperty("x", module.x)
-                        addProperty("y", module.y)
-                    }
                     module.settings.forEach {
-                        add(it.name.key.fullKey, it.toJson())
+                        add(it.name.key.key, it.toJson())
                     }
                 })
             }
@@ -29,7 +25,7 @@ class ModuleConfig : Config("Module") {
                 jsonObject.getAsJsonObject(module.name)?.let { moduleObject ->
                     module.settings.forEach { setting ->
                         runCatching {
-                            setting.fromJson(moduleObject.get(setting.name.key.fullKey))
+                            setting.fromJson(moduleObject.get(setting.name.key.key))
                         }.onFailure {
                             log.warn("Failed to load setting ${setting.name.translation} for module ${module.name}")
                         }
