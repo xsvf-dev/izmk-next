@@ -15,14 +15,18 @@ import ovo.xsvf.patchify.annotation.Patch;
  */
 @Patch(Minecraft.class)
 public class MinecraftPatch {
-    private static boolean initialized = false;
+    private static volatile boolean initialized = false;
 
     @Inject(method = "tick", desc = "()V")
     public static void onTickPre(Minecraft minecraft, CallbackInfo callbackInfo) throws Throwable {
         if (!initialized) {
-            IZMK.INSTANCE.setMc(Minecraft.getInstance());
-            IZMK.INSTANCE.init();
-            initialized = true;
+            synchronized (MinecraftPatch.class) {
+                if (!initialized) {
+                    IZMK.INSTANCE.setMc(Minecraft.getInstance());
+                    IZMK.INSTANCE.init();
+                    initialized = true;
+                }
+            }
         }
 
         new PreTickEvent().post();

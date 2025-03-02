@@ -33,6 +33,7 @@ object ModuleManager {
         addModule(ChatCopy)
         addModule(ClickGUI)
         addModule(ItemPhysics)
+        addModule(HitColor)
 
         /* render modules */
         addModule(TestHud)
