@@ -7,8 +7,7 @@ import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.AbstractSettingWidget
 import ovo.xsvf.izmk.settings.NumberSetting
 
-class NumberSettingWidget<N: Number>(screen: GuiScreen, override val setting: NumberSetting<N>):
-    AbstractSettingWidget(screen, setting) {
+class NumberSettingWidget<N: Number>(screen: GuiScreen, override val setting: NumberSetting<N>): AbstractSettingWidget(screen, setting) {
     override fun draw0(
         screenWidth: Float, screenHeight: Float,
         renderX: Float, renderY: Float,
@@ -16,6 +15,11 @@ class NumberSettingWidget<N: Number>(screen: GuiScreen, override val setting: Nu
         partialTicks: Float
     ) {
         drawDefaultBackground(rectMulti, renderX, renderY, screenWidth)
+        rectMulti.addRect(
+            renderX, renderY,
+            (screenWidth - 2 * 5f) * (setting.value.toFloat() / setting.maxValue.toFloat()), getHeight(),
+            ColorRGB(0.3f, 0.3f, 0.3f).alpha(0.4f)
+        )
         fontMulti.addText(
             "${setting.name.translation} : ${setting.value}",
             renderX + 2f,

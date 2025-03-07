@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.module.impl
+package ovo.xsvf.izmk.module.impl.render
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventTarget

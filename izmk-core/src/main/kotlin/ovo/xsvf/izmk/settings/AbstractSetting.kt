@@ -13,7 +13,6 @@ abstract class AbstractSetting<T>(
     var value: T,
     var visibility: () -> Boolean
 ) : ReadWriteProperty<Any, T> {
-
     private val defaultValue = value
 
     private val changeValueConsumers = CopyOnWriteArrayList<() -> Unit>()

@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.module.impl
+package ovo.xsvf.izmk.module.impl.render
 
 import ovo.xsvf.izmk.event.impl.Render2DEvent
 import ovo.xsvf.izmk.graphics.color.ColorRGB

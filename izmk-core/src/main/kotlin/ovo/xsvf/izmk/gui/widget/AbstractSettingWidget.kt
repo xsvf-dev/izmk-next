@@ -28,8 +28,6 @@ abstract class AbstractSettingWidget(
         draw0(screenWidth, screenHeight, renderX, renderY, fontMulti, rectMulti, partialTicks)
     }
 
-
-
     open fun getHeight0(): Float {
         return 20f
     }

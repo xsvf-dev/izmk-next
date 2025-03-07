@@ -38,7 +38,7 @@ class KeybindSettingWidget(
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
-        if (binding) {
+        if (binding && keyCode != GLFW.GLFW_KEY_ESCAPE) {
             binding = false
             if (keyCode == GLFW.GLFW_KEY_DELETE) {
                 setting.value = KeyBind(KeyBind.Type.KEYBOARD, -1, -1)

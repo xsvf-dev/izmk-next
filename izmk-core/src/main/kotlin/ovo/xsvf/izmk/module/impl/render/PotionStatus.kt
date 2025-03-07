@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.module.impl
+package ovo.xsvf.izmk.module.impl.render
 
 import net.minecraft.world.effect.MobEffectInstance
 import ovo.xsvf.izmk.event.EventTarget

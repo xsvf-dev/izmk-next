@@ -23,7 +23,7 @@ abstract class AbstractWidget(val screen: GuiScreen) {
     fun drawDefaultBackground(rectMulti: PosColor2DMultiDraw, renderX: Float, renderY: Float, screenWidth: Float) {
         rectMulti.addRectGradientHorizontal(
             renderX, renderY,
-            screenWidth - 2 * 5f, getHeight().toFloat(),
+            screenWidth - 2 * 5f, getHeight(),
             ColorRGB(0.2f, 0.2f, 0.2f),
             ColorRGB(0.25f, 0.25f, 0.25f)
         )

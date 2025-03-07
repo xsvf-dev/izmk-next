@@ -31,13 +31,9 @@ public class OverlayTexturePatch {
     }
 
     public static int modifyColor(int i) {
-        log.debug("Modifying overlay texture color");
         if (HitColor.INSTANCE.getEnabled()) {
             ColorRGB color = (ColorRGB) HitColor.INSTANCE.getColor();
-            if (color == null) {
-                log.debug("No hit color found");
-                return i;
-            }
+            if (color == null) return i;
             return color.toArgb();
         } else {
             return i;

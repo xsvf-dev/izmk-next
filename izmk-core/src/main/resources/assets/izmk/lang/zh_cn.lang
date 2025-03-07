@@ -4,7 +4,6 @@ modules.enabled=启用
 modules.renderable.x=X坐标
 modules.renderable.y=Y坐标
 
-# Modules
 modules.fps-display=帧数显示
 modules.fps-display.draw-string=绘制字符串
 modules.fps-display.font-scale=字体缩放
@@ -16,10 +15,15 @@ modules.render-test=渲染测试
 
 modules.test-hud=测试HUD
 
-modules.click-gui=Click GUI
+modules.click-gui=设置
 modules.chat-copy=聊天复制
 modules.nene-hud=柚子厨滚出本客户端
 
 modules.old-animations=旧版本动画
 modules.old-animations.sword-blocking=防砍
 
+modules.water-mark=水印
+modules.water-mark.text=文本
+modules.water-mark.color=颜色
+modules.water-mark.shadow=阴影
+modules.water-mark.scale=缩放

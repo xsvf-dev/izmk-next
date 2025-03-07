@@ -23,3 +23,8 @@ modules.nene-hud=Nene HUD
 modules.old-animations=Old Animations
 modules.old-animations.sword-blocking=Sword Blocking
 
+modules.water-mark=Water Mark
+modules.water-mark.text=Text
+modules.water-mark.color=Color
+modules.water-mark.shadow=Text Shadow
+modules.water-mark.scale=Scale
