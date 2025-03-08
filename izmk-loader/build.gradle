@@ -18,14 +18,18 @@ dependencies {
     implementation 'org.ow2.asm:asm-tree:9.2'
     implementation 'org.ow2.asm:asm-analysis:9.2'
 
+    // jna
+    implementation 'net.java.dev.jna:jna:5.10.0'
+    implementation 'net.java.dev.jna:jna-platform:5.10.0'
+
     implementation project(':izmk-common')
 }
 
 jar {
     manifest {
-        attributes 'Main-Class': 'ovo.xsvf.Launcher'
-        attributes 'Premain-Class': 'ovo.xsvf.AgentMain'
-        attributes 'Agent-Class' : 'ovo.xsvf.AgentMain'
+        attributes 'Main-Class': 'ovo.xsvf.Installer'
+        attributes 'Premain-Class': 'ovo.xsvf.Bootstrap'
+        attributes 'Agent-Class' : 'ovo.xsvf.Bootstrap'
         attributes 'Can-Redefine-Classes': true, 'Can-Retransform-Classes': true, 'Can-Set-Native-Method-Prefix': true
     }
 }

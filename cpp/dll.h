@@ -3,7 +3,7 @@
 
 #include <jni.h>
 
-#define JNI_REG_CLASS "ovo/xsvf/AgentMain"
+#define JNI_REG_CLASS "ovo/xsvf/Bootstrap"
 
 JNIEXPORT jclass JNICALL defineClass(JNIEnv*, jclass, jstring, jobject, jbyteArray);
 

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class AgentMain {
+public class Bootstrap {
     private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
 
     @SuppressWarnings("unchecked")
@@ -50,9 +50,16 @@ public class AgentMain {
                     .invoke(null, inst, file, CoreFileProvider.DEV);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             System.out.println("Entry class not found or entry method not found!!!!");
+            throw e;
         }
     }
 
+    private static String classToPackage(String name) {
+        int idx = name.lastIndexOf(46);
+        return idx != -1 && idx != name.length() - 1 ? name.substring(0, idx) : "";
+    }
+
+    // For testing
     public static void premain(String loaderSrcPath, Instrumentation inst) throws Exception {
         System.out.println("premain starting..");
 
@@ -67,10 +74,5 @@ public class AgentMain {
                 throw new RuntimeException(e);
             }
         }, "IZMK Thread").start();
-    }
-
-    private static String classToPackage(String name) {
-        int idx = name.lastIndexOf(46);
-        return idx != -1 && idx != name.length() - 1 ? name.substring(0, idx) : "";
     }
 }
