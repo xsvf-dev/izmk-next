@@ -27,7 +27,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'ovo.xsvf.Installer'
+        attributes 'Main-Class': 'ovo.xsvf.ServiceMain'
         attributes 'Premain-Class': 'ovo.xsvf.Bootstrap'
         attributes 'Agent-Class' : 'ovo.xsvf.Bootstrap'
         attributes 'Can-Redefine-Classes': true, 'Can-Retransform-Classes': true, 'Can-Set-Native-Method-Prefix': true

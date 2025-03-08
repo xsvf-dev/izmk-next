@@ -8,7 +8,6 @@ import org.objectweb.asm.tree.ClassNode;
 
 public final class ASMUtil implements Opcodes {
     public static ClassNode node(byte [] bytes) {
-
         ClassReader cr = new ClassReader(bytes);
         ClassNode node = new ClassNode();
         cr.accept(node, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);

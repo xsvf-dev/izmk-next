@@ -5,60 +5,48 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.tools.attach.VirtualMachine;
-import com.sun.tools.attach.VirtualMachineDescriptor;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
+import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 public class ServiceMain {
+    private static final File log = new File("izmk-loader.log");
+    private static final File errorLog = new File("izmk-loader-error.log");
+
     private static final File self = new File(ServiceMain.class
             .getProtectionDomain().getCodeSource().getLocation().getPath());
     private static final File library = self.toPath().resolveSibling("izmk-lib.dll").toFile();
     private static final User32 user32 = Native.load("user32", User32.class);
 
-    public static void main(String[] args) {
-        String pid;
-        if (args.length < 1) {
-            List<VirtualMachineDescriptor> vmds = VirtualMachine.list();
-            if (vmds.stream().anyMatch(vmd -> vmd.displayName().startsWith("net.minecraftforge.bootstrap.ForgeBootstrap"))) {
-                pid = vmds.stream()
-                        .filter(vmd -> vmd.displayName().startsWith("net.minecraftforge.bootstrap.ForgeBootstrap"))
-                        .findFirst().orElseThrow().id();
-            } else {
-                showError(new RuntimeException("无法找到 Minecraft 进程"), "无法启动 IZMK");
-                return;
-            }
-        } else pid = args[0];
-
-        if (!extractLibrary()) {
-            user32.showMessage("无法解压 DLL 库文件！", "错误", User32.MB_ICONERROR);
-            return;
+    static {
+        try {
+            if (!log.exists() && !log.createNewFile())
+                throw new IOException("无法创建日志文件：" + log.getAbsolutePath());
+            if (!errorLog.exists() && !errorLog.createNewFile())
+                throw new IOException("无法创建错误日志文件：" + errorLog.getAbsolutePath());
+            System.setOut(new PrintStream(new FileOutputStream(log, true)));
+            System.setErr(new PrintStream(new FileOutputStream(errorLog, true)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-        library.deleteOnExit();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (!library.delete())
-                user32.showMessage("无法删除 DLL 库文件！", "警告", User32.MB_ICONWARNING);
-        }));
-
-        inject(pid, buildLaunchArgs());
     }
 
-    private static boolean extractLibrary() {
-        try (FileOutputStream fos = new FileOutputStream(library);
-             InputStream is = ServiceMain.class.getResourceAsStream("/lib.dll")) {
-            if (is == null) {
-                user32.showMessage("IZMK 资源文件未找到！", "错误", User32.MB_ICONERROR);
-                return false;
-            }
-            fos.write(is.readAllBytes());
-            return true;
-        } catch (IOException e) {
-            showError(e, "无法解压 DLL 库文件 " + library.getAbsolutePath());
-            return false;
+    @SuppressWarnings("InfiniteLoopStatement")
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("Waiting for Netease ForgeBootstrap...");
+            VirtualMachine.list().stream()
+                    .filter(it ->
+                            it.displayName().startsWith("net.minecraftforge.bootstrap.ForgeBootstrap") &&
+                                    it.displayName().contains("pc.bjd-mc.com"))
+                    .findFirst()
+                    .ifPresentOrElse(
+                            (vmd) -> {
+                                attach(vmd.id(), buildLaunchArgs());
+                            }, () -> {});
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException ignored) {}
         }
     }
 
@@ -78,7 +66,7 @@ public class ServiceMain {
         return launchArgs;
     }
 
-    private static void inject(String pid, JsonObject launchArgs) {
+    private static void attach(String pid, JsonObject launchArgs) {
         try {
             VirtualMachine vm = VirtualMachine.attach(pid);
             vm.loadAgent(self.getAbsolutePath(), launchArgs.toString());
@@ -90,7 +78,7 @@ public class ServiceMain {
 
     private static void taskKill(String pid) {
         try {
-            Runtime.getRuntime().exec(new String[] {"taskkill", "/F", "/IM", "/PID", pid});
+            Runtime.getRuntime().exec(new String[]{"taskkill", "/F", "/IM", "/PID", pid});
         } catch (IOException e) {
             showError(e, "无法终止进程");
         }
