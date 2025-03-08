@@ -5,8 +5,8 @@ import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.screen.ClickGUIScreen
-import ovo.xsvf.izmk.gui.window.SimpleListWindow
 import ovo.xsvf.izmk.gui.widget.AbstractWidget
+import ovo.xsvf.izmk.gui.window.SimpleListWindow
 import ovo.xsvf.izmk.module.Module
 
 class ModuleWidget(screen: GuiScreen, val module: Module) : AbstractWidget(screen) {
@@ -19,6 +19,7 @@ class ModuleWidget(screen: GuiScreen, val module: Module) : AbstractWidget(scree
 
     override fun draw(
         screenWidth: Float, screenHeight: Float,
+        mouseX: Float, mouseY: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float

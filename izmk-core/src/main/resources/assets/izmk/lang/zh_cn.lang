@@ -10,11 +10,8 @@ modules.fps-display.font-scale=字体缩放
 modules.fps-display.string-color=字符串颜色
 
 modules.no-hurtcam=无受伤抖动
-
 modules.render-test=渲染测试
-
 modules.test-hud=测试HUD
-
 modules.click-gui=设置
 modules.chat-copy=聊天复制
 modules.nene-hud=柚子厨滚出本客户端
@@ -27,3 +24,6 @@ modules.water-mark.text=文本
 modules.water-mark.color=颜色
 modules.water-mark.shadow=阴影
 modules.water-mark.scale=缩放
+
+modules.hit-color=打击颜色
+modules.hit-color.color=颜色

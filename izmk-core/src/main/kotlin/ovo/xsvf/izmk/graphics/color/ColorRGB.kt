@@ -126,11 +126,10 @@ data class ColorRGB(val rgba: Int) {
         return ColorRGB(this.rgb)
     }
 
-    fun toArgb() = ColorUtils.rgbaToArgb(rgba)
-
     fun toColor() = Color(r, g, b, a)
-
     fun toHSB() = ColorUtils.rgbToHSB(r, g, b, a)
+    fun rgba() = rgba
+    fun argb() = ColorUtils.rgbaToArgb(rgba)
 
     override fun toString(): String {
         return "$r, $g, $b, $a"

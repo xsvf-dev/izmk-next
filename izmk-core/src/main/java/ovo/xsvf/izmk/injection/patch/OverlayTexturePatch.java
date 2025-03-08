@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import ovo.xsvf.izmk.graphics.color.ColorRGB;
 import ovo.xsvf.izmk.module.impl.HitColor;
 import ovo.xsvf.patchify.annotation.Patch;
 import ovo.xsvf.patchify.annotation.Transform;
@@ -31,12 +30,6 @@ public class OverlayTexturePatch {
     }
 
     public static int modifyColor(int i) {
-        if (HitColor.INSTANCE.getEnabled()) {
-            ColorRGB color = (ColorRGB) HitColor.INSTANCE.getColor();
-            if (color == null) return i;
-            return color.toArgb();
-        } else {
-            return i;
-        }
+        return HitColor.INSTANCE.getEnabled() ? HitColor.INSTANCE.getColor().argb() : i;
     }
 }

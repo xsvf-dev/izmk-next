@@ -15,6 +15,7 @@ class ColorSettingWidget(
 
     override fun draw0(
         screenWidth: Float, screenHeight: Float,
+        mouseX: Float, mouseY: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float

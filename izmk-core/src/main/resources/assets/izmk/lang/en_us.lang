@@ -11,11 +11,8 @@ modules.fps-display.font-scale=Font Scale
 modules.fps-display.string-color=String Color
 
 modules.no-hurtcam=No HurtCam
-
 modules.render-test=Render Test
-
 modules.test-hud=Test HUD
-
 modules.click-gui=Click GUI
 modules.chat-copy=Chat Copy
 modules.nene-hud=Nene HUD
@@ -28,3 +25,6 @@ modules.water-mark.text=Text
 modules.water-mark.color=Color
 modules.water-mark.shadow=Text Shadow
 modules.water-mark.scale=Scale
+
+modules.hit-color=Hit Color
+modules.hit-color.color=Color

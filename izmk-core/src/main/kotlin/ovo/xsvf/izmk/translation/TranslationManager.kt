@@ -1,13 +1,12 @@
 package ovo.xsvf.izmk.translation
 
 object TranslationManager {
-
-    private val language = Language.EN_US
+    private val language = Language.ZH_CN
 
     val en = TranslationMap("en_us")
     val cn = TranslationMap("zh_cn")
 
-    val defaultMap get() = en
+    val defaultMap get() = cn
 
     fun getTranslation(key: String): String {
         return when (language) {
@@ -34,5 +33,4 @@ object TranslationManager {
         EN_US,
         ZH_CN,
     }
-
 }

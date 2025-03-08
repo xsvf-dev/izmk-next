@@ -14,10 +14,16 @@ abstract class AbstractWidget(val screen: GuiScreen) {
 
     abstract fun getHeight(): Float
     abstract fun draw(screenWidth: Float, screenHeight: Float,
+                      mouseX: Float, mouseY: Float,
                       renderX: Float, renderY: Float,
                       fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
                       partialTicks: Float)
     open fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {}
+
+    open fun mouseReleased(mouseX: Float, mouseY: Float, isLeftClick: Boolean) : Boolean {
+        return false
+    }
+
     open fun keyPressed(keyCode: Int, scanCode: Int): Boolean { return false }
 
     fun drawDefaultBackground(rectMulti: PosColor2DMultiDraw, renderX: Float, renderY: Float, screenWidth: Float) {

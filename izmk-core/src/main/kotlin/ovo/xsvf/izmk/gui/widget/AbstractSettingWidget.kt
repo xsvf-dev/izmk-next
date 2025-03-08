@@ -11,6 +11,7 @@ abstract class AbstractSettingWidget(
 ): AbstractWidget(screen) {
     open fun draw0(
         screenWidth: Float, screenHeight: Float,
+        mouseX: Float, mouseY: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
@@ -20,12 +21,14 @@ abstract class AbstractSettingWidget(
 
     final override fun draw(
         screenWidth: Float, screenHeight: Float,
+        mouseX: Float, mouseY: Float,
         renderX: Float, renderY: Float,
         fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
         partialTicks: Float
     ) {
         if (!setting.visibility()) return
-        draw0(screenWidth, screenHeight, renderX, renderY, fontMulti, rectMulti, partialTicks)
+        draw0(screenWidth, screenHeight, mouseX, mouseY,
+            renderX, renderY, fontMulti, rectMulti, partialTicks)
     }
 
     open fun getHeight0(): Float {

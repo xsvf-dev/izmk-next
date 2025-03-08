@@ -40,5 +40,4 @@ class TranslationMap(
         result = 31 * result + resource.hashCode()
         return result
     }
-
 }

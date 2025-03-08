@@ -12,7 +12,7 @@ import ovo.xsvf.izmk.event.impl.Render2DEvent
  * @author LangYa466
  * @since 2/27/2025
  */
-open class GuiScreen(val name: String) {
+abstract class GuiScreen(val name: String) {
     private var mouseX = 0f
     private var mouseY = 0f
     private var screen: Screen? = null
@@ -20,8 +20,8 @@ open class GuiScreen(val name: String) {
     val mc by lazy { IZMK.mc }
 
     open fun drawScreen(mouseX: Float, mouseY: Float, partialTicks: Float) {}
-    open fun mouseClicked(buttonID: Int, mouseX: Float, mouseY: Float) {}
-    open fun mouseReleased(buttonID: Int, mouseX: Float, mouseY: Float) {}
+    open fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float) {}
+    open fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float) {}
     open fun keyPressed(keyCode: Int, scanCode: Int): Boolean { return false }
 
     open fun shouldCloseOnEsc(): Boolean = true

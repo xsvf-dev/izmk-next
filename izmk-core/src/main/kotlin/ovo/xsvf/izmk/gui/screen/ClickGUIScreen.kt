@@ -52,5 +52,4 @@ object ClickGUIScreen: GuiScreen("ClickGUI") {
         settingsWindow = null
         ClickGUI.enabled = false
     }
-
 }

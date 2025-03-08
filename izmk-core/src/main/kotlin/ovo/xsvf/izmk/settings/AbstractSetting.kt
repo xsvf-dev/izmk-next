@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-abstract class AbstractSetting<T>(
+abstract class AbstractSetting<T : Any>(
     var name: TranslationString,
     var value: T,
     var visibility: () -> Boolean
@@ -28,7 +28,7 @@ abstract class AbstractSetting<T>(
         value(value)
     }
 
-    fun onChangeValue(run: () -> Unit): AbstractSetting<*> {
+    fun onChangeValue(run: () -> Unit): AbstractSetting<T> {
         return this.apply { changeValueConsumers.add(run) }
     }
 

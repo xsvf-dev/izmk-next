@@ -18,7 +18,8 @@ object WaterMark: RenderableModule(
     private val scale by setting("scale", 1f, 1f..5f, 0.1f)
 
     override fun render(event: Render2DEvent) {
-        width = FontRenderers.getStringWidth(text)
+        width = FontRenderers.getStringWidth(text, scale)
+        height = FontRenderers.getHeight(scale)
         FontRenderers.drawString(text, x, y, color, shadow, scale)
     }
 }
