@@ -73,7 +73,7 @@ public final class PatchLoader implements IPatchLoader {
             for (AbstractInsnNode insnNode : insnList) {
                 if (filter.test(insnNode)) {
                     count++;
-                    log.debug("index-based slice match found!, count = " + count);
+                    log.debug("index-based slice match found!, count = {}", count);
                     if (count >= slice.startIndex() && count <= endIndex) {
                         log.debug("index-based slice injection point found!");
                         injectionPoints.add(insnNode);
@@ -378,7 +378,7 @@ public final class PatchLoader implements IPatchLoader {
                         m.name.equals(split.second()) && m.desc.equals(wrap.second()));
 
         if (toWrap.isEmpty()) {
-            log.warn("method invocation with name = {}, desc = {} cannot be found in target method", wrap.first(), wrap.second());
+            log.warn("wrap method invocation with name = {}, desc = {} cannot be found in target method", wrap.first(), wrap.second());
             return;
         }
 
@@ -627,7 +627,7 @@ public final class PatchLoader implements IPatchLoader {
                 var injectMethods = injectMap.get(Pair.of(targetNode.name + "/" + method.name, method.desc));
 
                 for (var injectMethod : injectMethods) {
-                    log.info("processing method " + method.name + " in class " + targetClass.getName() + " with patch method " + injectMethod.getName() + " in class " + patchClass.getName());
+                    log.info("processing method {} in class {} with patch method {} in class {}", method.name, targetClass.getName(), injectMethod.getName(), patchClass.getName());
                     if (injectMethod.isAnnotationPresent(Inject.class)) {
                         At at = injectMethod.getAnnotation(Inject.class).at();
                         switch (at.value()) {
@@ -646,7 +646,7 @@ public final class PatchLoader implements IPatchLoader {
                     } else if (injectMethod.isAnnotationPresent(Overwrite.class)) {
                         overwrite(method, injectMethod);
                     } else if (injectMethod.isAnnotationPresent(Transform.class)) {
-                        log.debug("transforming method " + method.name + " in class " + targetClass.getName());
+                        log.debug("transforming method {} in class {}", method.name, targetClass.getName());
                         injectMethod.invoke(null, method);
                     } else if (injectMethod.isAnnotationPresent(WrapInvoke.class)) {
                         int index = Modifier.isStatic(method.access) ? 0 : 1;

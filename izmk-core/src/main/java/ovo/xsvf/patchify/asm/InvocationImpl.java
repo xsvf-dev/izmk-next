@@ -4,7 +4,7 @@ import ovo.xsvf.patchify.api.Invocation;
 
 import java.util.List;
 
-public class InvocationImpl implements Invocation {
+public final class InvocationImpl implements Invocation {
     private final Object optionalInstance;
     private final MethodWrapper wrapper;
 
