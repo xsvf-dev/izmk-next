@@ -65,10 +65,14 @@ public final class MethodWrapper {
         try {
             if (instance == null) {
                 if (methodParams.isEmpty()) return lookup0.invoke();
-                return lookup0.invoke(methodParams.toArray());
+                return lookup0.invoke(methodParams.toArray(new Object[0]));
             } else {
                 if (methodParams.isEmpty()) return lookup0.invoke(instance);
-                return lookup0.invoke(instance, methodParams.toArray());
+                Object[] params = methodParams.toArray(new Object[0]);
+                Object[] paramsWithInstance = new Object[params.length + 1];
+                paramsWithInstance[0] = instance;
+                System.arraycopy(params, 0, paramsWithInstance, 1, params.length);
+                return lookup0.invokeWithArguments(paramsWithInstance);
             }
         } catch (Throwable e) {
             throw new RuntimeException(e);

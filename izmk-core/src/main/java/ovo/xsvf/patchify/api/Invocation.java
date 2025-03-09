@@ -5,8 +5,10 @@ import java.util.concurrent.Callable;
 
 /**
  * Interface for a method invocation.
+ * @param <T> the type of the object on which the method is invoked.
+ * @param <R> the return type of the method.
  */
-public interface Invocation extends Callable<Object> {
+public interface Invocation<T, R> extends Callable<R> {
     /**
      * Gets the arguments of the method invocation.
      * @return the arguments of the method invocation.
@@ -17,5 +19,5 @@ public interface Invocation extends Callable<Object> {
      * Gets the instance of the object on which the method is invoked.
      * @return the instance of the object on which the method is invoked.
      */
-    Object instance();
+    T instance();
 }
