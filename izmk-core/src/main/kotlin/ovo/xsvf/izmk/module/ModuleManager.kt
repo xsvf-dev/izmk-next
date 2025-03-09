@@ -20,7 +20,7 @@ import ovo.xsvf.izmk.settings.KeyBindSetting
 import java.util.concurrent.ConcurrentHashMap
 
 object ModuleManager {
-    val modulesMap = Object2ObjectAVLTreeMap<String, Module>()
+    private val modulesMap = Object2ObjectAVLTreeMap<String, Module>()
 
     private val fadeAnimations = ConcurrentHashMap<String, AnimationFlag>()
     private val mc by lazy { IZMK.mc }
@@ -37,6 +37,7 @@ object ModuleManager {
         addModule(ItemPhysics)
         addModule(HitColor)
         addModule(ItemScale)
+        addModule(Hitboxes)
 
         /* render modules */
         addModule(NeneHud)
