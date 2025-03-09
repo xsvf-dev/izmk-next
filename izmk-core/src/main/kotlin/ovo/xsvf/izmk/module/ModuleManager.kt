@@ -38,6 +38,8 @@ object ModuleManager {
         addModule(HitColor)
         addModule(ItemScale)
         addModule(Hitboxes)
+        addModule(Particles)
+        addModule(MinmalBobbing)
 
         /* render modules */
         addModule(NeneHud)
