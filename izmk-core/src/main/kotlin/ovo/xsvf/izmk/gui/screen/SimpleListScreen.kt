@@ -1,95 +1,167 @@
 package ovo.xsvf.izmk.gui.screen
 
+import org.apache.logging.log4j.LogManager
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
-import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.widget.AbstractWidget
 import ovo.xsvf.izmk.gui.window.AbstractWindow
 import ovo.xsvf.izmk.gui.window.DragWindow
 
-class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: String = ""): AbstractWindow(
-    title, 50f, 50f, 300f, 400f,
-) {
+class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: String = "") :
+    AbstractWindow(title, 100f, 100f, 400f, 400f) {
+
+    private val log = LogManager.getLogger(javaClass)
     private val rectMulti = PosColor2DMultiDraw()
     private val fontMulti = FontMultiDraw()
 
     private val window = DragWindow(x, y, width, height)
     private val padding = 35f
 
+    /* scroll bar */
+    private var showScrollBar = false
+    private var scrollOffset = 0f
+    private val scrollBarWidth = 10f
+    private val scrollBarPadding = 3f
+    private var draggingScrollBar = false
+    private var lastDragY = 0f
+
+    // 预计算属性
+    private val contentHeight get() = widgets.filter { it.isVisible() }.sumOf { it.getHeight().toDouble() + 5 }.toFloat()
+    private val viewportHeight get() = window.height - padding - scrollBarPadding
+    private val maxScrollOffset get() = (contentHeight - viewportHeight).coerceAtLeast(0f)
+
     override fun draw(mouseX: Float, mouseY: Float, partialTicks: Float) {
-        window.update(mouseX, mouseY)
-
-        fontMulti.addText(title,
-            window.x.toFloat() + 5f,
-            window.y.toFloat() + 5f,
-            ColorRGB.WHITE,
-            false, 2f
-        )
-
-        // 绘制列表背景
-        rectMulti.addRect(window.x.toFloat(), window.y.toFloat(),
-            window.width.toFloat(), window.height.toFloat(),
-            ColorRGB(0.15f, 0.15f, 0.15f)
-        )
-
-        var offsetY = window.y + padding
-
-        widgets.forEach {
-            it.draw(window.width, window.height, mouseX, mouseY,
-                window.x + 5f, offsetY, fontMulti, rectMulti, partialTicks)
-            offsetY += it.getHeight() + 5f
+        if (draggingScrollBar) {
+            val deltaY = mouseY - lastDragY
+            val scrollPerPixel = maxScrollOffset / (viewportHeight - (viewportHeight * viewportHeight / contentHeight))
+            scrollOffset = (scrollOffset + deltaY * scrollPerPixel).coerceIn(0f, maxScrollOffset)
+            lastDragY = mouseY
+        } else {
+            window.update(mouseX, mouseY)
         }
+
+        drawWindowFrame()
+        drawContent(mouseX, mouseY, partialTicks)
 
         rectMulti.draw()
         fontMulti.draw()
     }
 
+    private fun drawWindowFrame() {
+        // 绘制窗口背景
+        rectMulti.addRect(
+            window.x, window.y,
+            window.width, window.height,
+            ColorRGB(0.15f, 0.15f, 0.15f)
+        )
+
+        // 绘制标题
+        fontMulti.addText(
+            title,
+            window.x + 5f,
+            window.y + 5f,
+            ColorRGB.WHITE,
+            false, 2f
+        )
+    }
+
+    private fun drawContent(mouseX: Float, mouseY: Float, partialTicks: Float) {
+        val visibleWidgets = widgets.filter { it.isVisible() }
+        showScrollBar = contentHeight > viewportHeight
+
+        val renderWidth = if (showScrollBar) window.width - scrollBarWidth - scrollBarPadding else window.width
+        var offsetY = window.y + padding - scrollOffset
+
+        visibleWidgets.forEach { widget ->
+            if (offsetY + widget.getHeight() > window.y + padding && offsetY < window.y + window.height - scrollBarPadding) {
+                widget.draw(
+                    renderWidth, viewportHeight,
+                    mouseX, mouseY,
+                    window.x + 5f, offsetY,
+                    fontMulti, rectMulti, partialTicks
+                )
+            }
+            offsetY += widget.getHeight() + 5f
+        }
+
+        if (showScrollBar) {
+            drawScrollBar(mouseY)
+        }
+    }
+
+    private fun drawScrollBar(mouseY: Float) {
+        // 滚动条背景
+        rectMulti.addRect(
+            window.x + window.width - scrollBarWidth - scrollBarPadding,
+            window.y + padding,
+            scrollBarWidth, viewportHeight,
+            ColorRGB(0.2f, 0.2f, 0.2f)
+        )
+
+        // 滚动条滑块
+        val handleHeight = (viewportHeight * (viewportHeight / contentHeight)).coerceIn(10f, viewportHeight)
+        val scrollRatio = scrollOffset / maxScrollOffset
+        val handleY = window.y + padding + (viewportHeight - handleHeight) * scrollRatio
+
+        rectMulti.addRect(
+            window.x + window.width - scrollBarWidth - scrollBarPadding,
+            handleY,
+            scrollBarWidth, handleHeight,
+            if (draggingScrollBar) ColorRGB(0.7f, 0.7f, 0.7f) else ColorRGB(0.5f, 0.5f, 0.5f)
+        )
+    }
+
+    override fun mouseScrolled(mouseX: Float, mouseY: Float, scrollAmount: Int): Boolean {
+        if (showScrollBar) {
+            scrollOffset = (scrollOffset - scrollAmount * 20f).coerceIn(0f, maxScrollOffset)
+        }
+        return true
+    }
+
     override fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float): Boolean {
+        if (handleScrollBarClick(mouseX, mouseY)) return true
         if (window.shouldDrag(mouseX, mouseY, padding)) {
             window.startDrag(mouseX, mouseY)
             return true
         }
+        return checkWidgetClicks(mouseX, mouseY, buttonId)
+    }
 
-        var offsetY = window.y + padding
-        widgets.forEach {
-            val moduleX = window.x + 5f
-            val moduleY = offsetY
+    private fun handleScrollBarClick(mouseX: Float, mouseY: Float): Boolean {
+        if (!showScrollBar) return false
 
-            if (RenderUtils2D.isMouseOver(mouseX, mouseY,
-                    moduleX, moduleY,
-                    (moduleX + window.width - 2 * 5f),
-                    (moduleY + it.getHeight())
-            )) {
-                it.mouseClicked(mouseX, mouseY, buttonId == GLFW.GLFW_MOUSE_BUTTON_LEFT)
-                return true
-            }
-
-            offsetY += it.getHeight() + 5f
+        val scrollBarX = window.x + window.width - scrollBarWidth - scrollBarPadding
+        if (mouseX in scrollBarX..(scrollBarX + scrollBarWidth) &&
+            mouseY in window.y + padding..(window.y + padding + viewportHeight)) {
+            draggingScrollBar = true
+            lastDragY = mouseY
+            return true
         }
-
         return false
     }
 
-    override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
-        widgets.forEach {
-            if (it.keyPressed(keyCode, scanCode)) {
+    private fun checkWidgetClicks(mouseX: Float, mouseY: Float, buttonId: Int): Boolean {
+        var offsetY = window.y + padding - scrollOffset
+        for (widget in widgets.filter { it.isVisible() }) {
+            if (mouseY in offsetY..(offsetY + widget.getHeight()) &&
+                mouseX in window.x + 5f..(window.x + window.width - 5f - if (showScrollBar) scrollBarWidth else 0f)) {
+                widget.mouseClicked(mouseX, mouseY, buttonId == GLFW.GLFW_MOUSE_BUTTON_LEFT)
                 return true
             }
+            offsetY += widget.getHeight() + 5f
         }
         return false
     }
 
     override fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float): Boolean {
-        var offsetY = window.y + padding
-
-        widgets.forEach {
-            if (it.mouseReleased(mouseX, mouseY, buttonId == GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
-                return true
-            }
-            offsetY += it.getHeight() + 5f
-        }
+        draggingScrollBar = false
+        widgets.forEach { it.mouseReleased(mouseX, mouseY, buttonId == GLFW.GLFW_MOUSE_BUTTON_LEFT) }
         return window.stopDrag()
+    }
+
+    override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
+        return widgets.any { it.keyPressed(keyCode, scanCode) }
     }
 }

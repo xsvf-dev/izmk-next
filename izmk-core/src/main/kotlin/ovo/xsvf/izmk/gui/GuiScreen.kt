@@ -22,6 +22,7 @@ abstract class GuiScreen(val name: String) {
     open fun drawScreen(mouseX: Float, mouseY: Float, partialTicks: Float) {}
     open fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float) {}
     open fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float) {}
+    open fun mouseScrolled(mouseX: Float, mouseY: Float, scrollAmount: Int): Boolean { return false }
     open fun keyPressed(keyCode: Int, scanCode: Int): Boolean { return false }
 
     open fun shouldCloseOnEsc(): Boolean = true
@@ -51,6 +52,10 @@ abstract class GuiScreen(val name: String) {
                 override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
                     return keyPressed(pKeyCode, pScanCode) ||
                             super.keyPressed(pKeyCode, pScanCode, pModifiers)
+                }
+
+                override fun mouseScrolled(pMouseX: Double, pMouseY: Double, pScrollX: Double, pScrollY: Double): Boolean {
+                    return mouseScrolled(pMouseX.toFloat(), pMouseY.toFloat(), pScrollY.toInt())
                 }
 
                 override fun onClose() {

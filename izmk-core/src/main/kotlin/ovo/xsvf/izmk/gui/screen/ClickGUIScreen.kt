@@ -31,6 +31,11 @@ object ClickGUIScreen: GuiScreen("ClickGUI") {
         modulesWindow.mouseReleased(buttonId, mouseX, mouseY)
     }
 
+    override fun mouseScrolled(mouseX: Float, mouseY: Float, scrollAmount: Int): Boolean {
+        if (settingsWindow?.mouseScrolled(mouseX, mouseY, scrollAmount) == true) return true
+        return modulesWindow.mouseScrolled(mouseX, mouseY, scrollAmount)
+    }
+
     override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
         // If settings window is open, close it on escape
         if (keyCode == GLFW.GLFW_KEY_ESCAPE && settingsWindow != null) {

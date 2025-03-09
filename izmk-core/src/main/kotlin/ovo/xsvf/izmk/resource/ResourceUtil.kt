@@ -8,7 +8,7 @@ import java.nio.file.Path
 
 object ResourceUtil {
     private val resources = HashMap<Path, ByteArray>()
-    private val log = LogManager.getLogger(ResourceUtil::class.java)
+    private val log = LogManager.getLogger(javaClass)
 
     fun init(jar: Path) {
         log.info("Loading resources from ${jar.toAbsolutePath()}")

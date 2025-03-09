@@ -16,5 +16,4 @@ class Resource(path: String) {
 
         stream.close()
     }
-
 }

@@ -6,6 +6,8 @@ import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.AbstractSettingWidget
 import ovo.xsvf.izmk.settings.NumberSetting
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 class NumberSettingWidget<N: Number>(screen: GuiScreen, override val setting: NumberSetting<N>): AbstractSettingWidget(screen, setting) {
@@ -13,6 +15,7 @@ class NumberSettingWidget<N: Number>(screen: GuiScreen, override val setting: Nu
     private var mouseX = -1f
     private var mouseY = -1f
 
+    @Suppress("UNCHECKED_CAST")
     override fun draw0(
         screenWidth: Float, screenHeight: Float,
         mouseX: Float, mouseY: Float,
@@ -25,7 +28,8 @@ class NumberSettingWidget<N: Number>(screen: GuiScreen, override val setting: Nu
         drawDefaultBackground(rectMulti, renderX, renderY, screenWidth)
 
         if (dragging && mouseX in renderX..(renderX + (screenWidth - 2 * 5f))) {
-            setting.value(((mouseX - renderX) / (screenWidth - 2 * 5f) * setting.maxValue.toFloat()) as N)
+            val v = (mouseX - renderX) / (screenWidth - 2 * 5f) * setting.maxValue.toFloat()
+            setting.value(closestMultiple(v, setting.step.toFloat()) as N)
         }
 
         rectMulti.addRect(
@@ -39,6 +43,13 @@ class NumberSettingWidget<N: Number>(screen: GuiScreen, override val setting: Nu
             renderY + 3f,
             ColorRGB.WHITE
         )
+    }
+
+    private fun closestMultiple(target: Float, multiple: Float): Number {
+        val lowerMultiple = floor((target / multiple)) * multiple
+        val upperMultiple = ceil((target / multiple)) * multiple
+
+        return if (target - lowerMultiple <= upperMultiple - target) lowerMultiple else upperMultiple
     }
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {

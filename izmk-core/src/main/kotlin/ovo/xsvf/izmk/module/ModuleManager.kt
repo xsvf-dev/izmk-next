@@ -31,17 +31,18 @@ object ModuleManager {
 
     fun init() {
         addModule(NoHurtcam)
-        addModule(FPSDisplay)
         addModule(OldAnimations)
         addModule(ChatCopy)
         addModule(ClickGUI)
         addModule(ItemPhysics)
         addModule(HitColor)
+        addModule(ItemScale)
 
         /* render modules */
         addModule(NeneHud)
         addModule(PotionStatus)
         addModule(WaterMark)
+        addModule(FPSDisplay)
 
         modules().forEach { it.onLoad() }
     }
@@ -56,10 +57,6 @@ object ModuleManager {
 
     fun getNullable(name: String): Module? {
         return modulesMap[name]
-    }
-
-    inline fun <reified T: Module> get(): T {
-        return modulesMap.values.first { it is T } as T
     }
 
     fun modules() : List<Module> {

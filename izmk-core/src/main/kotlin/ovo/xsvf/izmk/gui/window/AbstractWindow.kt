@@ -8,10 +8,8 @@ abstract class AbstractWindow(
     var height: Float,
 ) {
     open fun draw(mouseX: Float, mouseY: Float, partialTicks: Float) {}
-
-    open fun keyPressed(keyCode: Int, scanCode: Int): Boolean = false
-
-    open fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float): Boolean = false
-
-    open fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float): Boolean = false
+    open fun keyPressed(keyCode: Int, scanCode: Int): Boolean = true
+    open fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float): Boolean = true
+    open fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float): Boolean = true
+    open fun mouseScrolled(mouseX: Float, mouseY: Float, scrollAmount: Int): Boolean = true
 }

@@ -195,7 +195,7 @@ class ColorSettingWidget(
         return false
     }
 
-    override fun getHeight0(): Float = if (isExtended) elementHeight + padding + colorPickerSize + padding else elementHeight
+    override fun getHeight(): Float = if (isExtended) elementHeight + padding + colorPickerSize + padding else elementHeight
 
     private fun updateColorFromPicker(mouseX: Float, mouseY: Float) {
         val saturation = (mouseX - colorPickerArea.left) / colorPickerArea.width

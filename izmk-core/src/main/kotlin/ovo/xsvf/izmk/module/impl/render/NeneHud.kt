@@ -17,6 +17,9 @@ object NeneHud : RenderableModule(
     private val imageTexture: Texture = ImageFileUtils.loadTextureFromResource(Resource("image/nene.png"))
 
     override fun render(event: Render2DEvent) {
+        width = FontRenderers.getStringWidth("起爆器") + 200f
+        height = 120f
+
         FontRenderers.drawString("起爆器", x, y, ColorRGB.WHITE)
 
         RenderUtils2D.drawTextureRect(

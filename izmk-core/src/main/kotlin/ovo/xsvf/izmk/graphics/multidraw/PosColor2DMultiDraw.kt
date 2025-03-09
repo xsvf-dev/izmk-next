@@ -72,7 +72,7 @@ class PosColor2DMultiDraw {
                 vertex(startX, endY, rect.color01)
             }
         }
-        rect.clear()
+        clear()
     }
 
     fun clear() {
@@ -83,5 +83,4 @@ class PosColor2DMultiDraw {
         private val countArr = Arr.malloc(0).asMutable()
         private val firstArr = Arr.malloc(0).asMutable()
     }
-
 }

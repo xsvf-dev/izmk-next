@@ -31,11 +31,9 @@ abstract class AbstractSettingWidget(
             renderX, renderY, fontMulti, rectMulti, partialTicks)
     }
 
-    open fun getHeight0(): Float {
-        return 20f
+    final override fun isVisible(): Boolean {
+        return setting.visibility()
     }
 
-    final override fun getHeight(): Float {
-        return if (setting.visibility()) getHeight0() else 0f
-    }
+    override fun getHeight(): Float = 20f
 }

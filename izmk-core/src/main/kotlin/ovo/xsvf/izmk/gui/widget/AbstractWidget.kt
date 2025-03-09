@@ -19,12 +19,9 @@ abstract class AbstractWidget(val screen: GuiScreen) {
                       fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
                       partialTicks: Float)
     open fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {}
-
-    open fun mouseReleased(mouseX: Float, mouseY: Float, isLeftClick: Boolean) : Boolean {
-        return false
-    }
-
-    open fun keyPressed(keyCode: Int, scanCode: Int): Boolean { return false }
+    open fun mouseReleased(mouseX: Float, mouseY: Float, isLeftClick: Boolean) : Boolean = false
+    open fun keyPressed(keyCode: Int, scanCode: Int): Boolean = false
+    open fun isVisible(): Boolean = true
 
     fun drawDefaultBackground(rectMulti: PosColor2DMultiDraw, renderX: Float, renderY: Float, screenWidth: Float) {
         rectMulti.addRectGradientHorizontal(
