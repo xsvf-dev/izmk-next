@@ -40,7 +40,7 @@ public final class MethodWrapper {
         return this;
     }
 
-    public Object call(Object instance) throws Exception{
+    public Object call(Object instance) throws Exception {
         return invokeMethod(instance);
     }
 

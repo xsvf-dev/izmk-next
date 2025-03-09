@@ -157,7 +157,11 @@ public class AccessorProcessor implements Opcodes {
                         int methodHelperIndex = method.maxLocals; method.maxLocals += 1;
 
                         // stack: [<instance>, args...]
-                        insnList.add(new MethodInsnNode(INVOKESTATIC, METHOD_WRAPPER_CLASS, "getInstance", "()L" + METHOD_WRAPPER_CLASS + ";", false));
+                        insnList.add(new LdcInsnNode(method1.owner));
+                        insnList.add(new LdcInsnNode(method1.name));
+                        insnList.add(new LdcInsnNode(method1.desc));
+                        // stack: [<instance>, args..., owner, name, desc]
+                        insnList.add(new MethodInsnNode(INVOKESTATIC, METHOD_WRAPPER_CLASS, "getInstance", "(" + Type.getDescriptor(String.class) + Type.getDescriptor(String.class) + Type.getDescriptor(String.class) + ")L" + METHOD_WRAPPER_CLASS + ";", false));
                         insnList.add(new VarInsnNode(ASTORE, methodHelperIndex));
                         // stack: [<instance>, args...]
                         Type[] argTypes = Type.getArgumentTypes(method1.desc);
@@ -169,17 +173,16 @@ public class AccessorProcessor implements Opcodes {
                             insnList.add(new InsnNode(POP));
                             // stack: [<instance>, args...]
                         }
+                        if (insnNode.getOpcode() == INVOKESTATIC) {
+                            insnList.add(new InsnNode(ACONST_NULL));
+                        }
                         insnList.add(new VarInsnNode(ALOAD, methodHelperIndex));
                         if (insnNode.getOpcode() != INVOKESTATIC) {
                             insnList.add(new InsnNode(SWAP));
                         }
-                        insnList.add(new LdcInsnNode(method1.owner));
-                        insnList.add(new LdcInsnNode(method1.name));
-                        insnList.add(new LdcInsnNode(method1.desc));
-                        if (insnNode.getOpcode() == INVOKESTATIC) {
-                            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_WRAPPER_CLASS, "callStatic", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;", false));
-                        } else if (insnNode.getOpcode() == INVOKEINTERFACE) {
-                            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_WRAPPER_CLASS, "call", "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;", false));
+                        // stack: [<instance>, methodHelper]
+                        if (insnNode.getOpcode() == INVOKESTATIC || insnNode.getOpcode() == INVOKEINTERFACE) {
+                            insnList.add(new MethodInsnNode(INVOKEVIRTUAL, METHOD_WRAPPER_CLASS, "call", "(Ljava/lang/Object;)Ljava/lang/Object;", false));
                         } else {
                             throw new IllegalStateException("Unexpected opcode: " + insnNode.getOpcode());
                         }
