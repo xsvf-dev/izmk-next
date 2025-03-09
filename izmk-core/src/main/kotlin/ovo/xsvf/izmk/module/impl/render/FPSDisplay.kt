@@ -20,9 +20,11 @@ object FPSDisplay: RenderableModule(
     @EventTarget
     fun onRender2D(event: Render2DEvent) {
         if (drawString) {
+            val text = "FPS: ${IZMK.mc.fps}"
+            width = FontRenderers.getStringWidth(text, fontScale)
+            height = FontRenderers.getHeight(fontScale)
             FontRenderers.drawString(
-                "FPS: ${IZMK.mc.fps}",
-                x, y, ColorRGB.WHITE, true, 1f
+                text, x, y, stringColor, true, fontScale
             )
         }
     }
