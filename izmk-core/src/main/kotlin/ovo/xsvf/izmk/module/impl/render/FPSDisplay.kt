@@ -9,7 +9,6 @@ import ovo.xsvf.izmk.module.RenderableModule
 
 object FPSDisplay: RenderableModule(
     name = "fps-display",
-    description = "Displays the FPS on the screen",
     defaultX = 20f, defaultY = 20f,
     width = 40f, height = 15f
 ) {

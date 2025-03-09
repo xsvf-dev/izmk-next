@@ -21,8 +21,7 @@ import ovo.xsvf.izmk.module.Module
 import java.util.*
 
 object ItemPhysics: Module(
-    name = "item-physics",
-    description = "item physics"
+    name = "item-physics"
 ) {
     private val random: Random = Random()
     private var lastRenderTime = System.nanoTime();

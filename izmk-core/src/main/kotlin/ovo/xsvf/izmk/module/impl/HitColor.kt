@@ -8,8 +8,7 @@ import ovo.xsvf.izmk.injection.accessor.GameRendererAccessor
 import ovo.xsvf.izmk.module.Module
 
 object HitColor: Module(
-    name = "hit-color",
-    description = "Change hit color"
+    name = "hit-color"
 ) {
     val color by setting("color", ColorRGB(50, 60, 700, 140))
         .onChangeValue { updateOverlayTexture() }

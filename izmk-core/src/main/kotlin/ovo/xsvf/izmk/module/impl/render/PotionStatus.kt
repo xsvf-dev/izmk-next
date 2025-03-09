@@ -11,7 +11,6 @@ import java.util.*
 
 object PotionStatus: RenderableModule(
     name = "potion-status",
-    description = "显示药水效果",
     defaultX = 0f,
     defaultY = 0f
 ) {

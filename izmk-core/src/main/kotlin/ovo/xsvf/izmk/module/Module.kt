@@ -16,13 +16,12 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @since 2025/2/16
  */
 abstract class Module(val name: String,
-                      val description: String = "",
                       val loadFromConfig: Boolean = true,
                       val showInGui: Boolean = true
 ): SettingsDesigner<Module> {
-    internal val settings = CopyOnWriteArrayList<AbstractSetting<*>>()
-
+    val settings = CopyOnWriteArrayList<AbstractSetting<*>>()
     val translation = TranslationString("modules", name)
+    val description = TranslationString("modules.$name", "description")
 
     private val enabled0 = BooleanSetting(TranslationString("modules", "enabled"), false) { false }
     var enabled by enabled0
@@ -69,12 +68,11 @@ abstract class Module(val name: String,
 
 abstract class RenderableModule(
     name: String,
-    description: String = "",
     defaultX: Float,
     defaultY: Float,
     var width: Float = 0f,
     var height: Float  = 0f
-): Module(name, description) {
+): Module(name) {
     private val x0 = FloatSetting(
         TranslationString("modules.renderable", "x"), defaultX,
         minValue = 0f, maxValue = mc.window.width.toFloat(), step = mc.window.width / 500f,

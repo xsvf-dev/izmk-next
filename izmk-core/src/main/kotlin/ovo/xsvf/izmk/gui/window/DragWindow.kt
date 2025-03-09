@@ -4,7 +4,7 @@ package ovo.xsvf.izmk.gui.window
  * @author LangYa466
  * @since 2/15/2025
  */
-class DraggableWindow(var x: Float, var y: Float, var width: Float, var height: Float) {
+class DragWindow(var x: Float, var y: Float, var width: Float, var height: Float) {
     private var dragging: Boolean = false
     private var dragOffsetX: Float = 0f
     private var dragOffsetY: Float = 0f

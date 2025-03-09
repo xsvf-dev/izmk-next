@@ -3,12 +3,10 @@ package ovo.xsvf.izmk.gui.screen
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.impl.ModuleWidget
-import ovo.xsvf.izmk.gui.window.SimpleListWindow
 import ovo.xsvf.izmk.module.ModuleManager
-import ovo.xsvf.izmk.module.impl.ClickGUI
 
 object ClickGUIScreen: GuiScreen("ClickGUI") {
-    private val modulesWindow = SimpleListWindow(
+    private val modulesWindow = SimpleListScreen(
         ModuleManager
             .modules()
             .map { ModuleWidget(this, it) }
@@ -16,21 +14,21 @@ object ClickGUIScreen: GuiScreen("ClickGUI") {
         "IZMK Next"
     )
 
-    internal var settingsWindow: SimpleListWindow? = null
+    var settingsWindow: SimpleListScreen? = null
 
     override fun drawScreen(mouseX: Float, mouseY: Float, partialTicks: Float) {
         modulesWindow.draw(mouseX, mouseY, partialTicks)
         settingsWindow?.draw(mouseX, mouseY, partialTicks)
     }
 
-    override fun mouseClicked(buttonID: Int, mouseX: Float, mouseY: Float) {
-        if (settingsWindow?.mouseClicked(buttonID, mouseX, mouseY) == true) return
-        modulesWindow.mouseClicked(buttonID, mouseX, mouseY)
+    override fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float) {
+        if (settingsWindow?.mouseClicked(buttonId, mouseX, mouseY) == true) return
+        modulesWindow.mouseClicked(buttonId, mouseX, mouseY)
     }
 
-    override fun mouseReleased(buttonID: Int, mouseX: Float, mouseY: Float) {
-        if (settingsWindow?.mouseReleased(buttonID, mouseX, mouseY) == true) return
-        modulesWindow.mouseReleased(buttonID, mouseX, mouseY)
+    override fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float) {
+        if (settingsWindow?.mouseReleased(buttonId, mouseX, mouseY) == true) return
+        modulesWindow.mouseReleased(buttonId, mouseX, mouseY)
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
@@ -50,6 +48,5 @@ object ClickGUIScreen: GuiScreen("ClickGUI") {
 
     override fun onClose() {
         settingsWindow = null
-        ClickGUI.enabled = false
     }
 }

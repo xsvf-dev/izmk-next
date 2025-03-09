@@ -7,7 +7,6 @@ import ovo.xsvf.izmk.module.RenderableModule
 
 object WaterMark: RenderableModule(
     name = "water-mark",
-    description = "Add a watermark to the image",
     defaultX = 5f,
     defaultY = 5f,
     width = FontRenderers.getStringWidth("IZMK")

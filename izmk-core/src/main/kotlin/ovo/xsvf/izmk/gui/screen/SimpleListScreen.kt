@@ -1,4 +1,4 @@
-package ovo.xsvf.izmk.gui.window
+package ovo.xsvf.izmk.gui.screen
 
 import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.graphics.color.ColorRGB
@@ -6,14 +6,16 @@ import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.gui.widget.AbstractWidget
+import ovo.xsvf.izmk.gui.window.AbstractWindow
+import ovo.xsvf.izmk.gui.window.DragWindow
 
-class SimpleListWindow(private val widgets: MutableList<AbstractWidget>, title: String = ""): AbstractWindow(
+class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: String = ""): AbstractWindow(
     title, 50f, 50f, 300f, 400f,
 ) {
     private val rectMulti = PosColor2DMultiDraw()
     private val fontMulti = FontMultiDraw()
 
-    private val window = DraggableWindow(x, y, width, height)
+    private val window = DragWindow(x, y, width, height)
     private val padding = 35f
 
     override fun draw(mouseX: Float, mouseY: Float, partialTicks: Float) {
