@@ -15,7 +15,7 @@ abstract class AbstractSetting<T : Any>(
 ) : ReadWriteProperty<Any, T> {
     private val defaultValue = value
 
-    private val changeValueConsumers = CopyOnWriteArrayList<() -> Unit>()
+    private val changeValueConsumers = CopyOnWriteArrayList<(setting: AbstractSetting<T>) -> Unit>()
 
     val settingId: String
         get() = "$name@${this::class.simpleName}"
@@ -28,7 +28,7 @@ abstract class AbstractSetting<T : Any>(
         value(value)
     }
 
-    fun onChangeValue(run: () -> Unit): AbstractSetting<T> {
+    fun onChangeValue(run: (setting: AbstractSetting<T>) -> Unit): AbstractSetting<T> {
         return this.apply { changeValueConsumers.add(run) }
     }
 
@@ -44,7 +44,7 @@ abstract class AbstractSetting<T : Any>(
 
     fun value(value: T): AbstractSetting<T> {
         this.value = value
-        changeValueConsumers.forEach { it.invoke() }
+        changeValueConsumers.forEach { it.invoke(this) }
         return this
     }
 

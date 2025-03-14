@@ -19,39 +19,44 @@ import kotlin.io.path.Path
 open class Shader(
     vertShaderPath: String,
     fragShaderPath: String,
-    geomShaderPath: String? = null
+    geomShaderPath: String? = null,
+    shouldBeCompiled: () -> Boolean = { true }
 ) : GlObject {
     private val buffer: FloatBuffer = BufferUtils.createFloatBuffer(4 * 4)
 
     final override var id: Int
 
     init {
-        val vertexShaderID = createShader(vertShaderPath, GL_VERTEX_SHADER)
-        val fragShaderID = createShader(fragShaderPath, GL_FRAGMENT_SHADER)
-        val geomShaderID = geomShaderPath?.let { createShader(it, GL_GEOMETRY_SHADER) }
-        val id = glCreateProgram()
+        if (shouldBeCompiled()) {
+            val vertexShaderID = createShader(vertShaderPath, GL_VERTEX_SHADER)
+            val fragShaderID = createShader(fragShaderPath, GL_FRAGMENT_SHADER)
+            val geomShaderID = geomShaderPath?.let { createShader(it, GL_GEOMETRY_SHADER) }
+            val id = glCreateProgram()
 
-        glAttachShader(id, vertexShaderID)
-        glAttachShader(id, fragShaderID)
-        geomShaderID?.let { glAttachShader(id, it) }
+            glAttachShader(id, vertexShaderID)
+            glAttachShader(id, fragShaderID)
+            geomShaderID?.let { glAttachShader(id, it) }
 
-        glLinkProgram(id)
-        val linked = glGetProgrami(id, GL_LINK_STATUS)
-        if (linked == 0) {
-            log.error(glGetProgramInfoLog(id, 1024))
-            glDeleteProgram(id)
-            throw ShaderCompileException(
-                "Failed to link shader: $vertShaderPath, $fragShaderPath" + geomShaderPath?.let { ", $geomShaderPath" }
-            )
+            glLinkProgram(id)
+            val linked = glGetProgrami(id, GL_LINK_STATUS)
+            if (linked == 0) {
+                log.error(glGetProgramInfoLog(id, 1024))
+                glDeleteProgram(id)
+                throw ShaderCompileException(
+                    "Failed to link shader: $vertShaderPath, $fragShaderPath" + geomShaderPath?.let { ", $geomShaderPath" }
+                )
+            }
+            this.id = id
+
+            glDetachShader(id, vertexShaderID)
+            glDetachShader(id, fragShaderID)
+            geomShaderID?.let { glDetachShader(id, it) }
+            glDeleteShader(vertexShaderID)
+            glDeleteShader(fragShaderID)
+            geomShaderID?.let { glDeleteShader(it) }
+        } else {
+            this.id = 0
         }
-        this.id = id
-
-        glDetachShader(id, vertexShaderID)
-        glDetachShader(id, fragShaderID)
-        geomShaderID?.let { glDetachShader(id, it) }
-        glDeleteShader(vertexShaderID)
-        glDeleteShader(fragShaderID)
-        geomShaderID?.let { glDeleteShader(it) }
     }
 
     private fun createShader(path: String, shaderType: Int): Int {

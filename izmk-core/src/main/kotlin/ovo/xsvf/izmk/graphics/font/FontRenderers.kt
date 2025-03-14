@@ -2,12 +2,17 @@ package ovo.xsvf.izmk.graphics.font
 
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.graphics.color.ColorRGB
+import ovo.xsvf.izmk.module.impl.ClickGUI
 import ovo.xsvf.izmk.resource.ResourceUtil
 import java.awt.Font
 import kotlin.io.path.Path
 
 object FontRenderers {
-    val fontMode = FontMode.GENERAL
+    val fontMode get() = when (ClickGUI.fontRenderer) {
+        ClickGUI.FontRendererType.GENERAL -> FontMode.GENERAL
+        ClickGUI.FontRendererType.SPARSE -> FontMode.SPARSE
+    }
+
     const val DRAW_FONT_SIZE = 12f
 
     const val FONT_SIZE = 16f

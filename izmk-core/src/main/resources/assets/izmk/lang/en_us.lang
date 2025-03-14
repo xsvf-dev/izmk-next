@@ -11,11 +11,20 @@ modules.fps-display.font-scale=Font Scale
 modules.fps-display.string-color=String Color
 
 modules.no-hurtcam=No HurtCam
+
 modules.render-test=Render Test
+
 modules.test-hud=Test HUD
+
 modules.click-gui=Click GUI
+modules.click-gui.font-renderer=Font Renderer
+modules.click-gui.font-renderer.general=General
+modules.click-gui.font-renderer.sparse=Sparse Texture
+
 modules.chat-copy=Chat Copy
+
 modules.nene-hud=Nene HUD
+
 modules.potion-status=Potion Status
 
 modules.old-animations=Old Animations
