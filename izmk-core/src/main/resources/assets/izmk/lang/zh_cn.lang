@@ -4,6 +4,7 @@ modules.enabled=启用
 modules.renderable.x=X坐标
 modules.renderable.y=Y坐标
 
+# Modules
 modules.fps-display=帧数显示
 modules.fps-display.draw-string=绘制字符串
 modules.fps-display.font-scale=字体缩放
@@ -15,6 +16,7 @@ modules.test-hud=测试HUD
 modules.click-gui=设置
 modules.chat-copy=聊天复制
 modules.nene-hud=柚子厨滚出本客户端
+modules.potion-status=药水状态
 
 modules.old-animations=旧版本动画
 modules.old-animations.sword-blocking=防砍
@@ -27,3 +29,69 @@ modules.water-mark.scale=缩放
 
 modules.hit-color=打击颜色
 modules.hit-color.color=颜色
+
+modules.particles=粒子
+modules.particles.show-first-person=第一人称显示
+modules.particles.block-breaking=破坏方块
+
+modules.minimal-bobbing=最小抖动
+
+modules.item-scale=物品缩放
+modules.item-scale.show-first-person=第一人称显示
+modules.item-scale.instant-axe=秒人斧
+modules.item-scale.instant-axe-scale=秒人斧 缩放
+modules.item-scale.instant-axe-x-rotation=秒人斧 X 旋转
+modules.item-scale.instant-axe-y-rotation=秒人斧 Y 旋转
+modules.item-scale.instant-axe-z-rotation=秒人斧 Z 旋转
+modules.item-scale.kb-ball=KB 球
+modules.item-scale.kb-ball-scale=KB 球 缩放
+modules.item-scale.kb-ball-x-rotation=KB 球 X 旋转
+modules.item-scale.kb-ball-y-rotation=KB 球 Y 旋转
+modules.item-scale.kb-ball-z-rotation=KB 球 Z 旋转
+modules.item-scale.totem=图腾
+modules.item-scale.totem-scale=图腾 缩放
+modules.item-scale.totem-x-rotation=图腾 X 旋转
+modules.item-scale.totem-y-rotation=图腾 Y 旋转
+modules.item-scale.totem-z-rotation=图腾 Z 旋转
+modules.item-scale.enchanted-golden-apple=附魔金苹果
+modules.item-scale.enchanted-golden-apple-scale=附魔金苹果 缩放
+modules.item-scale.enchanted-golden-apple-x-rotation=附魔金苹果 X 旋转
+modules.item-scale.enchanted-golden-apple-y-rotation=附魔金苹果 Y 旋转
+modules.item-scale.enchanted-golden-apple-z-rotation=附魔金苹果 Z 旋转
+modules.item-scale.power-5-bow=动力5弓
+modules.item-scale.power-5-bow-scale=动力5弓 缩放
+modules.item-scale.power-5-bow-x-rotation=动力5弓 X 旋转
+modules.item-scale.power-5-bow-y-rotation=动力5弓 Y 旋转
+modules.item-scale.power-5-bow-z-rotation=动力5弓 Z 旋转
+modules.item-scale.punch-3-bow=冲击3弓
+modules.item-scale.punch-3-bow-scale=冲击3弓 缩放
+modules.item-scale.punch-3-bow-x-rotation=冲击3弓 X 旋转
+modules.item-scale.punch-3-bow-y-rotation=冲击3弓 Y 旋转
+modules.item-scale.punch-3-bow-z-rotation=冲击3弓 Z 旋转
+modules.item-scale.flame-bow=火焰弓
+modules.item-scale.flame-bow-scale=火焰弓 缩放
+modules.item-scale.flame-bow-x-rotation=火焰弓 X 旋转
+modules.item-scale.flame-bow-y-rotation=火焰弓 Y 旋转
+modules.item-scale.flame-bow-z-rotation=火焰弓 Z 旋转
+modules.item-scale.end-crystal=末地水晶
+modules.item-scale.end-crystal-scale=末地水晶 缩放
+modules.item-scale.end-crystal-x-rotation=末地水晶 X 旋转
+modules.item-scale.end-crystal-y-rotation=末地水晶 Y 旋转
+modules.item-scale.end-crystal-z-rotation=末地水晶 Z 旋转
+modules.item-scale.sharp-5=锋利5
+modules.item-scale.sharp-5-scale=锋利5 缩放
+modules.item-scale.sharp-5-x-rotation=锋利5 X 旋转
+modules.item-scale.sharp-5-y-rotation=锋利5 Y 旋转
+modules.item-scale.sharp-5-z-rotation=锋利5 Z 旋转
+
+modules.item-physics=物品物理掉落
+
+modules.hit-boxes=碰撞箱显示
+modules.hit-boxes.color=颜色
+modules.hit-boxes.show-eye-vector=显示视线方向
+modules.hit-boxes.eye-vector-color=视线方向颜色
+modules.hit-boxes.players=玩家
+modules.hit-boxes.items=物品
+modules.hit-boxes.mobs=生物
+modules.hit-boxes.projectiles=投射物
+modules.hit-boxes.vehicles=载具

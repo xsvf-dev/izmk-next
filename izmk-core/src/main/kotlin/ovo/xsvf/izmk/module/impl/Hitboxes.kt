@@ -6,8 +6,7 @@ import ovo.xsvf.izmk.module.Module
 object Hitboxes: Module("hit-boxes") {
     val color by setting("color", ColorRGB.WHITE)
     val showViewVector by setting("show-eye-vector", true)
-    val viewVectorColor by setting("eye-vector-color", ColorRGB(0, 0, 255, 254))
-        .visibility { showViewVector }
+    val viewVectorColor by setting("eye-vector-color", ColorRGB(0, 0, 255, 254)) { showViewVector }
 
     val players by setting("players", true)
     val items by setting("items", true)
