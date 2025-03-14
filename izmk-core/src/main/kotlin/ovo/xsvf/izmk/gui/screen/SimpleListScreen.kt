@@ -2,6 +2,7 @@ package ovo.xsvf.izmk.gui.screen
 
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.glfw.GLFW
+import ovo.xsvf.izmk.graphics.ScissorBox
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.multidraw.FontMultiDraw
 import ovo.xsvf.izmk.graphics.multidraw.PosColor2DMultiDraw
@@ -17,7 +18,7 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: 
     private val fontMulti = FontMultiDraw()
 
     private val window = DragWindow(x, y, width, height)
-    private val padding = 35f
+    private val padding = 36f
 
     /* scroll bar */
     private var showScrollBar = false
@@ -65,6 +66,9 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: 
             ColorRGB.WHITE,
             false, 2f
         )
+
+        rectMulti.draw()
+        fontMulti.draw()
     }
 
     private fun drawContent(mouseX: Float, mouseY: Float, partialTicks: Float) {
@@ -74,16 +78,21 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: 
         val renderWidth = if (showScrollBar) window.width - scrollBarWidth - scrollBarPadding else window.width
         var offsetY = window.y + padding - scrollOffset
 
-        visibleWidgets.forEach { widget ->
-            if (offsetY + widget.getHeight() > window.y + padding && offsetY < window.y + window.height - scrollBarPadding) {
-                widget.draw(
-                    renderWidth, viewportHeight,
-                    mouseX, mouseY,
-                    window.x + 5f, offsetY,
-                    fontMulti, rectMulti, partialTicks
-                )
+        scissorBox.updateAndDraw(window.x, window.y + padding, renderWidth, window.height - padding) {
+            visibleWidgets.forEach { widget ->
+//                if (offsetY > window.y && offsetY < window.y + window.height - scrollBarPadding) {
+                if (offsetY in (window.y)..(window.y + window.height)) {
+                    widget.draw(
+                        renderWidth, viewportHeight,
+                        mouseX, mouseY,
+                        window.x + 5f, offsetY,
+                        fontMulti, rectMulti, partialTicks
+                    )
+                }
+                offsetY += widget.getHeight() + 5f
             }
-            offsetY += widget.getHeight() + 5f
+            rectMulti.draw()
+            fontMulti.draw()
         }
 
         if (showScrollBar) {
@@ -114,10 +123,11 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: 
     }
 
     override fun mouseScrolled(mouseX: Float, mouseY: Float, scrollAmount: Int): Boolean {
-        if (showScrollBar) {
+        if (showScrollBar && window.isHovered(mouseX, mouseY)) {
             scrollOffset = (scrollOffset - scrollAmount * 20f).coerceIn(0f, maxScrollOffset)
+            return true
         }
-        return true
+        return false
     }
 
     override fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float): Boolean {
@@ -143,16 +153,16 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: 
     }
 
     private fun checkWidgetClicks(mouseX: Float, mouseY: Float, buttonId: Int): Boolean {
+        if (!window.isHovered(mouseX, mouseY)) return false
         var offsetY = window.y + padding - scrollOffset
         for (widget in widgets.filter { it.isVisible() }) {
             if (mouseY in offsetY..(offsetY + widget.getHeight()) &&
                 mouseX in window.x + 5f..(window.x + window.width - 5f - if (showScrollBar) scrollBarWidth else 0f)) {
                 widget.mouseClicked(mouseX, mouseY, buttonId == GLFW.GLFW_MOUSE_BUTTON_LEFT)
-                return true
             }
             offsetY += widget.getHeight() + 5f
         }
-        return false
+        return true
     }
 
     override fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float): Boolean {
@@ -163,5 +173,9 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: 
 
     override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
         return widgets.any { it.keyPressed(keyCode, scanCode) }
+    }
+
+    companion object {
+        private val scissorBox = ScissorBox()
     }
 }

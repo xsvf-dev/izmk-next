@@ -41,6 +41,8 @@ class PosColor2DMultiDraw {
     }
 
     fun draw() {
+        if (rect.isEmpty()) return
+
         countArr.pos = 0L
         if (countArr.len < rect.size * 4) countArr.realloc(rect.size * 4L, false)
         repeat(rect.size) {

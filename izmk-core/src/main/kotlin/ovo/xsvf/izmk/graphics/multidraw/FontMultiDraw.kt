@@ -32,6 +32,8 @@ class FontMultiDraw {
     }
 
     fun draw() {
+        if (texts.isEmpty()) return
+
         countArr.pos = 0L
         if (countArr.len < texts.size * 4) countArr.realloc(texts.size * 4L, false)
         texts.forEach { text ->

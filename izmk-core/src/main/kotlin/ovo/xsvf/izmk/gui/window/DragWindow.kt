@@ -17,6 +17,13 @@ class DragWindow(var x: Float, var y: Float, var width: Float, var height: Float
     }
 
     /**
+     * 判断鼠标是否在窗口区域内
+     */
+    fun isHovered(mouseX: Float, mouseY: Float): Boolean {
+        return mouseX in x..(x + width) && mouseY in y..(y + height)
+    }
+
+    /**
      * 开始拖拽，并记录初始偏移量
      */
     fun startDrag(mouseX: Float, mouseY: Float) {

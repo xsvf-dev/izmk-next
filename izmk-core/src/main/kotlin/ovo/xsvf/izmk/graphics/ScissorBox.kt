@@ -1,7 +1,7 @@
 package ovo.xsvf.izmk.graphics
 
 import net.minecraft.client.Minecraft
-import org.lwjgl.opengl.GL45.glScissor
+import org.lwjgl.opengl.GL45.*
 
 class ScissorBox(
     var x: Int = 0,
@@ -30,10 +30,10 @@ class ScissorBox(
      * @param func The function to execute.
      */
     fun draw(func: () -> Unit) {
-        GlHelper.scissor = true
         val factor = mc.window.guiScale
         glScissor((x * factor).toInt(), (mc.window.height - (y + height) * factor).toInt(),
             (width * factor).toInt(), (height * factor).toInt())
+        GlHelper.scissor = true
         func()
         GlHelper.scissor = false
     }
