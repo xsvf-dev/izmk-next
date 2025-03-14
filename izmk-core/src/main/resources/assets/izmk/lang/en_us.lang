@@ -4,6 +4,9 @@ modules.enabled=Enabled
 modules.renderable.x=X Position
 modules.renderable.y=Y Position
 
+languages.en_us=English (US)
+languages.zh_cn=Chinese (Simplified)
+
 # Modules
 modules.fps-display=FPS Display
 modules.fps-display.draw-string=Draw String
@@ -20,6 +23,7 @@ modules.click-gui=Click GUI
 modules.click-gui.font-renderer=Font Renderer
 modules.click-gui.font-renderer.general=General
 modules.click-gui.font-renderer.sparse=Sparse Texture
+modules.click-gui.language=Language
 
 modules.chat-copy=Chat Copy
 

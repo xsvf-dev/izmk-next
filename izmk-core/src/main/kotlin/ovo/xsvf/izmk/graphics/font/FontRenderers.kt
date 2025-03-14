@@ -8,10 +8,7 @@ import java.awt.Font
 import kotlin.io.path.Path
 
 object FontRenderers {
-    val fontMode get() = when (ClickGUI.fontRenderer) {
-        ClickGUI.FontRendererType.GENERAL -> FontMode.GENERAL
-        ClickGUI.FontRendererType.SPARSE -> FontMode.SPARSE
-    }
+    val fontRendererType get() = ClickGUI.fontRenderer
 
     const val DRAW_FONT_SIZE = 12f
 

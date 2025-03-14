@@ -1,9 +1,11 @@
 package ovo.xsvf.izmk.module.impl
 
 import ovo.xsvf.izmk.graphics.RenderSystem
+import ovo.xsvf.izmk.graphics.font.FontRendererType
 import ovo.xsvf.izmk.gui.screen.ClickGUIScreen
 import ovo.xsvf.izmk.module.Module
 import ovo.xsvf.izmk.translation.TranslationEnum
+import ovo.xsvf.izmk.translation.TranslationManager
 
 /**
  * @author LangYa466
@@ -20,6 +22,8 @@ object ClickGUI : Module(
                 setting.value(FontRendererType.GENERAL)
         }
 
+    val language by setting("language", TranslationManager.Language.ZH_CN)
+
     override fun onEnable() {
         enabled = false
         if (mc.screen == null) {
@@ -27,8 +31,4 @@ object ClickGUI : Module(
         }
     }
 
-    enum class FontRendererType(override val key: CharSequence): TranslationEnum {
-        GENERAL("general"),
-        SPARSE("sparse"),
-    }
 }

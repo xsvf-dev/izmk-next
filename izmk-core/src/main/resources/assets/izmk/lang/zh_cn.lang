@@ -4,6 +4,9 @@ modules.enabled=启用
 modules.renderable.x=X坐标
 modules.renderable.y=Y坐标
 
+languages.en_us=英语
+languages.zh_cn=简体中文
+
 # Modules
 modules.fps-display=帧数显示
 modules.fps-display.draw-string=绘制字符串
@@ -20,6 +23,7 @@ modules.click-gui=设置
 modules.click-gui.font-renderer=字体渲染器
 modules.click-gui.font-renderer.general=常规
 modules.click-gui.font-renderer.sparse=稀疏纹理
+modules.click-gui.language=语言
 
 modules.chat-copy=聊天复制
 

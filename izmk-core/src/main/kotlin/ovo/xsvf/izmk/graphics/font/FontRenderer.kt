@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL45.GL_TRIANGLES
 import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.buffer.drawArrays
 import ovo.xsvf.izmk.graphics.color.ColorRGB
-import ovo.xsvf.izmk.graphics.font.FontRenderers.fontMode
+import ovo.xsvf.izmk.graphics.font.FontRenderers.fontRendererType
 import ovo.xsvf.izmk.graphics.font.general.GlyphChunk
 import ovo.xsvf.izmk.graphics.shader.impl.FontShader
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
@@ -26,8 +26,8 @@ class FontRenderer(
 
         var width = 0f
 
-        when (fontMode) {
-            FontMode.GENERAL -> {
+        when (fontRendererType) {
+            FontRendererType.GENERAL -> {
                 text.forEachIndexed { index, ch ->
                     if (index == continueIndex) {
                         continueIndex = -1
@@ -48,7 +48,7 @@ class FontRenderer(
                 }
             }
 
-            FontMode.SPARSE -> {
+            FontRendererType.SPARSE -> {
                 font.sparse.tex.bind()
                 FontShader.textureUnit = font.sparse.tex.handle
 

@@ -10,8 +10,8 @@ import ovo.xsvf.izmk.gui.widget.AbstractWidget
 import ovo.xsvf.izmk.gui.window.AbstractWindow
 import ovo.xsvf.izmk.gui.window.DragWindow
 
-class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: String = "") :
-    AbstractWindow(title, 100f, 100f, 400f, 400f) {
+class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, private val screenTitle: () -> String = { "" }) :
+    AbstractWindow(screenTitle(), 100f, 100f, 400f, 400f) {
 
     private val log = LogManager.getLogger(javaClass)
     private val rectMulti = PosColor2DMultiDraw()
@@ -60,7 +60,7 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, title: 
 
         // 绘制标题
         fontMulti.addText(
-            title,
+            screenTitle(),
             window.x + 5f,
             window.y + 5f,
             ColorRGB.WHITE,

@@ -10,9 +10,8 @@ object ClickGUIScreen: GuiScreen("ClickGUI") {
         ModuleManager
             .modules()
             .map { ModuleWidget(this, it) }
-            .toMutableList(),
-        "IZMK Next"
-    )
+            .toMutableList()
+    ) { "IZMK" }
 
     var settingsWindow: SimpleListScreen? = null
 

@@ -13,9 +13,8 @@ class ModuleWidget(screen: GuiScreen, val module: Module) : AbstractWidget(scree
     private val valueListScreen = SimpleListScreen(
         module.settings
             .map { it.createWidget(screen) }
-            .toMutableList(),
-        module.getDisplayName()
-    )
+            .toMutableList()
+    ) { module.translation.translation }
 
     override fun draw(
         screenWidth: Float, screenHeight: Float,

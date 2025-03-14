@@ -1,7 +1,9 @@
 package ovo.xsvf.izmk.translation
 
+import ovo.xsvf.izmk.module.impl.ClickGUI
+
 object TranslationManager {
-    private val language = Language.ZH_CN
+    private val language get() = ClickGUI.language
 
     val en = TranslationMap("en_us")
     val cn = TranslationMap("zh_cn")
@@ -29,8 +31,8 @@ object TranslationManager {
             else -> en
         }
     
-    enum class Language {
-        EN_US,
-        ZH_CN,
+    enum class Language(override val key: CharSequence): DirectTranslationEnum {
+        EN_US("languages.en_us"),
+        ZH_CN("languages.zh_cn"),
     }
 }

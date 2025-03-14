@@ -5,7 +5,7 @@ import ovo.xsvf.izmk.graphics.buffer.VertexBufferObjects
 import ovo.xsvf.izmk.graphics.buffer.drawArrays
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.font.FontAdapter
-import ovo.xsvf.izmk.graphics.font.FontMode
+import ovo.xsvf.izmk.graphics.font.FontRendererType
 import ovo.xsvf.izmk.graphics.font.FontRenderer.Companion.FONT_SIZE
 import ovo.xsvf.izmk.graphics.font.FontRenderers
 import ovo.xsvf.izmk.graphics.shader.impl.FontShader
@@ -32,8 +32,8 @@ class FontMultiDraw {
     fun draw() {
         if (texts.isEmpty()) return
         
-        when (FontRenderers.fontMode) {
-            FontMode.SPARSE -> {
+        when (FontRenderers.fontRendererType) {
+            FontRendererType.SPARSE -> {
                 VertexBufferObjects.RenderFont.drawArrays(GL_TRIANGLES) {
                     texts.forEach { text ->
                         val font = FontRenderers.default.font
