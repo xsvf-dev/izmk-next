@@ -1,6 +1,5 @@
 package ovo.xsvf;
 
-import cpw.mods.cl.ModuleClassLoader;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("izmk")

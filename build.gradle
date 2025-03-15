@@ -61,10 +61,10 @@ tasks.register('runClient0') {
 }
 
 tasks.register("runAttach", JavaExec) {
-    dependsOn project(':izmk-loader').tasks.merge
+    dependsOn project(':izmk-loader').tasks.mergeRemap
     workingDir runDir
     description 'Attaches the Minecraft client with IZMK to a running instance'
 
-    classpath += fileTree(project(':izmk-loader').tasks.merge.output as File)
+    classpath += fileTree(project(':izmk-loader').tasks.mergeRemap.output as File)
     mainClass = "ovo.xsvf.ServiceMain"
 }

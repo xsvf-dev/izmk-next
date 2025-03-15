@@ -1,4 +1,5 @@
 import ovo.xsvf.task.AccessorTask
+import ovo.xsvf.task.RemapTask
 
 plugins {
     id 'java'
@@ -13,7 +14,7 @@ version = '1.0-SNAPSHOT'
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
 
-    reobf = false
+    reobf = true
     copyIdeResources = true
 }
 
@@ -71,16 +72,26 @@ tasks.register('accessor', AccessorTask) {
 
     outputs.file(outputFile)
     def collect = fileTree("$buildDir/deps").collect { it.toPath() }
-    collect.forEach {
-        inputs.file(it)
-        println "Adding $it to accessor"
-    }
+    collect.forEach { inputs.file(it) }
+    libs.addAll(collect)
+}
+
+tasks.register('remap', RemapTask) {
+    dependsOn accessor
+
+    targetFile = tasks.shadowJar.archiveFile.get().asFile
+    outputFile = tasks.shadowJar.archiveFile.get().asFile
+    mapFile = file("$projectDir/mapping.srg") as File
+
+    inputs.file(mapFile)
+    inputs.file(targetFile)
+    outputs.file(outputFile)
+    def collect = fileTree("$buildDir/deps")
+    collect.forEach { inputs.file(it) }
     libs.addAll(collect)
 }
 
 shadowJar {
     configurations = [project.configurations.shade]
     archiveClassifier = ''
-
-    finalizedBy accessor
 }

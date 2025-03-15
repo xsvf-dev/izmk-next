@@ -95,8 +95,7 @@ public final class ReflectionUtil {
         if (instance == null) {
             ObjectLongPair<Object> pair = getStaticFieldOffset(clazz, field);
             return unsafe.getObject(pair.first(), pair.second());
-        }
-        else {
+        } else {
             return getVarHandle(clazz, field, className).get(instance);
         }
     }
@@ -133,9 +132,5 @@ public final class ReflectionUtil {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static void setClassModule(Class<?> clazz, Module module) throws NoSuchFieldException, IllegalAccessException {
-        System.out.println("你妈死了");
     }
 }

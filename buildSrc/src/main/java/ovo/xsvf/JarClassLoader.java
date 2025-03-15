@@ -22,7 +22,6 @@ public class JarClassLoader extends ClassLoader {
                 while ((entry = zis.getNextEntry()) != null) {
                     if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
                         String className = entry.getName().replace("/", ".").substring(0, entry.getName().length() - 6);
-                        System.out.println("Loading class " + className);
                         jarClasses.put(className, zis.readAllBytes());
                     }
                 }

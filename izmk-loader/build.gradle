@@ -35,7 +35,7 @@ jar {
 }
 
 tasks.register('merge', MergeTask) {
-    dependsOn project(':izmk-core').tasks.shadowJar
+    dependsOn project(':izmk-core').tasks.accessor
     dependsOn shadowJar
 
     group 'build'
@@ -43,4 +43,21 @@ tasks.register('merge', MergeTask) {
     loader = tasks.shadowJar.archiveFile.get().asFile
     core = project(':izmk-core').tasks.shadowJar.archiveFile.get().asFile
     output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/merged-loader.jar")
+
+    inputs.files(loader, core)
+    outputs.file(output)
+}
+
+tasks.register('mergeRemap', MergeTask) {
+    dependsOn project(':izmk-core').tasks.remap
+    dependsOn shadowJar
+
+    group 'build'
+
+    loader = tasks.shadowJar.archiveFile.get().asFile
+    core = project(':izmk-core').tasks.shadowJar.archiveFile.get().asFile
+    output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/merged-loader.jar")
+
+    inputs.files(loader, core)
+    outputs.file(output)
 }

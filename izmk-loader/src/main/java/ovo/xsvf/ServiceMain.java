@@ -5,8 +5,12 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
 
 import java.io.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class ServiceMain {
@@ -16,7 +20,9 @@ public class ServiceMain {
     private static final File self = new File(ServiceMain.class
             .getProtectionDomain().getCodeSource().getLocation().getPath());
     private static final File library = self.toPath().resolveSibling("izmk-lib.dll").toFile();
+    private static final File mapping = self.toPath().resolveSibling("mapping.srg").toFile();
     private static final User32 user32 = Native.load("user32", User32.class);
+    private static final Set<String> pids = new HashSet<>();
 
     static {
         try {
@@ -34,18 +40,29 @@ public class ServiceMain {
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String[] args) {
         while (true) {
-            System.out.println("Waiting for Netease ForgeBootstrap...");
-            VirtualMachine.list().stream()
-                    .filter(it ->
-                            it.displayName().startsWith("net.minecraftforge.bootstrap.ForgeBootstrap") &&
-                                    it.displayName().contains("pc.bjd-mc.com"))
+            System.out.println("Waiting for HeyPixel...");
+            List<VirtualMachineDescriptor> list = VirtualMachine.list();
+            pids.forEach(pid -> {
+                if (list.stream().map(VirtualMachineDescriptor::id).noneMatch(it -> it.equals(pid)))
+                    pids.remove(pid);
+            });
+            list.stream()
+                    .filter(it -> !pids.contains(it.id()) &&
+                            it.displayName().startsWith("cpw.mods.bootstraplauncher.BootstrapLauncher")
+//                                   && it.displayName().contains("pc.bjd-mc.com")
+                                    )
                     .findFirst()
-                    .ifPresentOrElse(
-                            (vmd) -> {
+                    .ifPresentOrElse(vmd -> {
+                                System.out.println("Attach to (" + vmd.id() + ") " + vmd.displayName());
+                                if (!library.exists() && !extractLibrary()) {
+                                    showError(new FileNotFoundException("无法加载 DLL 库文件 " + library), "错误");
+                                    return;
+                                }
                                 attach(vmd.id(), buildLaunchArgs());
+                                pids.add(vmd.id());
                             }, () -> {});
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException ignored) {}
         }
     }
@@ -57,6 +74,24 @@ public class ServiceMain {
             sb.append("\n at ").append(ste.toString());
         }
         user32.showMessage(sb.toString(), "错误", User32.MB_ICONERROR);
+    }
+
+    private static boolean extractLibrary() {
+        try (FileOutputStream fos = new FileOutputStream(library);
+             FileOutputStream mappingFos = new FileOutputStream(mapping);
+             InputStream is = ServiceMain.class.getResourceAsStream("/lib.dll");
+             InputStream mappingIs = ServiceMain.class.getResourceAsStream("/mapping.srg")) {
+            if (is == null || mappingIs == null) {
+                user32.showMessage("IZMK 资源文件未找到！", "错误", ServiceMain.User32.MB_ICONERROR);
+                return false;
+            }
+            fos.write(is.readAllBytes());
+            mappingFos.write(mappingIs.readAllBytes());
+            return true;
+        } catch (IOException e) {
+            showError(e, "无法解压资源文件 " + library + " 或 " + mapping);
+            return false;
+        }
     }
 
     private static JsonObject buildLaunchArgs() {
@@ -72,15 +107,6 @@ public class ServiceMain {
             vm.loadAgent(self.getAbsolutePath(), launchArgs.toString());
         } catch (Exception e) {
             showError(e, "无法加载 IZMK");
-            taskKill(pid);
-        }
-    }
-
-    private static void taskKill(String pid) {
-        try {
-            Runtime.getRuntime().exec(new String[]{"taskkill", "/F", "/IM", "/PID", pid});
-        } catch (IOException e) {
-            showError(e, "无法终止进程");
         }
     }
 

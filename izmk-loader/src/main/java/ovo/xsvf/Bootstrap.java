@@ -21,8 +21,24 @@ public class Bootstrap {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static void agentmain(String agentArgs, Instrumentation inst) throws Exception {
+    public static void agentmain(String agentArgs, Instrumentation inst) {
+        try {
+            agentmain0(agentArgs, inst);
+        } catch (Exception e) {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                System.exit(1);
+            });
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked, deprecation")
+    public static void agentmain0(String agentArgs, Instrumentation inst) throws Exception {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
         String dll = jsonObject.get("dll").getAsString();
         String file = jsonObject.get("file").getAsString();
@@ -54,17 +70,13 @@ public class Bootstrap {
                 .getDeclaredField("parentLoaders");
         Map<String, ClassLoader> parentLoaders = (Map<String, ClassLoader>)
                 unsafe.getObject(finalClassLoader, unsafe.objectFieldOffset(parentLoadersField));
-
-        packages.forEach(it -> {
-            System.out.println("Adding package " + it);
-            parentLoaders.put(it, bmwClassLoader);
-        });
+        packages.forEach(it -> parentLoaders.put(it, bmwClassLoader));
         Thread.currentThread().setContextClassLoader(finalClassLoader);
 
         try {
             Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)
-                    .getMethod("entry", Instrumentation.class, String.class, boolean.class, Map.class)
-                    .invoke(null, inst, file, CoreFileProvider.DEV, binaryMap);
+                    .getMethod("entry", Instrumentation.class, String.class, boolean.class, Map.class, byte[].class)
+                    .invoke(null, inst, file, CoreFileProvider.DEV, binaryMap, new byte[0]);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             System.out.println("Entry class not found or entry method not found!!!!");
             throw e;
@@ -81,6 +93,7 @@ public class Bootstrap {
         System.out.println("Premain starting..");
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("dll", loaderSrcPath + "\\src\\main\\resources\\lib.dll");
+        jsonObject.addProperty("mapping", loaderSrcPath + "\\src\\main\\resources\\mapping.srg");
         jsonObject.addProperty("file", loaderSrcPath + "\\build\\libs\\merged-loader.jar");
 
         new Thread(() -> {
