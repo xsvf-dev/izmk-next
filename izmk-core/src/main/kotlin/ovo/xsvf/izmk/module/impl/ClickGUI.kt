@@ -26,9 +26,7 @@ object ClickGUI : Module(
 
     override fun onEnable() {
         enabled = false
-        if (mc.screen == null) {
-            ClickGUIScreen.openScreen()
-        }
+        ClickGUIScreen.openScreen()
+        logger.info("ClickGUI enabled")
     }
-
 }

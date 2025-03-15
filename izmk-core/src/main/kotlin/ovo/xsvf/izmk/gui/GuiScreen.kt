@@ -37,6 +37,7 @@ abstract class GuiScreen(val name: String) {
                 override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
                     mouseX = pMouseX.toFloat()
                     mouseY = pMouseY.toFloat()
+                    drawScreen(mouseX, mouseY, pPartialTick)
                 }
 
                 override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
@@ -61,11 +62,6 @@ abstract class GuiScreen(val name: String) {
                 override fun onClose() {
                     super.onClose()
                     closeScreen()
-                }
-
-                @EventTarget(priority = 1000)
-                private fun onRender2D(event: Render2DEvent) {
-                    drawScreen(mouseX, mouseY, event.partialTick)
                 }
             }
         }

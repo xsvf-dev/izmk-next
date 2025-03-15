@@ -28,7 +28,7 @@ object ItemPhysics: Module(
     
     @EventTarget
     fun onRender2D(event: Render2DEvent) {
-        lastRenderTime = System.nanoTime();
+        lastRenderTime = System.nanoTime()
     }
 
     fun render(

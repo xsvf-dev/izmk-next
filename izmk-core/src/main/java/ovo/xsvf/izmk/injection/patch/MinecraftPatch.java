@@ -12,9 +12,6 @@ import ovo.xsvf.patchify.annotation.At;
 import ovo.xsvf.patchify.annotation.Inject;
 import ovo.xsvf.patchify.annotation.Patch;
 
-/**
- * @author xsvf
- */
 @Patch(Minecraft.class)
 public class MinecraftPatch {
     private static final Logger log = LogManager.getLogger(MinecraftPatch.class);

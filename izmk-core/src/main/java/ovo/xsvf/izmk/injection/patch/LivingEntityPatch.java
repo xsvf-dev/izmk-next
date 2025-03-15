@@ -12,7 +12,9 @@ import ovo.xsvf.patchify.api.Invocation;
 public class LivingEntityPatch {
     private static final Minecraft mc = Minecraft.getInstance();
 
-    @WrapInvoke(method = "tickEffects", desc = "()V", target = "net/minecraft/world/level/Level/addParticle", targetDesc = "(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V")
+    @WrapInvoke(method = "tickEffects", desc = "()V",
+            target = "net/minecraft/world/level/Level/addParticle",
+            targetDesc = "(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V")
     public static void wrapTickEffects(LivingEntity entity, Invocation<Level, Void> invocation) throws Exception {
         if (entity == mc.player && mc.options.getCameraType().isFirstPerson() &&
                 Particles.INSTANCE.getEnabled() && Particles.INSTANCE.getShowFirstPerson()) {
