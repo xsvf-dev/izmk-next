@@ -54,6 +54,7 @@ public class Bootstrap {
             }
         } while (classLoader == null);
         final ClassLoader finalClassLoader = classLoader;
+        Thread.currentThread().setContextClassLoader(finalClassLoader);
 
         List<byte[]> binaryFiles = CoreFileProvider.getBinaryFiles(file);
         Map<String, byte[]> binaryMap = new HashMap<>();
@@ -71,7 +72,6 @@ public class Bootstrap {
         Map<String, ClassLoader> parentLoaders = (Map<String, ClassLoader>)
                 unsafe.getObject(finalClassLoader, unsafe.objectFieldOffset(parentLoadersField));
         packages.forEach(it -> parentLoaders.put(it, bmwClassLoader));
-        Thread.currentThread().setContextClassLoader(finalClassLoader);
 
         try {
             Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)

@@ -562,8 +562,6 @@ public final class PatchLoader implements IPatchLoader {
         // STACK: []
 
         method.instructions.insertBefore(toInject, insnList);
-
-        ASMUtil.printOpcodesWithParameters(method, System.out::println);
     }
 
     @Override
@@ -627,7 +625,7 @@ public final class PatchLoader implements IPatchLoader {
                 var injectMethods = injectMap.get(Pair.of(targetNode.name + "/" + method.name, method.desc));
 
                 for (var injectMethod : injectMethods) {
-                    log.info("processing method {} in class {} with patch method {} in class {}", method.name, targetClass.getName(), injectMethod.getName(), patchClass.getName());
+                    log.info("patching {}#{} with {}#{}", targetClass.getName(), method.name, patchClass.getName(), injectMethod.getName());
                     if (injectMethod.isAnnotationPresent(Inject.class)) {
                         At at = injectMethod.getAnnotation(Inject.class).at();
                         switch (at.value()) {

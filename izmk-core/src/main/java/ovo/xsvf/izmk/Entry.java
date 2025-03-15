@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk;
 
+import net.minecraft.client.gui.Gui;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ovo.xsvf.izmk.event.impl.EntryEvent;
@@ -11,8 +12,10 @@ import ovo.xsvf.patchify.annotation.Patch;
 import ovo.xsvf.patchify.asm.ReflectionUtil;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Entry {
     private static final Logger log = LogManager.getLogger(Entry.class);
@@ -20,7 +23,7 @@ public class Entry {
 
     public static void entry(Instrumentation inst, String jar, boolean devMode,
                              Map<String, byte[]> classes, byte[] mapping) throws Throwable {
-        log.info("Initializing IZMK");
+        log.info("Initializing IZMK...");
         ClassUtil.init(inst);
         IZMK.INSTANCE.setObfuscated(!devMode);
         ResourceUtil.INSTANCE.init(Paths.get(jar));

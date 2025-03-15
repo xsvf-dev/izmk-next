@@ -10,12 +10,12 @@ minecraft {
         // applies to all the run configs below
         configureEach {
             workingDirectory file(runDir)
-            property 'forge.logging.console.level', 'info'
+            property 'forge.logging.console.level', 'debug'
         }
 
         client {
             property 'forge.enabledGameTestNamespaces', "izmk"
-            property 'log4j.configurationFile', "${rootDir}/log4j.xml"
+            property 'log4j.configurationFile', "${rootDir}\\log4j.xml"
             jvmArgs.add "-javaagent:${file(agent_file).absolutePath}=${file(agent_dir).absolutePath}".toString()
         }
     }
