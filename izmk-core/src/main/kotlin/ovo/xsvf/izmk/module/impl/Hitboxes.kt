@@ -12,7 +12,6 @@ object Hitboxes: Module("hit-boxes") {
     val items by setting("items", true)
     val mobs by setting("mobs", true)
     val projectiles by setting("projectiles", true)
-    val vehicles by setting("vehicles", true)
 
     override fun onEnable() {
         if (!mc.entityRenderDispatcher.shouldRenderHitBoxes()) {

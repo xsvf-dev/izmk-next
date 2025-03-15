@@ -2,6 +2,7 @@ package ovo.xsvf.patchify.asm;
 
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.*;
+import net.minecraft.client.Minecraft;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandles;

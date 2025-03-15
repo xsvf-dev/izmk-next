@@ -64,6 +64,7 @@ public class AccessorProcessor implements Opcodes {
                 }
             }
         }
+        libraryJars.add(inputJarFile.toPath());
         classLoader = new JarClassLoader(libraryJars, this.getClass().getClassLoader(), log);
     }
 

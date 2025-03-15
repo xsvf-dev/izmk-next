@@ -1,5 +1,28 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.1.10' apply false
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    runs {
+        // applies to all the run configs below
+        configureEach {
+            workingDirectory file(runDir)
+            property 'forge.logging.console.level', 'info'
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', "izmk"
+            property 'log4j.configurationFile', "${rootDir}/log4j.xml"
+            jvmArgs.add "-javaagent:${file(agent_file).absolutePath}=${file(agent_dir).absolutePath}".toString()
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 }
 
 subprojects {
@@ -31,57 +54,16 @@ subprojects {
     }
 }
 
-project.ext.mcDir = new File(rootDir, project.ext.mcDir).absolutePath
-project.ext.runDir = new File(rootDir, project.ext.runDir).absolutePath
-tasks.register('runClient', JavaExec) {
+tasks.register('runClient0') {
+    group = 'forgegradle runs'
     dependsOn project(':izmk-loader').tasks.merge
-    workingDir runDir
-    description 'Runs the Minecraft client with IZMK'
-
-    doFirst {
-        if (!file(runDir).exists()) {
-            file(runDir).mkdirs()
-        }
-    }
-
-    jvmArgs = [
-            "-Xmx4096m",
-            "-Dminecraft.client.jar=$mcDir/1.20.6/1.20.6-Forge.jar",
-            "-Djava.library.path=$mcDir/natives",
-            "-Dlog4j.skipJansi=false",
-            "-Dlog4j.configurationFile=$mcDir/log4j.xml",
-            "-javaagent:${project(':izmk-loader').tasks.merge.output}=${project(':izmk-loader').projectDir.absolutePath}"
-    ]
-
-    classpath = fileTree("$mcDir/libs")
-    classpath += fileTree("$mcDir/1.20.6/1.20.6-Forge.jar")
-
-    args = [
-            "--username", "xsvf",
-            "--version", "IZMK",
-            "--gameDir", runDir,
-            "--assetsDir", "$mcDir/assets",
-            "--assetIndex", "16",
-            "--accessToken", UUID.randomUUID().toString(),
-            "--launchTarget", "forge_client"
-    ]
-
-    mainClass = 'net.minecraftforge.bootstrap.ForgeBootstrap'
-
-    standardOutput = System.out
-    errorOutput = System.err
+    finalizedBy tasks.runClient
 }
 
 tasks.register("runAttach", JavaExec) {
     dependsOn project(':izmk-loader').tasks.merge
     workingDir runDir
     description 'Attaches the Minecraft client with IZMK to a running instance'
-
-    doFirst {
-        if (!file(runDir).exists()) {
-            file(runDir).mkdirs()
-        }
-    }
 
     classpath += fileTree(project(':izmk-loader').tasks.merge.output as File)
     mainClass = "ovo.xsvf.ServiceMain"

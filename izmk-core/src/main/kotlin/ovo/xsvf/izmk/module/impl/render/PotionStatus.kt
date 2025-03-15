@@ -19,11 +19,11 @@ object PotionStatus: RenderableModule(
         var height0 = 0f
         var width0 = 0f
         var y0 = y
-        mc.player?.activeEffectsMap?.forEach { (holder, effect) ->
+        mc.player?.activeEffectsMap?.forEach { (effect, instance) ->
             var x0 = x
-            val amplifier = getAmplifier(effect)
-            val duration = getDuration(effect)
-            val displayName = holder.get().displayName.string + " " + amplifier + " "
+            val amplifier = getAmplifier(instance)
+            val duration = getDuration(instance)
+            val displayName = effect.displayName.string + " " + amplifier + " "
             FontRenderers.drawString(
                 displayName,
                 x0, y0, ColorRGB.WHITE

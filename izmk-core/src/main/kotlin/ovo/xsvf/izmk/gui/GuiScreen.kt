@@ -54,7 +54,7 @@ abstract class GuiScreen(val name: String) {
                             super.keyPressed(pKeyCode, pScanCode, pModifiers)
                 }
 
-                override fun mouseScrolled(pMouseX: Double, pMouseY: Double, pScrollX: Double, pScrollY: Double): Boolean {
+                override fun mouseScrolled(pMouseX: Double, pMouseY: Double, pScrollY: Double): Boolean {
                     return mouseScrolled(pMouseX.toFloat(), pMouseY.toFloat(), pScrollY.toInt())
                 }
 

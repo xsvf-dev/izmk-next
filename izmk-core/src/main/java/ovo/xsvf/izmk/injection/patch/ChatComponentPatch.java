@@ -13,7 +13,7 @@ import ovo.xsvf.patchify.api.ILocals;
 public class ChatComponentPatch {
     private static final Logger log = LogManager.getLogger(ChatComponentPatch.class);
 
-    @ModifyLocals(method = "addMessage", desc = "(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V",
+    @ModifyLocals(method = "addMessage", desc = "(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;ILnet/minecraft/client/GuiMessageTag;Z)V",
             indexes = {1}, types = {Component.class})
     public static void onAddMessage(ILocals locals) {
         if (ChatCopy.INSTANCE.getEnabled()) {

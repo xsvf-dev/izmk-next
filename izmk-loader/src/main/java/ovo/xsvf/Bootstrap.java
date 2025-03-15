@@ -2,15 +2,24 @@ package ovo.xsvf;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import sun.misc.Unsafe;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Bootstrap {
     private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
+    private static final Unsafe unsafe;
+    static {
+        try {
+            Field field = Unsafe.class.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            unsafe = (Unsafe) field.get(null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public static void agentmain(String agentArgs, Instrumentation inst) throws Exception {
@@ -30,24 +39,32 @@ public class Bootstrap {
         } while (classLoader == null);
         final ClassLoader finalClassLoader = classLoader;
 
-        Field packageToParentLoader = Class.forName("net.minecraftforge.securemodules.SecureModuleClassLoader", true, finalClassLoader)
-                .getDeclaredField("packageToParentLoader");
-        packageToParentLoader.setAccessible(true);
-        Map<String, ClassLoader> pkgToParentLoader = (Map<String, ClassLoader>) packageToParentLoader.get(finalClassLoader);
+        List<byte[]> binaryFiles = CoreFileProvider.getBinaryFiles(file);
+        Map<String, byte[]> binaryMap = new HashMap<>();
         Set<String> packages = new HashSet<>();
 
         BMWClassLoader bmwClassLoader = new BMWClassLoader((bytes) -> {
             String name = ASMUtil.node(bytes).name;
             packages.add(classToPackage(name.replace("/", ".")));
+            binaryMap.put(name.replace("/", "."), bytes);
             return name;
-        }, () -> CoreFileProvider.getBinaryFiles(file), (name, b) -> defineClass(name, finalClassLoader, b));
-        packages.forEach(pkg -> pkgToParentLoader.put(pkg, bmwClassLoader));
+        }, () -> binaryFiles, (name, b) -> defineClass(name, finalClassLoader, b));
+
+        Field parentLoadersField = Class.forName("cpw.mods.cl.ModuleClassLoader")
+                .getDeclaredField("parentLoaders");
+        Map<String, ClassLoader> parentLoaders = (Map<String, ClassLoader>)
+                unsafe.getObject(finalClassLoader, unsafe.objectFieldOffset(parentLoadersField));
+
+        packages.forEach(it -> {
+            System.out.println("Adding package " + it);
+            parentLoaders.put(it, bmwClassLoader);
+        });
         Thread.currentThread().setContextClassLoader(finalClassLoader);
 
         try {
             Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)
-                    .getMethod("entry", Instrumentation.class, String.class, boolean.class)
-                    .invoke(null, inst, file, CoreFileProvider.DEV);
+                    .getMethod("entry", Instrumentation.class, String.class, boolean.class, Map.class)
+                    .invoke(null, inst, file, CoreFileProvider.DEV, binaryMap);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             System.out.println("Entry class not found or entry method not found!!!!");
             throw e;
@@ -61,8 +78,7 @@ public class Bootstrap {
 
     // For testing
     public static void premain(String loaderSrcPath, Instrumentation inst) throws Exception {
-        System.out.println("premain starting..");
-
+        System.out.println("Premain starting..");
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("dll", loaderSrcPath + "\\src\\main\\resources\\lib.dll");
         jsonObject.addProperty("file", loaderSrcPath + "\\build\\libs\\merged-loader.jar");

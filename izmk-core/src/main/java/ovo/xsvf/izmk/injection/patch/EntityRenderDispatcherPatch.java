@@ -10,7 +10,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.vehicle.VehicleEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +32,6 @@ public class EntityRenderDispatcherPatch {
                 case ItemEntity ignored when !Hitboxes.INSTANCE.getItems() -> { return; }
                 case Mob ignored when !Hitboxes.INSTANCE.getMobs() -> { return; }
                 case Projectile ignored when !Hitboxes.INSTANCE.getProjectiles() -> { return; }
-                case VehicleEntity ignored when !Hitboxes.INSTANCE.getVehicles() -> { return; }
                 case Player ignored when !Hitboxes.INSTANCE.getPlayers() -> { return; }
                 default -> {}
             }
@@ -51,17 +49,17 @@ public class EntityRenderDispatcherPatch {
 
                 Vec3 vec31 = entity.getViewVector(tickDelta);
                 PoseStack.Pose posestack$pose = poseStack.last();
-                vertexConsumer.vertex(posestack$pose, 0.0F, entity.getEyeHeight(), 0.0F)
+                vertexConsumer.vertex(posestack$pose.pose(), 0.0F, entity.getEyeHeight(), 0.0F)
                         .color(viewVectorColor.getRFloat(), viewVectorColor.getGFloat(),
                                 viewVectorColor.getBFloat(), 255 - viewVectorColor.getA())
-                        .normal(posestack$pose, (float) vec31.x, (float) vec31.y, (float) vec31.z)
+                        .normal(posestack$pose.normal(), (float) vec31.x, (float) vec31.y, (float) vec31.z)
                         .endVertex();
-                vertexConsumer.vertex(posestack$pose, (float) (vec31.x * (double) 2.0F),
+                vertexConsumer.vertex(posestack$pose.pose(), (float) (vec31.x * (double) 2.0F),
                                 (float) ((double) entity.getEyeHeight() + vec31.y * (double) 2.0F),
                                 (float) (vec31.z * (double) 2.0F))
                         .color(viewVectorColor.getRFloat(), viewVectorColor.getGFloat(),
                                 viewVectorColor.getBFloat(), 255 - viewVectorColor.getA())
-                        .normal(posestack$pose, (float) vec31.x, (float) vec31.y, (float) vec31.z)
+                        .normal(posestack$pose.normal(), (float) vec31.x, (float) vec31.y, (float) vec31.z)
                         .endVertex();
             }
 

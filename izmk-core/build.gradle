@@ -56,13 +56,26 @@ dependencies {
     testImplementation project(':izmk-loader')
 }
 
-tasks.register('accessor', AccessorTask) {
+tasks.register("copyDeps", Copy) {
     dependsOn shadowJar
+
+    from configurations.runtimeClasspath
+    into "$buildDir/deps"
+}
+
+tasks.register('accessor', AccessorTask) {
+    dependsOn copyDeps
 
     targetFile = tasks.shadowJar.archiveFile.get().asFile
     outputFile = tasks.shadowJar.archiveFile.get().asFile
-    libs.add(targetFile.toPath())
-    libs.addAll(fileTree("$rootDir/minecraft/libs").collect { it.toPath() })
+
+    outputs.file(outputFile)
+    def collect = fileTree("$buildDir/deps").collect { it.toPath() }
+    collect.forEach {
+        inputs.file(it)
+        println "Adding $it to accessor"
+    }
+    libs.addAll(collect)
 }
 
 shadowJar {
