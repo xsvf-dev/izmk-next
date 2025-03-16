@@ -13,14 +13,18 @@ abstract class AbstractWidget(val screen: GuiScreen) {
     val logger: Logger = LogManager.getLogger(javaClass)
 
     abstract fun getHeight(): Float
-    abstract fun draw(screenWidth: Float, screenHeight: Float,
-                      mouseX: Float, mouseY: Float,
-                      renderX: Float, renderY: Float,
-                      fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
-                      partialTicks: Float)
+    abstract fun draw(
+        screenWidth: Float, screenHeight: Float,
+        mouseX: Float, mouseY: Float,
+        renderX: Float, renderY: Float,
+        fontMulti: FontMultiDraw, rectMulti: PosColor2DMultiDraw,
+        partialTicks: Float
+    )
+
     open fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {}
-    open fun mouseReleased(mouseX: Float, mouseY: Float, isLeftClick: Boolean) : Boolean = false
+    open fun mouseReleased(mouseX: Float, mouseY: Float, isLeftClick: Boolean): Boolean = false
     open fun keyPressed(keyCode: Int, scanCode: Int): Boolean = false
+    open fun onWindowClose() {}
     open fun isVisible(): Boolean = true
 
     fun drawDefaultBackground(rectMulti: PosColor2DMultiDraw, renderX: Float, renderY: Float, screenWidth: Float) {

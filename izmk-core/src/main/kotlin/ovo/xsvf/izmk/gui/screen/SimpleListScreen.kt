@@ -10,7 +10,10 @@ import ovo.xsvf.izmk.gui.widget.AbstractWidget
 import ovo.xsvf.izmk.gui.window.AbstractWindow
 import ovo.xsvf.izmk.gui.window.DragWindow
 
-class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, private val screenTitle: () -> String = { "" }) :
+class SimpleListScreen(
+    private val widgets: MutableList<AbstractWidget>,
+    private val screenTitle: () -> String = { "" }
+) :
     AbstractWindow(screenTitle(), 100f, 100f, 400f, 400f) {
 
     private val log = LogManager.getLogger(javaClass)
@@ -29,7 +32,8 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, private
     private var lastDragY = 0f
 
     // 预计算属性
-    private val contentHeight get() = widgets.filter { it.isVisible() }.sumOf { it.getHeight().toDouble() + 5 }.toFloat()
+    private val contentHeight
+        get() = widgets.filter { it.isVisible() }.sumOf { it.getHeight().toDouble() + 5 }.toFloat()
     private val viewportHeight get() = window.height - padding - scrollBarPadding
     private val maxScrollOffset get() = (contentHeight - viewportHeight).coerceAtLeast(0f)
 
@@ -144,7 +148,8 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, private
 
         val scrollBarX = window.x + window.width - scrollBarWidth - scrollBarPadding
         if (mouseX in scrollBarX..(scrollBarX + scrollBarWidth) &&
-            mouseY in window.y + padding..(window.y + padding + viewportHeight)) {
+            mouseY in window.y + padding..(window.y + padding + viewportHeight)
+        ) {
             draggingScrollBar = true
             lastDragY = mouseY
             return true
@@ -157,7 +162,8 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, private
         var offsetY = window.y + padding - scrollOffset
         for (widget in widgets.filter { it.isVisible() }) {
             if (mouseY in offsetY..(offsetY + widget.getHeight()) &&
-                mouseX in window.x + 5f..(window.x + window.width - 5f - if (showScrollBar) scrollBarWidth else 0f)) {
+                mouseX in window.x + 5f..(window.x + window.width - 5f - if (showScrollBar) scrollBarWidth else 0f)
+            ) {
                 widget.mouseClicked(mouseX, mouseY, buttonId == GLFW.GLFW_MOUSE_BUTTON_LEFT)
             }
             offsetY += widget.getHeight() + 5f
@@ -173,6 +179,10 @@ class SimpleListScreen(private val widgets: MutableList<AbstractWidget>, private
 
     override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
         return widgets.any { it.keyPressed(keyCode, scanCode) }
+    }
+
+    override fun onClose() {
+        widgets.forEach { it.onWindowClose() }
     }
 
     companion object {

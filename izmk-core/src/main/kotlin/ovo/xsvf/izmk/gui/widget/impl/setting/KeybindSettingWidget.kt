@@ -12,7 +12,7 @@ import ovo.xsvf.izmk.util.input.KeyBind
 class KeybindSettingWidget(
     screen: GuiScreen,
     override val setting: KeyBindSetting
-): AbstractSettingWidget(screen, setting) {
+) : AbstractSettingWidget(screen, setting) {
     private var binding = false
 
     override fun draw0(
@@ -25,9 +25,9 @@ class KeybindSettingWidget(
         drawDefaultBackground(rectMulti, renderX, renderY, screenWidth)
         fontMulti.addText(
             "${setting.name.translation}: " +
-                if (binding) "Press a key to bind"
-                else if (setting.value.keyCode == -1) "Not bound"
-                else "Bound to ${setting.value.keyName.uppercase()}",
+                    if (binding) "Press a key to bind"
+                    else if (setting.value.keyCode == -1) "Not bound"
+                    else "Bound to ${setting.value.keyName.uppercase()}",
             renderX + 2f,
             renderY + 3f,
             ColorRGB.WHITE
@@ -36,6 +36,10 @@ class KeybindSettingWidget(
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, isLeftClick: Boolean) {
         binding = !binding
+    }
+
+    override fun onWindowClose() {
+        binding = false
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int): Boolean {

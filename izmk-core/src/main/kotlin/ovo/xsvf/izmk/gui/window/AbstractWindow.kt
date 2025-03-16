@@ -12,4 +12,5 @@ abstract class AbstractWindow(
     open fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float): Boolean = true
     open fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float): Boolean = true
     open fun mouseScrolled(mouseX: Float, mouseY: Float, scrollAmount: Int): Boolean = true
+    open fun onClose() {}
 }

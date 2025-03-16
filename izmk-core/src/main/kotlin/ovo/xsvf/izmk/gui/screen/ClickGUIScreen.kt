@@ -5,7 +5,7 @@ import ovo.xsvf.izmk.gui.GuiScreen
 import ovo.xsvf.izmk.gui.widget.impl.ModuleWidget
 import ovo.xsvf.izmk.module.ModuleManager
 
-object ClickGUIScreen: GuiScreen("ClickGUI") {
+object ClickGUIScreen : GuiScreen("ClickGUI") {
     private val modulesWindow = SimpleListScreen(
         ModuleManager
             .modules()
@@ -14,6 +14,10 @@ object ClickGUIScreen: GuiScreen("ClickGUI") {
     ) { "IZMK" }
 
     var settingsWindow: SimpleListScreen? = null
+        set(value) {
+            if (value == null) field?.onClose()
+            field = value
+        }
 
     override fun drawScreen(mouseX: Float, mouseY: Float, partialTicks: Float) {
         modulesWindow.draw(mouseX, mouseY, partialTicks)
@@ -52,5 +56,6 @@ object ClickGUIScreen: GuiScreen("ClickGUI") {
 
     override fun onClose() {
         settingsWindow = null
+        modulesWindow.onClose()
     }
 }
