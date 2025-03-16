@@ -39,6 +39,7 @@ object ModuleManager {
         addModule(Hitboxes)
         addModule(Particles)
         addModule(MinmalBobbing)
+        addModule(TestScreen)
 
         /* render modules */
         addModule(NeneHud)

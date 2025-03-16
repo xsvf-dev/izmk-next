@@ -20,16 +20,15 @@ public class HumanoidArmorLayerPatch {
     private static int overlayCoords;
 
     public static void renderWithOverlay(HumanoidArmorLayer instance,
-                                  PoseStack poseStack, MultiBufferSource multiBufferSource, int i,
-                                  LivingEntity entity, float f, float g, float h, float j, float k, float l,
-                                  int overlayCoords0) {
-        log.debug("calling renderWithOverlay method");
+                                         PoseStack poseStack, MultiBufferSource multiBufferSource, int i,
+                                         LivingEntity entity, float f, float g, float h, float j, float k, float l,
+                                         int overlayCoords0) {
         overlayCoords = overlayCoords0;
         instance.render(poseStack, multiBufferSource, i, entity, f, g, h, j, k, l);
     }
 
     @WrapInvoke(method = "renderModel", desc = "(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;FFFLnet/minecraft/resources/ResourceLocation;)V",
-                target = "net/minecraft/client/model/Model/renderToBuffer", targetDesc = "(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V")
+            target = "net/minecraft/client/model/Model/renderToBuffer", targetDesc = "(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V")
     public static void renderToBuffer(HumanoidArmorLayer<LivingEntity, HumanoidModel<LivingEntity>, HumanoidModel<LivingEntity>> instance,
                                       PoseStack poseStack, MultiBufferSource multiBufferSource, int i,
                                       Model model, float f, float g, float h, ResourceLocation resourceLocation,

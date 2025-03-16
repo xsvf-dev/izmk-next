@@ -1,15 +1,14 @@
 package ovo.xsvf.izmk.injection.patch;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ovo.xsvf.izmk.graphics.RenderSystem;
 import ovo.xsvf.izmk.module.impl.MinmalBobbing;
-import ovo.xsvf.patchify.annotation.Patch;
-import ovo.xsvf.patchify.annotation.WrapInvoke;
+import ovo.xsvf.patchify.CallbackInfo;
+import ovo.xsvf.patchify.annotation.*;
 import ovo.xsvf.patchify.api.Invocation;
 
 @Patch(GameRenderer.class)
@@ -25,11 +24,13 @@ public class GameRendererPatch {
         original.call();
     }
 
-    @WrapInvoke(method = "render", desc = "(FJZ)V",
-            target = "net/minecraft/client/gui/Gui/render",
-            targetDesc = "(Lnet/minecraft/client/gui/GuiGraphics;F)V")
-    public static void render(GameRenderer instance, float partialTicks, long finishTimeNano, boolean renderLevel, Invocation<Gui, Void> original) throws Exception {
-        original.call();
-        RenderSystem.INSTANCE.onRender2d((GuiGraphics) original.args().getFirst(), partialTicks);
+    @Inject(method = "render", desc = "(FJZ)V",
+            at = @At(value = At.Type.AFTER_INVOKE,
+                    method = "net/minecraft/client/gui/Gui/render",
+                    desc = "(Lnet/minecraft/client/gui/GuiGraphics;F)V"))
+    public static void render(GameRenderer instance, float partialTicks, long finishTimeNano,
+                              boolean renderLevel, @Local(10) GuiGraphics guiGraphics,
+                              CallbackInfo ci) throws Exception {
+        RenderSystem.INSTANCE.onRender2d(guiGraphics, partialTicks);
     }
 }

@@ -51,7 +51,7 @@ dependencies {
     shade 'com.sun.msv.datatype.xsd:xsdlib:2013.2'
     shade "gg.essential:elementa:695"
     shade "gg.essential:elementa-unstable-layoutdsl:695"
-    shade "gg.essential:universalcraft-1.20.1-forge:375"
+    shade fg.deobf("gg.essential:universalcraft-1.20.1-forge:375")
 
     testImplementation "it.unimi.dsi:fastutil:8.5.6"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
@@ -103,7 +103,7 @@ shadowJar {
 
     relocate 'kotlin', 'ovo.xsvf.lib.kotlin'
     relocate 'kotlinx', 'ovo.xsvf.lib.kotlinx'
-    relocate 'com.twelvemonkeys.imageio', 'ovo.xsvf.lib.com.twelvemonkeys.imageio'
+    relocate 'com.twelvemonkeys', 'ovo.xsvf.lib.com.twelvemonkeys'
     relocate 'dev.luna5ama', 'ovo.xsvf.lib.dev.luna5ama'
     relocate 'gg.essential', 'ovo.xsvf.lib.gg.essential'
     relocate 'com.sun.msv.datatype.xsd', 'ovo.xsvf.lib.com.sun.msv.datatype.xsd'
