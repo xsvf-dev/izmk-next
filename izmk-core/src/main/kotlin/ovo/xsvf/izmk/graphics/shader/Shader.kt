@@ -6,7 +6,6 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.graphics.GlHelper
 import ovo.xsvf.izmk.graphics.GlObject
-import ovo.xsvf.izmk.resource.ResourceUtil
 import java.io.InputStream
 import java.io.StringWriter
 import java.nio.FloatBuffer
@@ -14,7 +13,6 @@ import java.nio.charset.Charset
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.io.path.Path
 
 open class Shader(
     vertShaderPath: String,
@@ -60,7 +58,7 @@ open class Shader(
     }
 
     private fun createShader(path: String, shaderType: Int): Int {
-        val srcString = ResourceUtil.getAsStream(Path(path))?.use { it.readText() } ?: run {
+        val srcString = javaClass.getResourceAsStream(path)?.use { it.readText() } ?: run {
             throw IllegalArgumentException("Shader source not found: $path")
         }
         val id = glCreateShader(shaderType)
@@ -110,7 +108,7 @@ open class Shader(
         glProgramUniform1f(id, location, value)
     }
 
-    class ShaderCompileException(message: String): Exception(message)
+    class ShaderCompileException(message: String) : Exception(message)
 
     companion object {
         private val log = LogManager.getLogger(Shader::class.java)

@@ -1,6 +1,6 @@
 package ovo.xsvf.izmk.translation
 
-import ovo.xsvf.izmk.resource.Resource
+import ovo.xsvf.izmk.util.Resource
 import java.util.concurrent.ConcurrentHashMap
 
 class TranslationMap(

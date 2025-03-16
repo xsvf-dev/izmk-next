@@ -4,13 +4,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import sun.misc.Unsafe;
 
+import java.io.FileOutputStream;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class Bootstrap {
-    private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
     private static final Unsafe unsafe;
+    private static final Path assetsDir = Path.of("C:", "ProgramData", "izmk", "runtime_assets");
+
     static {
         try {
             Field field = Unsafe.class.getDeclaredField("theUnsafe");
@@ -20,6 +25,8 @@ public class Bootstrap {
             throw new RuntimeException(e);
         }
     }
+
+    private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
 
     public static void agentmain(String agentArgs, Instrumentation inst) {
         try {
@@ -32,7 +39,7 @@ public class Bootstrap {
                     throw new RuntimeException(ex);
                 }
                 System.exit(1);
-            });
+            }).start();
             throw new RuntimeException(e);
         }
     }
@@ -56,7 +63,8 @@ public class Bootstrap {
         final ClassLoader finalClassLoader = classLoader;
         Thread.currentThread().setContextClassLoader(finalClassLoader);
 
-        List<byte[]> binaryFiles = CoreFileProvider.getBinaryFiles(file);
+        List<byte[]> classes = CoreFileProvider.getClasses(file);
+        extractResources(CoreFileProvider.getResources(file));
         Map<String, byte[]> binaryMap = new HashMap<>();
         Set<String> packages = new HashSet<>();
 
@@ -65,7 +73,13 @@ public class Bootstrap {
             packages.add(classToPackage(name.replace("/", ".")));
             binaryMap.put(name.replace("/", "."), bytes);
             return name;
-        }, () -> binaryFiles, (name, b) -> defineClass(name, finalClassLoader, b));
+        }, () -> classes, name -> {
+            try {
+                return assetsDir.resolve(name).toUri().toURL();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }, finalClassLoader);
 
         Field parentLoadersField = Class.forName("cpw.mods.cl.ModuleClassLoader")
                 .getDeclaredField("parentLoaders");
@@ -81,6 +95,20 @@ public class Bootstrap {
             System.out.println("Entry class not found or entry method not found!!!!");
             throw e;
         }
+    }
+
+    private static void extractResources(Map<String, byte[]> resources) throws Exception {
+        System.out.println("Extracting resources..");
+        for (Map.Entry<String, byte[]> entry : resources.entrySet()) {
+            String name = entry.getKey();
+            byte[] bytes = entry.getValue();
+            Path path = assetsDir.resolve(name);
+            Files.createDirectories(path.getParent());
+            try (FileOutputStream fos = new FileOutputStream(path.toFile())) {
+                fos.write(bytes);
+            }
+        }
+        System.out.println("Resources extracted.");
     }
 
     private static String classToPackage(String name) {

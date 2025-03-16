@@ -38,6 +38,7 @@ subprojects {
         maven { url "https://maven.aliyun.com/repository/jcenter" }
         maven { url "https://maven.aliyun.com/repository/apache-snapshots" }
         maven { url 'https://maven.luna5ama.dev/'}
+        maven { url 'https://repo.essential.gg/repository/maven-public' }
         maven { url 'https://jitpack.io' }
     }
 

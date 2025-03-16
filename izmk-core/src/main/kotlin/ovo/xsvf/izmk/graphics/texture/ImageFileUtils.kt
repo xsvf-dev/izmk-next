@@ -2,7 +2,7 @@ package ovo.xsvf.izmk.graphics.texture
 
 import org.lwjgl.opengl.GL45.*
 import org.lwjgl.stb.STBImage
-import ovo.xsvf.izmk.resource.Resource
+import ovo.xsvf.izmk.util.Resource
 import ovo.xsvf.izmk.util.memory.MemoryUtil.createDirectByteBuffer
 import ovo.xsvf.izmk.util.timing.Timer
 import java.nio.ByteBuffer
@@ -51,8 +51,8 @@ object ImageFileUtils {
         val height = IntArray(1)
         val channels = IntArray(1)
 
-        val imageData = STBImage.stbi_load(path, width, height, channels, 4) ?:
-            throw IllegalArgumentException("Failed to load image: $path")
+        val imageData = STBImage.stbi_load(path, width, height, channels, 4)
+            ?: throw IllegalArgumentException("Failed to load image: $path")
 
         tex.width = width[0]
         tex.height = height[0]

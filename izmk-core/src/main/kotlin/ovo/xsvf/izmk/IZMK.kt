@@ -19,10 +19,10 @@ import com.mojang.blaze3d.systems.RenderSystem as MojangRenderSystem
 
 object IZMK {
     val log: Logger = LogManager.getLogger(javaClass)
+    lateinit var classes: MutableMap<String, ByteArray>
     lateinit var mc: Minecraft
     var obfuscated by Delegates.notNull<Boolean>()
-
-    const val ASSETS_DIRECTORY = "assets/izmk"
+    const val ASSETS_DIRECTORY = "/assets/izmk"
 
     fun init() {
         log.info("Start initializing IZMK...")

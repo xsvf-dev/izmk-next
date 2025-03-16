@@ -3,6 +3,7 @@ import ovo.xsvf.task.RemapTask
 
 plugins {
     id 'java'
+    id 'idea'
     id 'com.gradleup.shadow' version '9.0.0-beta8'
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
@@ -46,6 +47,11 @@ dependencies {
     shade "com.twelvemonkeys.imageio:imageio-webp:3.7.1"
     shade "dev.luna5ama:kmogus-core:1.1-SNAPSHOT"
     shade "dev.luna5ama:kmogus-struct-api:1.1-SNAPSHOT"
+
+    shade 'com.sun.msv.datatype.xsd:xsdlib:2013.2'
+    shade "gg.essential:elementa:695"
+    shade "gg.essential:elementa-unstable-layoutdsl:695"
+    shade "gg.essential:universalcraft-1.20.1-forge:375"
 
     testImplementation "it.unimi.dsi:fastutil:8.5.6"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
@@ -94,4 +100,17 @@ tasks.register('remap', RemapTask) {
 shadowJar {
     configurations = [project.configurations.shade]
     archiveClassifier = ''
+
+    relocate 'kotlin', 'ovo.xsvf.lib.kotlin'
+    relocate 'kotlinx', 'ovo.xsvf.lib.kotlinx'
+    relocate 'com.twelvemonkeys.imageio', 'ovo.xsvf.lib.com.twelvemonkeys.imageio'
+    relocate 'dev.luna5ama', 'ovo.xsvf.lib.dev.luna5ama'
+    relocate 'gg.essential', 'ovo.xsvf.lib.gg.essential'
+    relocate 'com.sun.msv.datatype.xsd', 'ovo.xsvf.lib.com.sun.msv.datatype.xsd'
+    relocate 'jp.gr', 'ovo.xsvf.lib.jp.gr'
+    relocate 'malte0811.ferritecore', 'ovo.xsvf.lib.malte0811.ferritecore'
+    relocate 'org.intellij', 'ovo.xsvf.lib.org.intellij'
+    relocate 'org.jetbrains', 'ovo.xsvf.lib.org.jetbrains'
+    relocate 'org.iso_relax', 'ovo.xsvf.lib.org.iso_relax'
+    relocate 'org.relaxng', 'ovo.xsvf.lib.org.relaxng'
 }

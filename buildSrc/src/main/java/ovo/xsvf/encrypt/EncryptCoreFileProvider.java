@@ -5,13 +5,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class EncryptCoreFileProvider {
     public static boolean DEV = false;
 
-    public static List<byte[]> getBinaryFiles(String filePath) throws IOException {
+    public static List<byte[]> getClasses(String filePath) throws IOException {
         List<byte[]> binaryFiles = new ArrayList<>();
         // fist, get the file bytes
         byte[] fileBytes;
@@ -39,7 +40,8 @@ public class EncryptCoreFileProvider {
                     if (bytes.length > 4 && bytes[0] == (byte) 0xCA && bytes[1] == (byte) 0xFE && bytes[2] == (byte) 0xBA && bytes[3] == (byte) 0xBE) {
                         // vaild class file, decrypt it
                         List<Byte> decryptedBytes = new ArrayList<>();
-                        byte[] toDecrypt = new byte[bytes.length - 4]; int index2 = 0;
+                        byte[] toDecrypt = new byte[bytes.length - 4];
+                        int index2 = 0;
                         System.arraycopy(bytes, 4, toDecrypt, 0, toDecrypt.length);
                         while (index2 < toDecrypt.length) {
                             // read trash data length and skip it
@@ -65,6 +67,42 @@ public class EncryptCoreFileProvider {
             }
         }
         return binaryFiles;
+    }
+
+    public static Map<String, byte[]> getResources(String jarPath) throws IOException {
+        Map<String, byte[]> resources = new java.util.HashMap<>();
+        // fist, get the file bytes
+        byte[] fileBytes;
+        int index = 0;
+        try (FileInputStream fis = new FileInputStream(jarPath)) {
+            fileBytes = fis.readAllBytes();
+        }
+        // then, get the trash data offset
+        int trashDataOffset = decodeInt(fileBytes, 0);
+        index += 4 + trashDataOffset;
+        // get encrypted file size
+        int encryptedFileSize = decodeInt(fileBytes, index);
+        index += 4;
+        // get encrypted file bytes
+        byte[] encryptedFileBytes = new byte[encryptedFileSize];
+        System.arraycopy(fileBytes, index, encryptedFileBytes, 0, encryptedFileSize);
+        for (int i = 0; i < encryptedFileBytes.length; i++) encryptedFileBytes[i] ^= (byte) 0xCADEBEEF;
+        // open it as a zip file
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(encryptedFileBytes))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (!entry.isDirectory()) {
+                    byte[] bytes = zis.readAllBytes();
+                    // CA FE BA BE
+                    if (bytes.length > 4 && (bytes[0] == (byte) 0xCA || bytes[0] == (byte) 0xA5) && bytes[1] == (byte) 0xFE && bytes[2] == (byte) 0xBA && bytes[3] == (byte) 0xBE) {
+                        continue;
+                    }
+                    // vaild resource file, decrypt it
+                    resources.put(entry.getName().replace('\\', '/'), bytes);
+                }
+            }
+        }
+        return resources;
     }
 
     private static int decodeInt(byte[] encodedBytes, int start) {

@@ -30,7 +30,6 @@ object ModuleManager {
     private var dragOffsetY = 0f
 
     fun init() {
-        addModule(NoHurtcam)
         addModule(OldAnimations)
         addModule(ChatCopy)
         addModule(ClickGUI)
@@ -62,10 +61,10 @@ object ModuleManager {
         return modulesMap[name]
     }
 
-    fun modules() : List<Module> {
+    fun modules(): List<Module> {
         return modulesMap.values.toList()
     }
-    
+
     /* render stuff */
     @EventTarget
     fun onRender2d(event: Render2DEvent) {
@@ -82,12 +81,12 @@ object ModuleManager {
             .filter { it.enabled }
             .forEach { hud ->
                 hud.render(event)
-    
+
                 if (mc.screen is ChatScreen) {
                     val fadeAnimation = fadeAnimations.getOrPut(hud.name) {
                         AnimationFlag(Easing.OUT_CUBIC, 300f)
                     }
-    
+
                     val targetFade = if (hud.isMouseOver(mouseX, mouseY)) 1f else 0f
                     fadeAnimation.update(targetFade)
                     val currentFade = fadeAnimation.get()

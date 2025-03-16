@@ -3,9 +3,7 @@ package ovo.xsvf.izmk.graphics.font
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.module.impl.ClickGUI
-import ovo.xsvf.izmk.resource.ResourceUtil
 import java.awt.Font
-import kotlin.io.path.Path
 
 object FontRenderers {
     val fontRendererType get() = ClickGUI.fontRenderer
@@ -15,10 +13,14 @@ object FontRenderers {
     const val FONT_SIZE = 16f
 
     // Comfortaa
-    private val enFont = FontAdapter(Font.createFont(
-        Font.TRUETYPE_FONT,
-        ResourceUtil.getAsStream(Path("${IZMK.ASSETS_DIRECTORY}/font/font.ttf"))
-    ).deriveFont(Font.PLAIN, FONT_SIZE * 2f))
+    private val enFont = kotlin.runCatching {
+        FontAdapter(
+            Font.createFont(
+                Font.TRUETYPE_FONT,
+                javaClass.getResourceAsStream("${IZMK.ASSETS_DIRECTORY}/font/font.ttf")
+            ).deriveFont(Font.PLAIN, FONT_SIZE * 2f)
+        )
+    }.onFailure { e -> e.printStackTrace() }.getOrThrow()
 
     internal val default = FontRenderer(enFont)
 

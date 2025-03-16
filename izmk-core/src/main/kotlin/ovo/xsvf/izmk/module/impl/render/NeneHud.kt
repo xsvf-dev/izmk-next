@@ -7,7 +7,7 @@ import ovo.xsvf.izmk.graphics.texture.ImageFileUtils
 import ovo.xsvf.izmk.graphics.texture.Texture
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.module.RenderableModule
-import ovo.xsvf.izmk.resource.Resource
+import ovo.xsvf.izmk.util.Resource
 
 object NeneHud : RenderableModule(
     name = "nene-hud",

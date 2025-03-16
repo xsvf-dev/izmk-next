@@ -13,11 +13,10 @@ import java.util.zip.ZipOutputStream;
 
 // trashes and merge core into jar file
 public class EncryptMergeTask2 extends DefaultTask {
+    private final Random random = new Random();
     public File loader;
     public File core;
     public File output;
-
-    private final Random random = new Random();
 
     @TaskAction
     public void run() throws IOException {
@@ -37,7 +36,7 @@ public class EncryptMergeTask2 extends DefaultTask {
             ByteArrayOutputStream coreStream = new ByteArrayOutputStream();
             ZipOutputStream coreZipStream = new ZipOutputStream(coreStream);
             ZipEntry coreEntry;
-            while ((coreEntry = coreZip.getNextEntry())!= null) {
+            while ((coreEntry = coreZip.getNextEntry()) != null) {
                 if (!coreEntry.isDirectory()) {
                     if (coreEntry.getName().endsWith(".class")) {
                         // encrypt class file
@@ -59,12 +58,16 @@ public class EncryptMergeTask2 extends DefaultTask {
                 byte[] bytes = EncryptUtil.getRandomBytes(random.nextInt(1024, 4096));
                 coreZipStream.putNextEntry(new ZipEntry(name));
                 coreZipStream.write(0xA5); // to make it not start with CA FE BA BE
+                coreZipStream.write(0xFE);
+                coreZipStream.write(0xBA);
+                coreZipStream.write(0xBE); // to make reverse engineers confused
                 coreZipStream.write(bytes);
                 coreZipStream.closeEntry();
             }
             byte[] coreBytes = coreStream.toByteArray();
             for (int i = 0; i < coreBytes.length; i++) coreBytes[i] ^= (byte) 0xCAFEBEEF;
-            coreZipStream.close(); coreStream.close();
+            coreZipStream.close();
+            coreStream.close();
 
             // write ez encrypted core zip
             outputZip.write(EncryptUtil.encodeInt(coreBytes.length));
@@ -80,7 +83,7 @@ public class EncryptMergeTask2 extends DefaultTask {
 
             // first, add the loader
             ZipEntry entry;
-            while ((entry = loaderZip.getNextEntry())!= null) {
+            while ((entry = loaderZip.getNextEntry()) != null) {
                 zipOutputStream.putNextEntry(entry);
                 zipOutputStream.write(loaderZip.readAllBytes());
                 zipOutputStream.closeEntry();
