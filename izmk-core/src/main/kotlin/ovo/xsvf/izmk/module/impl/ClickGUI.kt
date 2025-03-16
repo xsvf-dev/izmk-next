@@ -4,7 +4,6 @@ import ovo.xsvf.izmk.graphics.RenderSystem
 import ovo.xsvf.izmk.graphics.font.FontRendererType
 import ovo.xsvf.izmk.gui.screen.ClickGUIScreen
 import ovo.xsvf.izmk.module.Module
-import ovo.xsvf.izmk.translation.TranslationEnum
 import ovo.xsvf.izmk.translation.TranslationManager
 
 /**
@@ -18,7 +17,8 @@ object ClickGUI : Module(
         .onChangeValue { setting ->
             if (setting.value == FontRendererType.SPARSE
                 && (RenderSystem.gpuType == RenderSystem.GPUType.INTEL
-                        || RenderSystem.gpuType == RenderSystem.GPUType.OTHER))
+                        || RenderSystem.gpuType == RenderSystem.GPUType.OTHER)
+            )
                 setting.value(FontRendererType.GENERAL)
         }
 

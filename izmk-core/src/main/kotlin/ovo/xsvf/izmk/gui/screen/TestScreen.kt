@@ -2,35 +2,26 @@ package ovo.xsvf.izmk.gui.screen
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
-import gg.essential.elementa.components.UIBlock
-import gg.essential.elementa.components.UIContainer
-import gg.essential.elementa.constraints.RelativeConstraint
-import gg.essential.elementa.dsl.childOf
-import gg.essential.elementa.dsl.constrain
-import gg.essential.elementa.dsl.effect
-import gg.essential.elementa.dsl.pixels
-import gg.essential.elementa.effects.OutlineEffect
+import gg.essential.elementa.components.UIWrappedText
+import gg.essential.elementa.constraints.MousePositionConstraint
+import gg.essential.elementa.dsl.*
+import gg.essential.elementa.effects.GradientEffect
+import gg.essential.elementa.state.v2.stateOf
 import java.awt.Color
 
 class TestScreen : WindowScreen(ElementaVersion.V8) {
-    private val myTextBox = UIBlock(Color(0, 0, 0, 255))
+    private val text = UIWrappedText("Hello, world!")
+        .constrain {
+            x = MousePositionConstraint() + 10.pixels()
+            y = MousePositionConstraint() + 10.pixels()
+        } effect GradientEffect(
+        stateOf(Color.WHITE), stateOf(Color.BLUE),
+        stateOf(Color.WHITE), stateOf(Color.BLUE)
+    ) childOf window
 
     init {
-        val container = UIContainer().constrain {
-            x = RelativeConstraint(.25f)
-            y = RelativeConstraint(.25f)
-            width = RelativeConstraint(.5f)
-            height = RelativeConstraint(.5f)
-        } childOf window
-        UIBlock(Color.RED /* java.awt.Color */).constrain {
-            width = 10.pixels()
-            height = 10.pixels()
-        } childOf window effect OutlineEffect(Color.BLUE, 1f)
-        myTextBox.constrain {
-            x = 10.pixels()
-            y = 10.pixels()
-            width = 100.pixels()
-            height = 100.pixels()
-        } childOf container
+
     }
+
+    override fun isPauseScreen() = false
 }

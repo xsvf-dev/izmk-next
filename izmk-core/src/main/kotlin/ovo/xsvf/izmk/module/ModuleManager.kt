@@ -40,6 +40,7 @@ object ModuleManager {
         addModule(Particles)
         addModule(MinmalBobbing)
         addModule(TestScreen)
+        addModule(FullBright)
 
         /* render modules */
         addModule(NeneHud)
