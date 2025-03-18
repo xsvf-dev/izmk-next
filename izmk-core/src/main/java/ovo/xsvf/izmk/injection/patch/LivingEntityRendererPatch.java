@@ -21,7 +21,7 @@ public class LivingEntityRendererPatch {
     private static final Logger log = LogManager.getLogger(LivingEntityRendererPatch.class);
 
     @WrapInvoke(method = "render", desc = "(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-                target = "net/minecraft/client/renderer/entity/layers/RenderLayer/render", targetDesc = "(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/Entity;FFFFFF)V")
+            target = "net/minecraft/client/renderer/entity/layers/RenderLayer/render", targetDesc = "(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/Entity;FFFFFF)V")
     public static void renderWithOverlay(LivingEntityRenderer<?, ?> instance, LivingEntity entity, float yaw, float partialTicks,
                                          PoseStack poseStack, MultiBufferSource vertexConsumers, int light,
                                          Invocation<RenderLayer<?, ?>, Void> invocation) throws Exception {
@@ -30,7 +30,7 @@ public class LivingEntityRendererPatch {
             int overlayCoords = LivingEntityRenderer.getOverlayCoords(entity,
                     ((LivingEntityRendererAccessor) instance).getWhiteOverlayProgress(entity, (Float) args.get(6)));
             HumanoidArmorLayerPatch.renderWithOverlay((HumanoidArmorLayer) invocation.instance(),
-                    (PoseStack) args.getFirst(), (MultiBufferSource) args.get(1), (Integer) args.get(2),
+                    (PoseStack) args.get(0), (MultiBufferSource) args.get(1), (Integer) args.get(2),
                     (LivingEntity) args.get(3), (Float) args.get(4), (Float) args.get(5),
                     (Float) args.get(6), (Float) args.get(7), (Float) args.get(8),
                     (Float) args.get(9), overlayCoords);

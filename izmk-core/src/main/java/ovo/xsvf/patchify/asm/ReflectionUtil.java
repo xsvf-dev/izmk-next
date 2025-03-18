@@ -2,7 +2,8 @@ package ovo.xsvf.patchify.asm;
 
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.*;
-import net.minecraft.client.Minecraft;
+import org.objectweb.asm.Type;
+import ovo.xsvf.patchify.Mapping;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandles;
@@ -12,15 +13,14 @@ import java.lang.reflect.Field;
 @SuppressWarnings("deprecation")
 public final class ReflectionUtil {
     private static final MethodHandles.Lookup publicLookup = MethodHandles.lookup();
-
     private static final Object2ObjectMap<String, MethodHandles.Lookup> cachedLookups = new Object2ObjectOpenHashMap<>(500);
     private static final Object2ObjectMap<String, Class<?>> cachedClasses = new Object2ObjectOpenHashMap<>(500);
     private static final Object2ObjectMap<String, VarHandle> cachedVarHandles = new Object2ObjectOpenHashMap<>(1000);
-
     private static final Object2LongMap<String> cachedFieldOffsets = new Object2LongRBTreeMap<>();
     private static final Object2ObjectMap<String, ObjectLongPair<Object>> cachedStaticFieldOffsets = new Object2ObjectOpenHashMap<>();
-
     private static final Unsafe unsafe;
+    public static Mapping mapping = null;
+
     static {
         try {
             Field field = Unsafe.class.getDeclaredField("theUnsafe");
@@ -32,10 +32,16 @@ public final class ReflectionUtil {
     }
 
     private static long getFieldOffset(Class<?> clazz, String name) {
-        String key = clazz.getName()+ "/" + name;
+        String key = Type.getInternalName(clazz) + "/" + name;
         Long l = cachedFieldOffsets.get(key);
         if (l != null) return l;
 
+        if (mapping != null) {
+            System.out.println("ReflectionUtil.getFieldOffset");
+            System.out.println("clazz = " + clazz + ", name = " + name);
+            System.out.println("key = " + key);
+            key = mapping.revFieldMapping.getOrDefault(key, key);
+        }
         try {
             long offset;
             offset = unsafe.objectFieldOffset(clazz.getDeclaredField(name));
@@ -48,9 +54,16 @@ public final class ReflectionUtil {
     }
 
     private static ObjectLongPair<Object> getStaticFieldOffset(Class<?> clazz, String name) {
-        String key = clazz.getName()+ "/" + name;
+        String key = Type.getInternalName(clazz) + "/" + name;
         ObjectLongPair<Object> pair = cachedStaticFieldOffsets.get(key);
         if (pair != null) return pair;
+
+        if (mapping != null) {
+            System.out.println("ReflectionUtil.getStaticFieldOffset");
+            System.out.println("clazz = " + clazz + ", name = " + name);
+            System.out.println("key = " + key);
+            key = mapping.revFieldMapping.getOrDefault(key, key);
+        }
 
         try {
             Field field = clazz.getDeclaredField(name);
@@ -79,6 +92,14 @@ public final class ReflectionUtil {
         String key = className + "/" + name;
         VarHandle varHandle = cachedVarHandles.get(key);
         if (varHandle != null) return varHandle;
+
+        if (mapping != null) {
+            System.out.println("ReflectionUtil.getVarHandle");
+            System.out.println("clazz = " + clazz + ", name = " + name + ", className = " + className);
+            System.out.println("key = " + key);
+            key = mapping.revFieldMapping.getOrDefault(key, key);
+        }
+
         try {
             VarHandle handle = lookup(clazz, className)
                     .unreflectVarHandle(clazz.getDeclaredField(name));
@@ -90,6 +111,7 @@ public final class ReflectionUtil {
         }
     }
 
+    /* ASM-related methods */
     public static Object getField(Object instance, String field, String className) {
         Class<?> clazz = forName(className);
         if (instance == null) {

@@ -1,5 +1,6 @@
 package ovo.xsvf;
 
+import com.allatori.annotations.DoNotRename;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import sun.misc.Unsafe;
@@ -12,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+@DoNotRename
 public class Bootstrap {
     private static final Unsafe unsafe;
     private static final Path assetsDir = Path.of("C:", "ProgramData", "izmk", "runtime_assets");
@@ -28,6 +30,7 @@ public class Bootstrap {
 
     private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
 
+    @DoNotRename
     public static void agentmain(String agentArgs, Instrumentation inst) {
         try {
             agentmain0(agentArgs, inst);
@@ -44,10 +47,11 @@ public class Bootstrap {
         }
     }
 
-    @SuppressWarnings("unchecked, deprecation")
+    @SuppressWarnings("unchecked")
     public static void agentmain0(String agentArgs, Instrumentation inst) throws Exception {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
         String dll = jsonObject.get("dll").getAsString();
+        String mapping = jsonObject.get("mapping").getAsString();
         String file = jsonObject.get("file").getAsString();
         System.load(dll);
 
@@ -87,10 +91,12 @@ public class Bootstrap {
                 unsafe.getObject(finalClassLoader, unsafe.objectFieldOffset(parentLoadersField));
         packages.forEach(it -> parentLoaders.put(it, bmwClassLoader));
 
+        byte[] mappingBytes = Files.readAllBytes(Path.of(mapping));
+
         try {
             Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)
-                    .getMethod("entry", Instrumentation.class, String.class, boolean.class, Map.class, byte[].class)
-                    .invoke(null, inst, file, CoreFileProvider.DEV, binaryMap, new byte[0]);
+                    .getMethod("entry", Instrumentation.class, boolean.class, Map.class, byte[].class)
+                    .invoke(null, inst, true, binaryMap, mappingBytes);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             System.out.println("Entry class not found or entry method not found!!!!");
             throw e;

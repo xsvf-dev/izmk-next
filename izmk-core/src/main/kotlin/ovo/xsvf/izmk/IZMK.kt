@@ -18,10 +18,11 @@ import kotlin.properties.Delegates
 import com.mojang.blaze3d.systems.RenderSystem as MojangRenderSystem
 
 object IZMK {
-    val log: Logger = LogManager.getLogger(javaClass)
     lateinit var classes: MutableMap<String, ByteArray>
     lateinit var mc: Minecraft
+    val log: Logger = LogManager.getLogger(javaClass)
     var obfuscated by Delegates.notNull<Boolean>()
+
     const val ASSETS_DIRECTORY = "/assets/izmk"
 
     fun init() {

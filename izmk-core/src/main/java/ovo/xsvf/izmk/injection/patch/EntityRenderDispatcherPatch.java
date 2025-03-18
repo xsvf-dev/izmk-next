@@ -28,18 +28,20 @@ public class EntityRenderDispatcherPatch {
     public static void renderHitbox(PoseStack poseStack, VertexConsumer vertexConsumer, Entity entity, float tickDelta, CallbackInfo callbackInfo) {
         if (Hitboxes.INSTANCE.getEnabled()) {
             callbackInfo.cancelled = true;
-            switch (entity) {
-                case ItemEntity ignored when !Hitboxes.INSTANCE.getItems() -> { return; }
-                case Mob ignored when !Hitboxes.INSTANCE.getMobs() -> { return; }
-                case Projectile ignored when !Hitboxes.INSTANCE.getProjectiles() -> { return; }
-                case Player ignored when !Hitboxes.INSTANCE.getPlayers() -> { return; }
-                default -> {}
+            if (entity instanceof ItemEntity && !Hitboxes.INSTANCE.getItems()) {
+                return;
+            } else if (entity instanceof Mob && !Hitboxes.INSTANCE.getMobs()) {
+                return;
+            } else if (entity instanceof Projectile && !Hitboxes.INSTANCE.getProjectiles()) {
+                return;
+            } else if (entity instanceof Player && !Hitboxes.INSTANCE.getPlayers()) {
+                return;
             }
 
             AABB box = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
             ColorRGB color = Hitboxes.INSTANCE.getColor();
             RenderSystem.enableDepthTest();
-            RenderSystem.setShaderColor(1f ,1f, 1f, 1f);
+            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
             LevelRenderer.renderLineBox(poseStack, vertexConsumer, box,
                     color.getRFloat(), color.getGFloat(), color.getBFloat(), 255 - color.getA());

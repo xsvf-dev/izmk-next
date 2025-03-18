@@ -1,0 +1,40 @@
+<config>
+    <input>
+        <jar in="${inputJar}" out="${outputJar}"/>
+    </input>
+
+    <classpath>
+        <jar name="${classpathJars}"/>
+    </classpath>
+
+    <property name="log-file" value="${logFile}"/>
+
+    <!-- String encryption -->
+    <property name="string-encryption" value="disable"/>
+
+    <!-- Control flow obfuscation -->
+    <property name="control-flow-obfuscation" value="disable"/>
+
+    <!-- Renaming -->
+    <property name="default-package" value="ovo.xsvf"/>
+
+    <property name="classes-naming" value="iii"/>
+    <property name="methods-naming" value="iii"/>
+    <property name="fields-naming" value="iii"/>
+
+    <ignore-classes>
+        <class template="class *org*"/>
+        <class template="class *sun*"/>
+        <class template="class *javax*"/>
+        <class template="class *jdk*"/>
+        <class template="class *com.sun*"/>
+        <class template="class *org.apache*"/>
+        <class template="class *com*"/>
+        <class template="class *rip.jnic*"/>
+        <class template="class *me*"/>
+        <class template="class *java*"/>
+        <class template="class *blue*"/>
+    </ignore-classes>
+
+    <property name="log-file" value="allatori-log.xml"/>
+</config>

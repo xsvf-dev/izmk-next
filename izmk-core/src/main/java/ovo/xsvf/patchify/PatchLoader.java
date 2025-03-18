@@ -23,7 +23,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class PatchLoader implements IPatchLoader {
+    public static final IPatchLoader INSTANCE = new PatchLoader();
     private static final Logger log = LogManager.getLogger(PatchLoader.class);
+    public static Mapping mapping = null;
 
     private static Inject getInject(Class<?> patchClass, Method method) {
         Inject inject = method.getAnnotation(Inject.class);
@@ -114,8 +116,11 @@ public final class PatchLoader implements IPatchLoader {
         var injectDesc = Type.getMethodDescriptor(inject);
 
 
-        InsnList insnList = new InsnList(); LabelNode labelNode = new LabelNode();
-        int index = 0; int callbackIndex = method.maxLocals; method.maxLocals += 1;
+        InsnList insnList = new InsnList();
+        LabelNode labelNode = new LabelNode();
+        int index = 0;
+        int callbackIndex = method.maxLocals;
+        method.maxLocals += 1;
 
         // pass all parameters to the inject method
         if (!Modifier.isStatic(method.access)) insnList.add(new VarInsnNode(Opcodes.ALOAD, index++)); // 0
@@ -260,16 +265,18 @@ public final class PatchLoader implements IPatchLoader {
         // check local variables initialization
         Map<Integer, Boolean> locals = new HashMap<>();
         for (AbstractInsnNode insnNode : method.instructions) {
-            if (insnNode == toInject.getFirst()) break;
+            if (insnNode == toInject.get(0)) break;
             if (insnNode instanceof VarInsnNode var && var.getOpcode() >= Opcodes.ISTORE && var.getOpcode() <= Opcodes.ASTORE) {
                 locals.put(var.var, true);
             }
         }
 
-        int callbackIndex = method.maxLocals; method.maxLocals += 1;
+        int callbackIndex = method.maxLocals;
+        method.maxLocals += 1;
 
         for (AbstractInsnNode insnNode : toInject) {
-            InsnList insnList = new InsnList(); LabelNode labelNode = new LabelNode();
+            InsnList insnList = new InsnList();
+            LabelNode labelNode = new LabelNode();
             int index = 0;
 
             // STACK: (before) [margs...] (after) [<ret_value>]
@@ -385,7 +392,7 @@ public final class PatchLoader implements IPatchLoader {
         // check local variables initialization
         Map<Integer, Boolean> locals = new HashMap<>();
         for (AbstractInsnNode insnNode : method.instructions) {
-            if (insnNode == toWrap.getFirst()) break;
+            if (insnNode == toWrap.get(0)) break;
             if (insnNode instanceof VarInsnNode var && var.getOpcode() >= Opcodes.ISTORE && var.getOpcode() <= Opcodes.ASTORE) {
                 locals.put(var.var, true);
             }
@@ -394,13 +401,15 @@ public final class PatchLoader implements IPatchLoader {
         for (AbstractInsnNode insnNode : toWrap) {
             InsnList insnList = new InsnList();
             // STACK: [<INSTANCE>, margs...]
-            boolean staticCall; int helperIndex = method.maxLocals; method.maxLocals += 1;
-            if (toWrap.getFirst().getOpcode() == Opcodes.INVOKESTATIC) {
+            boolean staticCall;
+            int helperIndex = method.maxLocals;
+            method.maxLocals += 1;
+            if (toWrap.get(0).getOpcode() == Opcodes.INVOKESTATIC) {
                 staticCall = true;
-            } else if (toWrap.getFirst().getOpcode() == Opcodes.INVOKEVIRTUAL) {
+            } else if (toWrap.get(0).getOpcode() == Opcodes.INVOKEVIRTUAL) {
                 staticCall = false;
             } else {
-                throw new IllegalArgumentException("Unsupported method call for " + toWrap.getFirst() + ", wrapper method: " + inject.getName() + " in class " + inject.getDeclaringClass().getName());
+                throw new IllegalArgumentException("Unsupported method call for " + toWrap.get(0) + ", wrapper method: " + inject.getName() + " in class " + inject.getDeclaringClass().getName());
             }
             // STACK: [<mInstance>, margs...]
             insnList.add(new LdcInsnNode(split.first()));
@@ -420,7 +429,7 @@ public final class PatchLoader implements IPatchLoader {
                 // STACK: [<mInstance>, margs..., (Object)arg, MethodWrapper]
                 insnList.add(new InsnNode(Opcodes.SWAP));
                 // STACK: [<mInstance>, margs..., MethodWrapper, (Object)arg]
-                insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(MethodWrapper.class), "addParam", "("+ Type.getDescriptor(Object.class) + ")" + Type.getDescriptor(MethodWrapper.class), false));
+                insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(MethodWrapper.class), "addParam", "(" + Type.getDescriptor(Object.class) + ")" + Type.getDescriptor(MethodWrapper.class), false));
                 // STACK: [<mInstance>, margs..., MethodWrapper]
                 insnList.add(new InsnNode(Opcodes.POP));
                 // STACK: [<mInstance>, margs...]
@@ -485,7 +494,8 @@ public final class PatchLoader implements IPatchLoader {
         }
         List<Type> localTypes = Arrays.stream(modifyLocals.types()).map(Type::getType).toList();
 
-        At at = modifyLocals.at(); AbstractInsnNode toInject = method.instructions.getFirst();
+        At at = modifyLocals.at();
+        AbstractInsnNode toInject = method.instructions.getFirst();
         if (at.value() != At.Type.HEAD) {
             Map<Integer, Boolean> locals = new HashMap<>();
             if (at.value() == At.Type.TAIL) {
@@ -584,10 +594,11 @@ public final class PatchLoader implements IPatchLoader {
                     method.isAnnotationPresent(ModifyLocals.class)) {
                 if (!Modifier.isStatic(method.getModifiers()))
                     throw new IllegalArgumentException("inject method " + method.getName() + " in class " + patchClass.getName() + " is not static");
-                if (Modifier.isPrivate(method.getModifiers())) 
-                     throw new IllegalArgumentException("inject method " + method.getName() + " in class " + patchClass.getName() + " is private");
+                if (Modifier.isPrivate(method.getModifiers()))
+                    throw new IllegalArgumentException("inject method " + method.getName() + " in class " + patchClass.getName() + " is private");
                 Class<?>[] parameterTypes = method.getParameterTypes();
-                String name; String desc;
+                String name;
+                String desc;
                 if (method.isAnnotationPresent(Inject.class)) {
                     Inject inject = getInject(patchClass, method);
                     name = inject.method();
@@ -616,6 +627,9 @@ public final class PatchLoader implements IPatchLoader {
                     throw new RuntimeException("wtf");
                 }
                 Pair<String, String> target = Pair.of(targetNode.name + "/" + name, desc);
+                if (mapping != null) {
+                    target = mapping.revMethodsMapping.getOrDefault(target, target);
+                }
                 injectMap.computeIfAbsent(target, k -> new ArrayList<>()).add(method);
             }
         }

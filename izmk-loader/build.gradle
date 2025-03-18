@@ -1,3 +1,5 @@
+import ovo.xsvf.task.EncryptMergeTask
+import ovo.xsvf.task.EncryptMergeTask2
 import ovo.xsvf.task.MergeTask
 
 plugins {
@@ -22,6 +24,8 @@ dependencies {
     implementation 'net.java.dev.jna:jna:5.10.0'
     implementation 'net.java.dev.jna:jna-platform:5.10.0'
 
+    compileOnly files("$rootDir/allatori/annotations.jar")
+
     implementation project(':izmk-common')
 }
 
@@ -29,7 +33,7 @@ jar {
     manifest {
         attributes 'Main-Class': 'ovo.xsvf.ServiceMain'
         attributes 'Premain-Class': 'ovo.xsvf.Bootstrap'
-        attributes 'Agent-Class' : 'ovo.xsvf.Bootstrap'
+        attributes 'Agent-Class': 'ovo.xsvf.Bootstrap'
         attributes 'Can-Redefine-Classes': true, 'Can-Retransform-Classes': true, 'Can-Set-Native-Method-Prefix': true
     }
 }
@@ -38,7 +42,7 @@ tasks.register('merge', MergeTask) {
     dependsOn project(':izmk-core').tasks.accessor
     dependsOn shadowJar
 
-    group 'build'
+    group 'merge'
 
     loader = tasks.shadowJar.archiveFile.get().asFile
     core = project(':izmk-core').tasks.shadowJar.archiveFile.get().asFile
@@ -52,11 +56,89 @@ tasks.register('mergeRemap', MergeTask) {
     dependsOn project(':izmk-core').tasks.remap
     dependsOn shadowJar
 
-    group 'build'
+    group 'merge'
 
     loader = tasks.shadowJar.archiveFile.get().asFile
     core = project(':izmk-core').tasks.shadowJar.archiveFile.get().asFile
     output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/merged-loader.jar")
+
+    inputs.files(loader, core)
+    outputs.file(output)
+}
+
+tasks.register('mergeEncryptA', EncryptMergeTask) {
+    dependsOn shadowJar
+    group 'merge'
+
+    loader = tasks.shadowJar.archiveFile.get().asFile
+    output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/encrypted-loader-A.jar")
+
+    inputs.files(loader)
+    outputs.file(output)
+}
+
+tasks.register("copyDeps", Copy) {
+    from configurations.runtimeClasspath
+    into "$buildDir/deps"
+}
+
+tasks.register("obfuscate") {
+    dependsOn tasks.mergeEncryptA
+    dependsOn project(':izmk-core').tasks.copyDeps
+    dependsOn tasks.copyDeps
+
+    group 'merge'
+
+    doLast {
+        copy {
+            from "$rootDir/allatori/allatori.xml"
+            into "${layout.buildDirectory.get()}/obf/"
+            expand(inputJar: tasks.mergeEncryptA.outputs.files.singleFile.absolutePath,
+                    outputJar: tasks.mergeEncryptA.outputs.files.singleFile.absolutePath,
+                    classpathJars: tasks.compileJava.classpath.asPath,
+                    logFile: 'allatori-log.xml')
+            rename('allatori.xml', 'allatori-expanded.xml')
+        }
+
+        javaexec {
+            mainClass = 'com.allatori.Class299'
+            classpath = files("$rootDir/allatori/allatori.jar")
+            args = ["${layout.buildDirectory.get()}/obf/allatori-expanded.xml"]
+        }
+
+        def dependencies = project(':izmk-core').tasks.copyDeps.outputs.files
+        dependencies += tasks.copyDeps.outputs.files
+        dependencies += fileTree(new File(tasks.compileJava.javaCompiler.get().executablePath
+                .asFile.parentFile.parentFile.absolutePath, "jmods"))
+
+        copy {
+            from "$rootDir/qProtect/config.yml"
+            into "${layout.buildDirectory.file("obf").get()}"
+            expand(
+                    inputJar: tasks.mergeEncryptA.outputs.files.singleFile.absolutePath,
+                    outputJar: tasks.mergeEncryptA.outputs.files.singleFile.absolutePath,
+                    dependencies: dependencies.collect { "- $it" }.join('\n  ')
+            )
+        }
+
+
+        javaexec {
+            mainClass = 'dev.mdma.qprotect.Main'
+            classpath = files("$rootDir/qProtect/qprotect.jar")
+            args = ['--config', layout.buildDirectory.file("obf\\config.yml").get().asFile.absolutePath]
+        }
+    }
+}
+
+tasks.register('mergeEncryptB', EncryptMergeTask2) {
+    dependsOn project(':izmk-core').tasks.remap
+    dependsOn tasks.obfuscate
+
+    group 'merge'
+
+    loader = tasks.mergeEncryptA.outputs.files.singleFile
+    core = project(':izmk-core').tasks.remap.outputs.files.singleFile
+    output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/encrypted-merged-loader.jar")
 
     inputs.files(loader, core)
     outputs.file(output)

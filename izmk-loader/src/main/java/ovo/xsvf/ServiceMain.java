@@ -1,5 +1,6 @@
 package ovo.xsvf;
 
+import com.allatori.annotations.DoNotRename;
 import com.google.gson.JsonObject;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+@DoNotRename
 public class ServiceMain {
     private static final File log = new File("izmk-loader.log");
     private static final File errorLog = new File("izmk-loader-error.log");
@@ -37,6 +39,7 @@ public class ServiceMain {
         }
     }
 
+    @DoNotRename
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String[] args) {
         while (true) {
@@ -48,22 +51,24 @@ public class ServiceMain {
             });
             list.stream()
                     .filter(it -> !pids.contains(it.id()) &&
-                            it.displayName().startsWith("cpw.mods.bootstraplauncher.BootstrapLauncher")
+                                    it.displayName().startsWith("cpw.mods.bootstraplauncher.BootstrapLauncher")
 //                                   && it.displayName().contains("pc.bjd-mc.com")
-                                    )
+                    )
                     .findFirst()
                     .ifPresentOrElse(vmd -> {
-                                System.out.println("Attach to (" + vmd.id() + ") " + vmd.displayName());
-                                if (!library.exists() && !extractLibrary()) {
-                                    showError(new FileNotFoundException("无法加载 DLL 库文件 " + library), "错误");
-                                    return;
-                                }
-                                attach(vmd.id(), buildLaunchArgs());
-                                pids.add(vmd.id());
-                            }, () -> {});
+                        System.out.println("Attach to (" + vmd.id() + ") " + vmd.displayName());
+                        if (!library.exists() && !extractLibrary()) {
+                            showError(new FileNotFoundException("无法加载 DLL 库文件 " + library), "错误");
+                            return;
+                        }
+                        attach(vmd.id(), buildLaunchArgs());
+                        pids.add(vmd.id());
+                    }, () -> {
+                    });
             try {
                 TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 
@@ -97,6 +102,7 @@ public class ServiceMain {
     private static JsonObject buildLaunchArgs() {
         JsonObject launchArgs = new JsonObject();
         launchArgs.addProperty("dll", library.getAbsolutePath());
+        launchArgs.addProperty("mapping", mapping.getAbsolutePath());
         launchArgs.addProperty("file", self.getAbsolutePath());
         return launchArgs;
     }
@@ -111,14 +117,7 @@ public class ServiceMain {
     }
 
     public interface User32 extends Library {
-        int MB_ICONEXCLAMATION = 0x00000030;
-        int MB_ICONWARNING = 0x00000030;
-        int MB_ICONINFORMATION = 0x00000040;
-        int MB_ICONASTERISK = 0x00000040;
-        int MB_ICONQUESTION = 0x00000020;
-        int MB_ICONSTOP = 0x00000010;
         int MB_ICONERROR = 0x00000010;
-        int MB_ICONHAND = 0x00000010;
 
         int MessageBoxW(int hWnd, WString lpText, WString lpCaption, int uType);
 

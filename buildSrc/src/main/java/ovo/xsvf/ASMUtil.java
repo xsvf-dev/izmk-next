@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 
 public class ASMUtil implements Opcodes {
     private static final Map<Integer, String> OPCODE_NAMES = new HashMap<>();
+
     static {
         try {
             for (Field field : Opcodes.class.getFields()) {
@@ -62,23 +63,31 @@ public class ASMUtil implements Opcodes {
     }
 
     private static String parseParameters(AbstractInsnNode abstractInsn) {
-        return switch (abstractInsn) {
-            case VarInsnNode varInsn -> "var: " + varInsn.var;
-            case IntInsnNode intInsn -> "value: " + intInsn.operand;
-            case FieldInsnNode fieldInsn ->
-                    "owner: " + fieldInsn.owner + ", name: " + fieldInsn.name + ", desc: " + fieldInsn.desc;
-            case MethodInsnNode methodInsn ->
-                    "owner: " + methodInsn.owner + ", name: " + methodInsn.name + ", desc: " + methodInsn.desc;
-            case LdcInsnNode ldcInsn -> "value: " + ldcInsn.cst;
-            case TypeInsnNode typeInsn -> "desc: " + typeInsn.desc;
-            case JumpInsnNode jumpInsn -> "label: " + jumpInsn.label.toString();
-            case MultiANewArrayInsnNode multiANewArrayInsn ->
-                    "desc: " + multiANewArrayInsn.desc + ", dims: " + multiANewArrayInsn.dims;
-            case IincInsnNode iincInsn -> "var: " + iincInsn.var + ", incr: " + iincInsn.incr;
-            case null, default -> "";
-        };
+        if (abstractInsn == null) {
+            return "";
+        } else if (abstractInsn instanceof VarInsnNode varInsn) {
+            return "var: " + varInsn.var;
+        } else if (abstractInsn instanceof IntInsnNode intInsn) {
+            return "value: " + intInsn.operand;
+        } else if (abstractInsn instanceof FieldInsnNode fieldInsn) {
+            return "owner: " + fieldInsn.owner + ", name: " + fieldInsn.name + ", desc: " + fieldInsn.desc;
+        } else if (abstractInsn instanceof MethodInsnNode methodInsn) {
+            return "owner: " + methodInsn.owner + ", name: " + methodInsn.name + ", desc: " + methodInsn.desc;
+        } else if (abstractInsn instanceof LdcInsnNode ldcInsn) {
+            return "value: " + ldcInsn.cst;
+        } else if (abstractInsn instanceof TypeInsnNode typeInsn) {
+            return "desc: " + typeInsn.desc;
+        } else if (abstractInsn instanceof JumpInsnNode jumpInsn) {
+            return "label: " + jumpInsn.label.toString();
+        } else if (abstractInsn instanceof MultiANewArrayInsnNode multiANewArrayInsn) {
+            return "desc: " + multiANewArrayInsn.desc + ", dims: " + multiANewArrayInsn.dims;
+        } else if (abstractInsn instanceof IincInsnNode iincInsn) {
+            return "var: " + iincInsn.var + ", incr: " + iincInsn.incr;
+        } else {
+            return "";
+        }
     }
-
+    
     public static InsnList checkcastFromObject(String desc) {
         return checkcastFromObject(Type.getType(desc));
     }

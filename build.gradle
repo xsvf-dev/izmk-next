@@ -1,5 +1,4 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.1.10' apply false
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
@@ -29,7 +28,7 @@ subprojects {
     // mirror repositories to speed up builds
     repositories {
         mavenLocal()
-        maven { url 'https://lss233.littleservice.cn/repositories/minecraft/'}
+        maven { url 'https://lss233.littleservice.cn/repositories/minecraft/' }
         maven { url 'https://repository.hanbings.io/proxy' }
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
         maven { url "https://maven.aliyun.com/repository/central" }
@@ -37,21 +36,16 @@ subprojects {
         maven { url "https://maven.aliyun.com/repository/google" }
         maven { url "https://maven.aliyun.com/repository/jcenter" }
         maven { url "https://maven.aliyun.com/repository/apache-snapshots" }
-        maven { url 'https://maven.luna5ama.dev/'}
+        maven { url 'https://maven.luna5ama.dev/' }
         maven { url 'https://repo.essential.gg/repository/maven-public' }
         maven { url 'https://jitpack.io' }
+        maven { url 'https://repo.jeff-media.com/public/' }
     }
-
-    apply plugin: 'org.jetbrains.kotlin.jvm'
 
     tasks.withType(JavaCompile).tap {
         configureEach {
             options.encoding = 'UTF-8'
         }
-    }
-
-    kotlin {
-        jvmToolchain(21)
     }
 }
 

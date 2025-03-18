@@ -4,6 +4,7 @@ import ovo.xsvf.task.RemapTask
 plugins {
     id 'java'
     id 'idea'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
     id 'com.gradleup.shadow' version '9.0.0-beta8'
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
@@ -25,6 +26,10 @@ sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 configurations {
@@ -64,13 +69,12 @@ dependencies {
 }
 
 tasks.register("copyDeps", Copy) {
-    dependsOn shadowJar
-
     from configurations.runtimeClasspath
     into "$buildDir/deps"
 }
 
 tasks.register('accessor', AccessorTask) {
+    dependsOn shadowJar
     dependsOn copyDeps
 
     targetFile = tasks.shadowJar.archiveFile.get().asFile
