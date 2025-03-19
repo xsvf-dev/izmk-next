@@ -6,5 +6,5 @@ group = 'ovo.xsvf'
 version = '1.0-SNAPSHOT'
 
 dependencies {
-    // should be empty
+    compileOnly files("$rootDir/allatori/annotations.jar")
 }

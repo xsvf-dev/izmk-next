@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -69,12 +70,12 @@ public class EncryptCoreFileProvider {
         return binaryFiles;
     }
 
-    public static Map<String, byte[]> getResources(String jarPath) throws IOException {
-        Map<String, byte[]> resources = new java.util.HashMap<>();
+    public static Map<String, byte[]> getResources(String filePath) throws IOException {
+        Map<String, byte[]> binaryFiles = new HashMap<>();
         // fist, get the file bytes
         byte[] fileBytes;
         int index = 0;
-        try (FileInputStream fis = new FileInputStream(jarPath)) {
+        try (FileInputStream fis = new FileInputStream(filePath)) {
             fileBytes = fis.readAllBytes();
         }
         // then, get the trash data offset
@@ -94,15 +95,13 @@ public class EncryptCoreFileProvider {
                 if (!entry.isDirectory()) {
                     byte[] bytes = zis.readAllBytes();
                     // CA FE BA BE
-                    if (bytes.length > 4 && (bytes[0] == (byte) 0xCA || bytes[0] == (byte) 0xA5) && bytes[1] == (byte) 0xFE && bytes[2] == (byte) 0xBA && bytes[3] == (byte) 0xBE) {
-                        continue;
+                    if (bytes.length <= 4 || bytes[0] != (byte) 0xCA || bytes[1] != (byte) 0xFE || bytes[2] != (byte) 0xBA || bytes[3] != (byte) 0xBE) {
+                        binaryFiles.put(entry.getName(), bytes);
                     }
-                    // vaild resource file, decrypt it
-                    resources.put(entry.getName().replace('\\', '/'), bytes);
                 }
             }
         }
-        return resources;
+        return binaryFiles;
     }
 
     private static int decodeInt(byte[] encodedBytes, int start) {

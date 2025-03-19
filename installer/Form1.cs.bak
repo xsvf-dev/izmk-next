@@ -1,0 +1,402 @@
+using System;
+using System.IO;
+using System.Windows.Forms;
+using Microsoft.Win32;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+
+namespace installer
+{
+    public partial class Form1 : Form
+    {
+        private const string INSTALLED_KEY = "izmk-qwq-awa";
+        private const string TARGET_DIR = @"C:\ProgramData\izmk";
+        private const string JAR_FILE = "izmk.jar";
+        private const string DLL_FILE = "izmk-lib.dll";
+        private const string SERVICE_NAME = "izmk-loader";
+        private const string SERVICE_DISPLAY_NAME = "IZMK 启动器";
+
+        private string javaHome;
+        private string minecraftPath;
+
+        public Form1()
+        {
+            InitializeComponent();
+            InitializeInstallation();
+        }
+
+        private void InitializeInstallation()
+        {
+            try
+            {
+                // 检查网易我的世界安装路径
+                string path4399 = null;
+                string pathNE = null;
+                
+                // 尝试从多个可能的注册表位置读取
+                path4399 = GetRegistryValue(@"Software\Netease\PC4399_MCLauncher", "DownloadPath");
+                if (path4399 == null)
+                {
+                    path4399 = GetRegistryValue(@"SOFTWARE\Netease\PC4399_MCLauncher", "DownloadPath");
+                }
+                
+                pathNE = GetRegistryValue(@"Software\Netease\MCLauncher", "DownloadPath");
+                if (pathNE == null)
+                {
+                    pathNE = GetRegistryValue(@"SOFTWARE\Netease\MCLauncher", "DownloadPath");
+                }
+
+                // 检查HKEY_LOCAL_MACHINE
+                if (path4399 == null)
+                {
+                    path4399 = GetRegistryValueFromLocalMachine(@"SOFTWARE\Netease\PC4399_MCLauncher", "DownloadPath");
+                }
+                
+                if (pathNE == null)
+                {
+                    pathNE = GetRegistryValueFromLocalMachine(@"SOFTWARE\Netease\MCLauncher", "DownloadPath");
+                }
+
+                // 手动设置默认路径检查（常见的安装位置）
+                if (path4399 == null && Directory.Exists(@"C:\Program Files (x86)\PC4399\MCLauncher"))
+                {
+                    path4399 = @"C:\Program Files (x86)\PC4399\MCLauncher";
+                }
+                
+                if (pathNE == null && Directory.Exists(@"C:\Program Files (x86)\Netease\MCLauncher"))
+                {
+                    pathNE = @"C:\Program Files (x86)\Netease\MCLauncher";
+                }
+
+                // 创建诊断日志
+                StringBuilder log = new StringBuilder();
+                log.AppendLine("注册表路径检查：");
+                log.AppendLine($"HKCU\\Software\\Netease\\PC4399_MCLauncher: {GetRegistryValue(@"Software\Netease\PC4399_MCLauncher", "DownloadPath")}");
+                log.AppendLine($"HKCU\\Software\\Netease\\MCLauncher: {GetRegistryValue(@"Software\Netease\MCLauncher", "DownloadPath")}");
+                log.AppendLine($"HKLM\\SOFTWARE\\Netease\\PC4399_MCLauncher: {GetRegistryValueFromLocalMachine(@"SOFTWARE\Netease\PC4399_MCLauncher", "DownloadPath")}");
+                log.AppendLine($"HKLM\\SOFTWARE\\Netease\\MCLauncher: {GetRegistryValueFromLocalMachine(@"SOFTWARE\Netease\MCLauncher", "DownloadPath")}");
+                
+                if (path4399 == null && pathNE == null)
+                {
+                    MessageBox.Show($"无法找到网易我的世界安装目录\n\n诊断信息：\n{log}", "安装失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Application.Exit();
+                    return;
+                }
+
+                if (pathNE != null && path4399 != null)
+                {
+                    var result = MessageBox.Show(
+                        "检测到网易我的世界存在两个版本，请选择一个安装目录：\n" +
+                        "【是】：使用网易我的世界版本\n" +
+                        "【否】：使用PC4399版本",
+                        "提示",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Information);
+
+                    minecraftPath = result == DialogResult.Yes ? pathNE : path4399;
+                }
+                else
+                {
+                    minecraftPath = pathNE ?? path4399;
+                }
+
+                string extPath = Path.Combine(minecraftPath, "ext");
+                if (!Directory.Exists(extPath))
+                {
+                    // 尝试寻找备选的Java目录
+                    string altJavaPath = Path.Combine(minecraftPath, "java");
+                    if (Directory.Exists(altJavaPath))
+                    {
+                        extPath = altJavaPath;
+                    }
+                    else
+                    {
+                        MessageBox.Show($"网易我的世界 Java 目录不存在\n\n当前路径: {extPath}\n\n诊断信息：\n{log}", "安装失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Application.Exit();
+                        return;
+                    }
+                }
+
+                // 查找Java 21
+                var javaExe = FindJavaExe(extPath);
+                if (javaExe == null)
+                {
+                    // 尝试找任何版本的Java，不限制版本号
+                    javaExe = FindAnyJavaExe(extPath);
+                    if (javaExe == null)
+                    {
+                        MessageBox.Show($"无法找到网易我的世界 Java 目录\n\n当前路径: {extPath}\n\n诊断信息：\n{log}", "安装失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Application.Exit();
+                        return;
+                    }
+                }
+
+                javaHome = javaExe;
+                MessageBox.Show($"找到 Java 目录：{javaHome}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // 检查是否已安装
+                if (IsInstalled())
+                {
+                    var result = MessageBox.Show("已经安装过了，是否重新安装？", "提示",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (result == DialogResult.No)
+                    {
+                        Application.Exit();
+                        return;
+                    }
+                    Uninstall();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"初始化失败：{ex.Message}\n\n错误堆栈：{ex.StackTrace}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+        }
+
+        private string FindJavaExe(string extPath)
+        {
+            try
+            {
+                var javaExes = Directory.GetFiles(extPath, "java.exe", SearchOption.AllDirectories);
+                return javaExes.FirstOrDefault(exe =>
+                {
+                    try
+                    {
+                        var version = FileVersionInfo.GetVersionInfo(exe);
+                        return version.FileMajorPart >= 21;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                });
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string FindAnyJavaExe(string extPath)
+        {
+            try
+            {
+                var javaExes = Directory.GetFiles(extPath, "java.exe", SearchOption.AllDirectories);
+                return javaExes.FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private bool IsInstalled()
+        {
+            try
+            {
+                using (var key = Registry.CurrentUser.OpenSubKey(@"Software\izmk"))
+                {
+                    return key?.GetValue(INSTALLED_KEY) != null;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void Uninstall()
+        {
+            try
+            {
+                // 删除服务
+                var processInfo = new ProcessStartInfo
+                {
+                    FileName = "sc.exe",
+                    Arguments = $"delete {SERVICE_NAME}",
+                    UseShellExecute = true,
+                    Verb = "runas", // 请求管理员权限
+                    CreateNoWindow = false
+                };
+                
+                using (var process = Process.Start(processInfo))
+                {
+                    if (process != null) process.WaitForExit();
+                }
+
+                // 删除文件
+                var targetDir = Path.Combine(TARGET_DIR);
+                if (Directory.Exists(targetDir))
+                {
+                    Directory.Delete(targetDir, true);
+                }
+
+                // 删除注册表项
+                Registry.CurrentUser.DeleteSubKey(@"Software\izmk", false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"卸载失败：{ex.Message}\n\n错误堆栈：{ex.StackTrace}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Install()
+        {
+            try
+            {
+                // 创建目标目录
+                Directory.CreateDirectory(TARGET_DIR);
+
+                // 复制文件
+                string targetJar = Path.Combine(TARGET_DIR, JAR_FILE);
+                ExtractJar(targetJar);
+
+                // 解压DLL
+                string targetDll = Path.Combine(TARGET_DIR, DLL_FILE);
+                ExtractDll(targetDll);
+
+                // 创建服务
+                string cmd = $"\"{javaHome}\" -jar \"{targetJar}\"";
+                
+                // 使用Process.Start并请求管理员权限
+                var processInfo = new ProcessStartInfo
+                {
+                    FileName = "sc.exe",
+                    Arguments = $"create {SERVICE_NAME} binPath= \"{cmd}\" DisplayName= \"{SERVICE_DISPLAY_NAME}\" start= auto",
+                    UseShellExecute = true,
+                    Verb = "runas", // 请求管理员权限
+                    CreateNoWindow = false
+                };
+                
+                using (var process = Process.Start(processInfo))
+                {
+                    if (process != null)
+                    {
+                        process.WaitForExit();
+                        
+                        // 检查服务是否创建成功
+                        bool serviceCreated = false;
+                        var checkProcess = new ProcessStartInfo
+                        {
+                            FileName = "sc.exe",
+                            Arguments = $"query {SERVICE_NAME}",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        
+                        using (var checkResult = Process.Start(checkProcess))
+                        {
+                            if (checkResult != null)
+                            {
+                                string output = checkResult.StandardOutput.ReadToEnd();
+                                serviceCreated = !output.Contains("1060") && !output.Contains("失败");
+                            }
+                        }
+                        
+                        if (!serviceCreated)
+                        {
+                            throw new Exception("服务创建失败，请确保您以管理员身份运行此程序");
+                        }
+                    }
+                }
+
+                // 写入注册表
+                using (var key = Registry.CurrentUser.CreateSubKey(@"Software\izmk"))
+                {
+                    key?.SetValue(INSTALLED_KEY, true);
+                }
+
+                MessageBox.Show("IZMK 安装成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Application.Exit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"安装失败：{ex.Message}\n\n错误堆栈：{ex.StackTrace}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ExtractJar(string targetPath)
+        {
+            try
+            {
+                using (var stream = GetType().Assembly.GetManifestResourceStream("installer.izmk.jar"))
+                {
+                    if (stream == null)
+                    {
+                        throw new Exception("IZMK JAR 文件未找到！");
+                    }
+
+                    using (var fileStream = File.Create(targetPath))
+                    {
+                        stream.CopyTo(fileStream);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"无法提取 JAR 文件：{ex.Message}");
+            }
+        }
+
+        private void ExtractDll(string targetPath)
+        {
+            try
+            {
+                using (var stream = GetType().Assembly.GetManifestResourceStream("installer.lib.dll"))
+                {
+                    if (stream == null)
+                    {
+                        throw new Exception("IZMK DLL 文件未找到！");
+                    }
+
+                    using (var fileStream = File.Create(targetPath))
+                    {
+                        stream.CopyTo(fileStream);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"无法提取 DLL 文件：{ex.Message}");
+            }
+        }
+
+        private string GetRegistryValue(string path, string key)
+        {
+            try
+            {
+                using (var regKey = Registry.CurrentUser.OpenSubKey(path))
+                {
+                    return regKey?.GetValue(key) as string;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string GetRegistryValueFromLocalMachine(string path, string key)
+        {
+            try
+            {
+                using (var regKey = Registry.LocalMachine.OpenSubKey(path))
+                {
+                    return regKey?.GetValue(key) as string;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Install();
+        }
+    }
+}

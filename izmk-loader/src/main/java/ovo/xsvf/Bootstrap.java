@@ -96,7 +96,7 @@ public class Bootstrap {
         try {
             Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)
                     .getMethod("entry", Instrumentation.class, boolean.class, Map.class, byte[].class)
-                    .invoke(null, inst, true, binaryMap, mappingBytes);
+                    .invoke(null, inst, !CoreFileProvider.DEV, binaryMap, mappingBytes);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             System.out.println("Entry class not found or entry method not found!!!!");
             throw e;

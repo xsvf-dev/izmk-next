@@ -20,12 +20,12 @@ import ovo.xsvf.izmk.injection.accessor.EntityAccessor
 import ovo.xsvf.izmk.module.Module
 import java.util.*
 
-object ItemPhysics: Module(
+object ItemPhysics : Module(
     name = "item-physics"
 ) {
     private val random: Random = Random()
-    private var lastRenderTime = System.nanoTime();
-    
+    private var lastRenderTime = System.nanoTime()
+
     @EventTarget
     fun onRender2D(event: Render2DEvent) {
         lastRenderTime = System.nanoTime()
@@ -48,7 +48,7 @@ object ItemPhysics: Module(
         val applyEffects =
             entity.age != 0
 
-        //Handle Rotations
+        // Handle Rotations
         if (applyEffects) {
             var rotateBy: Float = (getRotation() * 0.2f)
             if (mc.isPaused) rotateBy = 0f

@@ -22,8 +22,13 @@ abstract class GuiScreen(val name: String) {
     open fun drawScreen(mouseX: Float, mouseY: Float, partialTicks: Float) {}
     open fun mouseClicked(buttonId: Int, mouseX: Float, mouseY: Float) {}
     open fun mouseReleased(buttonId: Int, mouseX: Float, mouseY: Float) {}
-    open fun mouseScrolled(mouseX: Float, mouseY: Float, scrollAmount: Int): Boolean { return false }
-    open fun keyPressed(keyCode: Int, scanCode: Int): Boolean { return false }
+    open fun mouseScrolled(mouseX: Float, mouseY: Float, scrollAmount: Int): Boolean {
+        return false
+    }
+
+    open fun keyPressed(keyCode: Int, scanCode: Int): Boolean {
+        return false
+    }
 
     open fun shouldCloseOnEsc(): Boolean = true
     open fun onClose() {}
@@ -37,7 +42,11 @@ abstract class GuiScreen(val name: String) {
                 override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
                     mouseX = pMouseX.toFloat()
                     mouseY = pMouseY.toFloat()
-                    drawScreen(mouseX, mouseY, pPartialTick)
+                }
+
+                @EventTarget
+                fun onRender2D(event: Render2DEvent) {
+                    drawScreen(mouseX, mouseY, event.partialTick)
                 }
 
                 override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {

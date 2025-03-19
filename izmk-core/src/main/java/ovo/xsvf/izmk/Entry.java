@@ -25,9 +25,9 @@ public class Entry {
         log.info("Initializing IZMK...");
         ClassUtil.init(inst);
         IZMK.INSTANCE.setClasses(classes);
+        IZMK.INSTANCE.setObfuscated(obfuscated);
         if (obfuscated) {
             Mapping mapping0 = new Mapping(mapping);
-            IZMK.INSTANCE.setObfuscated(true);
             PatchLoader.mapping = mapping0;
             MethodWrapper.mapping = mapping0;
             ReflectionUtil.mapping = mapping0;

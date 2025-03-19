@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\izmk-loader\src\main\resources\lib.dll">
+      <Link>lib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="..\izmk-loader\src\main\resources\lib.dll">
+      <LogicalName>installer.lib.dll</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\izmk-loader\build\libs\merged-loader-remap.jar">
+      <LogicalName>installer.izmk.jar</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

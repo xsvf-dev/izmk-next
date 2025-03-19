@@ -3,6 +3,7 @@ package ovo.xsvf.patchify.asm;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.*;
 import org.objectweb.asm.Type;
+import ovo.xsvf.patchify.ASMUtil;
 import ovo.xsvf.patchify.Mapping;
 import sun.misc.Unsafe;
 
@@ -37,10 +38,8 @@ public final class ReflectionUtil {
         if (l != null) return l;
 
         if (mapping != null) {
-            System.out.println("ReflectionUtil.getFieldOffset");
-            System.out.println("clazz = " + clazz + ", name = " + name);
-            System.out.println("key = " + key);
             key = mapping.revFieldMapping.getOrDefault(key, key);
+            name = ASMUtil.splitDesc(key).second();
         }
         try {
             long offset;
@@ -59,10 +58,8 @@ public final class ReflectionUtil {
         if (pair != null) return pair;
 
         if (mapping != null) {
-            System.out.println("ReflectionUtil.getStaticFieldOffset");
-            System.out.println("clazz = " + clazz + ", name = " + name);
-            System.out.println("key = " + key);
             key = mapping.revFieldMapping.getOrDefault(key, key);
+            name = ASMUtil.splitDesc(key).second();
         }
 
         try {
@@ -94,10 +91,8 @@ public final class ReflectionUtil {
         if (varHandle != null) return varHandle;
 
         if (mapping != null) {
-            System.out.println("ReflectionUtil.getVarHandle");
-            System.out.println("clazz = " + clazz + ", name = " + name + ", className = " + className);
-            System.out.println("key = " + key);
             key = mapping.revFieldMapping.getOrDefault(key, key);
+            name = ASMUtil.splitDesc(key).second();
         }
 
         try {

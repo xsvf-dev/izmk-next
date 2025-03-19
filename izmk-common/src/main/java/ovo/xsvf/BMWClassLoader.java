@@ -1,11 +1,14 @@
 package ovo.xsvf;
 
+import com.allatori.annotations.DoNotRename;
+
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@DoNotRename
 public class BMWClassLoader extends ClassLoader {
     private final HashMap<String, byte[]> classMap = new HashMap<>();
     private final Function<String, URL> resourceProvider;

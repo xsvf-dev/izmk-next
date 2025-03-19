@@ -62,7 +62,8 @@ public final class PatchLoader implements IPatchLoader {
         }
     }
 
-    private static List<AbstractInsnNode> getInjectionPoints(InsnList insnList, Slice slice, Predicate<AbstractInsnNode> filter) {
+    private static List<AbstractInsnNode> getInjectionPoints(InsnList insnList, Slice slice,
+                                                             Predicate<AbstractInsnNode> filter) {
         final List<AbstractInsnNode> injectionPoints = new ArrayList<>();
         if (slice.start().value() == At.Type.HEAD && slice.end().value() == At.Type.TAIL && slice.startIndex() == -1 && slice.endIndex() == -1) {
             log.debug("head-tail slice injection point found!");
@@ -90,14 +91,36 @@ public final class PatchLoader implements IPatchLoader {
             boolean head = slice.start().value() == At.Type.HEAD;
             boolean tail = slice.end().value() == At.Type.TAIL;
 
-            var startSplit = ASMUtil.splitDesc(slice.start().method());
-            var endSplit = ASMUtil.splitDesc(slice.end().method());
+            var start = Pair.of(slice.start().method(), slice.start().desc());
+            var end = Pair.of(slice.end().method(), slice.end().desc());
+
+            if (mapping != null) {
+                if (!mapping.revMethodsMapping.containsKey(start)) {
+                    log.warn("start method {} not found in mapping", start);
+                } else {
+                    start = mapping.revMethodsMapping.get(start);
+                }
+                if (!mapping.revMethodsMapping.containsKey(end)) {
+                    log.warn("end method {} not found in mapping", end);
+                } else {
+                    end = mapping.revMethodsMapping.get(end);
+                }
+            }
+
+            var startSplit = ASMUtil.splitDesc(start.first());
+            var endSplit = ASMUtil.splitDesc(end.first());
 
             boolean foundStart = head;
             for (AbstractInsnNode insnNode : insnList) {
-                if (!head && insnNode instanceof MethodInsnNode m && m.owner.equals(startSplit.first()) && m.name.equals(startSplit.second()) && m.desc.equals(startSplit.second())) {
+                if (!head && insnNode instanceof MethodInsnNode m &&
+                        m.owner.equals(startSplit.first()) &&
+                        m.name.equals(startSplit.second()) &&
+                        m.desc.equals(start.second())) {
                     foundStart = true;
-                } else if (!tail && insnNode instanceof MethodInsnNode m && m.owner.equals(endSplit.first()) && m.name.equals(endSplit.second()) && m.desc.equals(endSplit.second())) {
+                } else if (!tail && insnNode instanceof MethodInsnNode m &&
+                        m.owner.equals(endSplit.first()) &&
+                        m.name.equals(endSplit.second()) &&
+                        m.desc.equals(end.second())) {
                     break;
                 }
                 if (foundStart) {
@@ -244,11 +267,21 @@ public final class PatchLoader implements IPatchLoader {
         }
     }
 
-    private static void injectMethod(MethodNode method, Method inject, Pair<String, String> invoke, boolean isBefore) {
+    private static void injectMethod(MethodNode method, Method inject, Pair<String, String> invoke0, boolean isBefore) {
         var returnType = Type.getReturnType(method.desc);
         var injectOwner = Type.getInternalName(inject.getDeclaringClass());
         var injectName = inject.getName();
         var injectDesc = Type.getMethodDescriptor(inject);
+
+        if (mapping != null) {
+            if (!mapping.revMethodsMapping.containsKey(invoke0)) {
+                log.warn("method invocation with name = {}, desc = {} cannot be found in mapping",
+                        invoke0.first(), invoke0.second());
+            } else {
+                invoke0 = mapping.revMethodsMapping.get(invoke0);
+            }
+        }
+        final var invoke = invoke0;
 
         var split = ASMUtil.splitDesc(invoke.first());
 
@@ -376,7 +409,19 @@ public final class PatchLoader implements IPatchLoader {
         var injectDesc = Type.getMethodDescriptor(inject);
 
         WrapInvoke wrapInvoke = inject.getDeclaredAnnotation(WrapInvoke.class);
-        var wrap = Pair.of(wrapInvoke.target(), wrapInvoke.targetDesc());
+        var wrap0 = Pair.of(wrapInvoke.target(), wrapInvoke.targetDesc());
+
+        if (mapping != null) {
+            if (!mapping.revMethodsMapping.containsKey(wrap0)) {
+                log.warn("wrap method invocation with name = {}, desc = {} cannot be found in mapping",
+                        wrap0.first(), wrap0.second());
+            } else {
+                wrap0 = mapping.revMethodsMapping.get(wrap0);
+            }
+        }
+        final var wrap = wrap0;
+
+
         var split = ASMUtil.splitDesc(wrap.first());
 
         List<AbstractInsnNode> toWrap = getInjectionPoints(method.instructions,
@@ -628,7 +673,11 @@ public final class PatchLoader implements IPatchLoader {
                 }
                 Pair<String, String> target = Pair.of(targetNode.name + "/" + name, desc);
                 if (mapping != null) {
-                    target = mapping.revMethodsMapping.getOrDefault(target, target);
+                    if (!mapping.revMethodsMapping.containsKey(target)) {
+                        log.warn("target method {}#{} not found in mapping, skipping", target.first(), target.second());
+                    } else {
+                        target = mapping.revMethodsMapping.get(target);
+                    }
                 }
                 injectMap.computeIfAbsent(target, k -> new ArrayList<>()).add(method);
             }

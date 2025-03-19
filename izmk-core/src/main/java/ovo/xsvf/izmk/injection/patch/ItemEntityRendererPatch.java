@@ -12,9 +12,11 @@ import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+import ovo.xsvf.izmk.IZMK;
 import ovo.xsvf.izmk.injection.accessor.ItemEntityRendererAccessor;
 import ovo.xsvf.izmk.module.impl.ItemPhysics;
 import ovo.xsvf.patchify.ASMUtil;
+import ovo.xsvf.patchify.PatchLoader;
 import ovo.xsvf.patchify.annotation.Patch;
 import ovo.xsvf.patchify.annotation.Transform;
 
@@ -37,6 +39,9 @@ public class ItemEntityRendererPatch {
         InsnList insnList = new InsnList();
         LabelNode labelNode = new LabelNode();
         Pair<String, String> superRenderMethod = Pair.of(Type.getInternalName(EntityRenderer.class) + "/render", "(Lnet/minecraft/world/entity/Entity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V");
+        if (IZMK.INSTANCE.getObfuscated()) {
+            superRenderMethod = PatchLoader.mapping.revMethodsMapping.get(superRenderMethod);
+        }
         Pair<String, String> data = ASMUtil.splitDesc(superRenderMethod.first());
 
         insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));

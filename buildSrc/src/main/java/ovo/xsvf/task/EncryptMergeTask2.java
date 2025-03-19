@@ -24,8 +24,8 @@ public class EncryptMergeTask2 extends DefaultTask {
         if (!output.exists()) output.getParentFile().mkdirs();
         try (ZipInputStream loaderZip = new ZipInputStream(new FileInputStream(loader));
              ZipInputStream coreZip = new ZipInputStream(new FileInputStream(core));
-             InputStream coreFileProvider = MergeTask.class.getResourceAsStream("/ovo/xsvf/encrypt/EncryptCoreFileProvider.class");
              FileOutputStream outputZip = new FileOutputStream(output)) {
+
             // first, write some trash datas
             int trashLength = random.nextInt(1024, 4096);
             byte[] trashBytes = EncryptUtil.getRandomBytes(trashLength);
@@ -53,17 +53,14 @@ public class EncryptMergeTask2 extends DefaultTask {
                 }
             }
             // add some trash entries
-            for (int i = 0; i < RandomUtil.generateRandomNumber(100, 200); i++) {
-                String name = RandomUtil.generateRandomFileName(2) + ".json";
-                byte[] bytes = EncryptUtil.getRandomBytes(random.nextInt(1024, 4096));
-                coreZipStream.putNextEntry(new ZipEntry(name));
-                coreZipStream.write(0xA5); // to make it not start with CA FE BA BE
-                coreZipStream.write(0xFE);
-                coreZipStream.write(0xBA);
-                coreZipStream.write(0xBE); // to make reverse engineers confused
-                coreZipStream.write(bytes);
-                coreZipStream.closeEntry();
-            }
+//            for (int i = 0; i < RandomUtil.generateRandomNumber(100, 200); i++) {
+//                String name = RandomUtil.generateRandomFileName(2) + ".json";
+//                byte[] bytes = EncryptUtil.getRandomBytes(random.nextInt(1024, 4096));
+//                coreZipStream.putNextEntry(new ZipEntry(name));
+//                coreZipStream.write(0x00); // to make it not start with CA FE BA BE
+//                coreZipStream.write(bytes);
+//                coreZipStream.closeEntry();
+//            }
             byte[] coreBytes = coreStream.toByteArray();
             for (int i = 0; i < coreBytes.length; i++) coreBytes[i] ^= (byte) 0xCAFEBEEF;
             coreZipStream.close();
