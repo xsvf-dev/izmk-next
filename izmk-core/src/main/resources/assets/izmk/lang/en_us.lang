@@ -114,3 +114,6 @@ modules.full-bright.mode=Mode
 modules.full-bright.mode.gamma=Gamma
 modules.full-bright.mode.night-vision=Night Vision
 modules.full-bright.gamma=Gamma
+
+modules.motion-blur=Motion Blur
+modules.motion-blur.strength=Strength

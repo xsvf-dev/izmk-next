@@ -6,6 +6,7 @@ import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.matrix.MatrixStack
 import ovo.xsvf.izmk.graphics.shader.Shader
 import ovo.xsvf.izmk.graphics.shader.impl.FontShader
+import ovo.xsvf.izmk.graphics.shader.impl.MotionBlurShader
 import ovo.xsvf.izmk.graphics.shader.impl.PosColorShader2D
 import ovo.xsvf.izmk.graphics.shader.impl.PosColorShader3D
 import ovo.xsvf.izmk.graphics.shader.impl.PosTexShader2D
@@ -25,6 +26,7 @@ object VertexBufferObjects {
         PosTex2D,
         PosColor3D,
         RenderFont,
+        MotionBlur,
     )
 
     data object PosColor2D: VertexMode(
@@ -141,6 +143,21 @@ object VertexBufferObjects {
             pointer[12] = v
             pointer[16] = chunk
             pointer[20] = color.rgba
+            arr += attribute.stride.toLong()
+            vertexSize++
+        }
+    }
+
+    data object MotionBlur: VertexMode(
+        MotionBlurShader, buildAttribute(8) {
+            float(0, 2, GlDataType.GL_FLOAT, false)
+        }, 1L
+    ) {
+        fun vertex(x: Float, y: Float) {
+            // Needn't to update matrix
+            val pointer = arr.ptr
+            pointer[0] = x
+            pointer[4] = y
             arr += attribute.stride.toLong()
             vertexSize++
         }

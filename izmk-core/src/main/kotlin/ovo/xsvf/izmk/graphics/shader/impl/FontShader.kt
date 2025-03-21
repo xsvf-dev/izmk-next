@@ -18,7 +18,7 @@ object FontShader: Shader(
     private val samplerLocation = GL45.glGetUniformLocation(id, "u_Texture")
 
     override fun default() {
-        set(matrixLocation, MatrixStack.peek().mvpMatrix)
+        matrix4f(matrixLocation, MatrixStack.peek().mvpMatrix)
         textureUnit?.let { glProgramUniformHandleui64ARB(id, samplerLocation, it) }
     }
 

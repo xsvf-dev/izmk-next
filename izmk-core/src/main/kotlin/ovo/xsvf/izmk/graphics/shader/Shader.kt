@@ -2,6 +2,7 @@ package ovo.xsvf.izmk.graphics.shader
 
 import org.apache.logging.log4j.LogManager
 import org.joml.Matrix4f
+import org.joml.Vector3f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL45.*
 import ovo.xsvf.izmk.graphics.GlHelper
@@ -91,20 +92,20 @@ open class Shader(
     open fun default() {}
 
     /* uniform functions */
-
-    // matrix4f
-    protected fun set(location: Int, mat: Matrix4f) {
+    protected fun matrix4f(location: Int, mat: Matrix4f) {
         mat.get(buffer)
         glProgramUniformMatrix4fv(id, location, false, buffer)
     }
 
-    // sampler2D
-    protected fun set(location: Int, textureUnit: Int) {
+    protected fun vec3f(location: Int, vec: Vector3f) {
+        glProgramUniform3f(id, location, vec.x, vec.y, vec.z)
+    }
+
+    protected fun int1(location: Int, textureUnit: Int) {
         glProgramUniform1i(id, location, textureUnit)
     }
 
-    // general
-    protected fun set(location: Int, value: Float) {
+    protected fun float1(location: Int, value: Float) {
         glProgramUniform1f(id, location, value)
     }
 

@@ -41,6 +41,7 @@ object ModuleManager {
         addModule(MinmalBobbing)
 //        addModule(TestScreen)
         addModule(FullBright)
+        addModule(MotionBlur)
 
         /* render modules */
         addModule(NeneHud)

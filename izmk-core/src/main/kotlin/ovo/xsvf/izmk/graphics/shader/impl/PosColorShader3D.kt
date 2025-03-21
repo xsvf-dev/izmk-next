@@ -13,7 +13,7 @@ object PosColorShader3D: Shader(
     private val matrixLocation = glGetUniformLocation(id, "MVPMatrix")
 
     override fun default() {
-        set(matrixLocation, MatrixStack.peek().mvpMatrix)
+        matrix4f(matrixLocation, MatrixStack.peek().mvpMatrix)
     }
 
 }

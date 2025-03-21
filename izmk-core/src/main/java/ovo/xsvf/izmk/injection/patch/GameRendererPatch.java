@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ovo.xsvf.izmk.event.impl.ResolutionUpdateEvent;
 import ovo.xsvf.izmk.graphics.RenderSystem;
 import ovo.xsvf.izmk.module.impl.MinmalBobbing;
 import ovo.xsvf.patchify.CallbackInfo;
@@ -32,5 +33,11 @@ public class GameRendererPatch {
                               boolean renderLevel, @Local(10) GuiGraphics guiGraphics,
                               CallbackInfo ci) throws Exception {
         RenderSystem.INSTANCE.onRender2d(guiGraphics, partialTicks);
+    }
+
+    @Inject(method = "resize", desc = "(II)V",
+            at = @At(value = At.Type.HEAD))
+    public static void onResize(GameRenderer instance, int width, int height, CallbackInfo ci) {
+        new ResolutionUpdateEvent(width, height).post();
     }
 }
