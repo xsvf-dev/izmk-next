@@ -34,6 +34,7 @@ object ModuleManager {
         addModule(Hitboxes)
         addModule(Particles)
         addModule(FullBright)
+        addModule(MotionBlur)
 
         /* render modules */
         addModule(NeneHud)

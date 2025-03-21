@@ -14,7 +14,7 @@ object PosTexShader2D: Shader(
     private val samplerLocation = GL45.glGetUniformLocation(id, "u_Texture")
 
     override fun default() {
-        set(matrixLocation, MatrixStack.peek().mvpMatrix)
-        set(samplerLocation, 0)
+        matrix4f(matrixLocation, MatrixStack.peek().mvpMatrix)
+        int1(samplerLocation, 0)
     }
 }
