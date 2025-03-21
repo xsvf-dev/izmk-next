@@ -2,6 +2,7 @@ package ovo.xsvf.izmk.module
 
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.IZMK
 import ovo.xsvf.izmk.event.EventBus
 import ovo.xsvf.izmk.event.impl.Render2DEvent
@@ -17,7 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 abstract class Module(val name: String,
                       val loadFromConfig: Boolean = true,
-                      val showInGui: Boolean = true
+                      val showInGui: Boolean = true,
+                      defaultKeybind: Int? = null,
 ): SettingsDesigner<Module> {
     val settings = CopyOnWriteArrayList<AbstractSetting<*>>()
     val translation = TranslationString("modules", name)
@@ -41,6 +43,10 @@ abstract class Module(val name: String,
                 onDisable()
                 EventBus.unregister(this)
             }
+        }
+
+        defaultKeybind?.let {
+            keyBind = KeyBind(KeyBind.Type.KEYBOARD, it, GLFW.glfwGetKeyScancode(it))
         }
     }
 

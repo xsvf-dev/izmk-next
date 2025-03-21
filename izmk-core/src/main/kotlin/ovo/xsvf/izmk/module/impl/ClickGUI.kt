@@ -1,5 +1,6 @@
 package ovo.xsvf.izmk.module.impl
 
+import org.lwjgl.glfw.GLFW
 import ovo.xsvf.izmk.graphics.RenderSystem
 import ovo.xsvf.izmk.graphics.font.FontRendererType
 import ovo.xsvf.izmk.gui.screen.ClickGUIScreen
@@ -12,6 +13,7 @@ import ovo.xsvf.izmk.translation.TranslationManager
  */
 object ClickGUI : Module(
     name = "click-gui",
+    defaultKeybind = GLFW.GLFW_KEY_RIGHT_SHIFT,
 ) {
     var fontRenderer by setting("font-renderer", FontRendererType.GENERAL)
         .onChangeValue { setting ->
