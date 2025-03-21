@@ -14,19 +14,19 @@ class SimpleListScreen(
     private val widgets: MutableList<AbstractWidget>,
     private val screenTitle: () -> String = { "" }
 ) :
-    AbstractWindow(screenTitle(), 100f, 100f, 400f, 400f) {
+    AbstractWindow(screenTitle(), 50f, 50f, 275f, 300f) {
 
     private val log = LogManager.getLogger(javaClass)
     private val rectMulti = PosColor2DMultiDraw()
     private val fontMulti = FontMultiDraw()
 
     private val window = DragWindow(x, y, width, height)
-    private val padding = 36f
+    private val padding = 35f
 
     /* scroll bar */
     private var showScrollBar = false
     private var scrollOffset = 0f
-    private val scrollBarWidth = 10f
+    private val scrollBarWidth = 6f
     private val scrollBarPadding = 3f
     private var draggingScrollBar = false
     private var lastDragY = 0f
