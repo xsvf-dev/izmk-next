@@ -5,9 +5,11 @@ import net.minecraft.world.effect.MobEffects
 import ovo.xsvf.izmk.event.EventTarget
 import ovo.xsvf.izmk.event.impl.PreTickEvent
 import ovo.xsvf.izmk.module.Module
+import ovo.xsvf.izmk.translation.TranslationEnum
 
 object FullBright : Module("full-bright") {
     private var gamma0 = mc.options.gamma().get()
+
     private val mode by setting("mode", Mode.GAMMA)
     val gamma by setting("gamma", gamma0, 0.1..15.0, 0.1)
         .visibility { mode == Mode.GAMMA }
@@ -40,8 +42,8 @@ object FullBright : Module("full-bright") {
         }
     }
 
-    enum class Mode {
-        GAMMA,
-        NIGHT_VISION
+    private enum class Mode(override val key: CharSequence): TranslationEnum {
+        GAMMA("gamma"),
+        NIGHT_VISION("night-vision")
     }
 }

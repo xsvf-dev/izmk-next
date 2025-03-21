@@ -108,3 +108,9 @@ modules.hit-boxes.items=Items
 modules.hit-boxes.mobs=Mobs
 modules.hit-boxes.projectiles=Projectiles
 modules.hit-boxes.vehicles=Vehicles
+
+modules.full-bright=Full Bright
+modules.full-bright.mode=Mode
+modules.full-bright.mode.gamma=Gamma
+modules.full-bright.mode.night-vision=Night Vision
+modules.full-bright.gamma=Gamma
