@@ -61,8 +61,6 @@ object GlHelper {
         GlStateManager._enableBlend()
         GlStateManager._disableDepthTest()
         GlStateManager._disableCull()
-        GlStateManager._glBindVertexArray(0)
-        GlStateManager._glUseProgram(0)
         GlStateManager._disableScissorTest()
         MojangRenderSystem.defaultBlendFunc()
         MojangRenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)

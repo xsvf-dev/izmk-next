@@ -39,7 +39,7 @@ object ModuleManager {
         addModule(Hitboxes)
         addModule(Particles)
         addModule(MinmalBobbing)
-        addModule(TestScreen)
+//        addModule(TestScreen)
         addModule(FullBright)
 
         /* render modules */

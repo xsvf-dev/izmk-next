@@ -86,6 +86,7 @@ object RenderSystem {
     }
 
     private fun preRender() {
+        preAttrib()
         GlHelper.reset()
         VertexBufferObjects.sync()
         GlHelper.blend = true
@@ -93,6 +94,27 @@ object RenderSystem {
 
     private fun postRender() {
         GlHelper.syncWithMinecraft()
+        postAttrib()
+    }
+
+    /* Attrib */
+    private var vaoLast = -1
+    private var vboLast = -1
+    private var eboLast = -1
+    private var lastShader = -1
+
+    private fun preAttrib() {
+        vaoLast = glGetInteger(GL_VERTEX_ARRAY_BINDING)
+        vboLast = glGetInteger(GL_ARRAY_BUFFER_BINDING)
+        eboLast = glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING)
+        lastShader = glGetInteger(GL_CURRENT_PROGRAM)
+    }
+
+    private fun postAttrib() {
+        glBindVertexArray(vaoLast)
+        glBindBuffer(GL_ARRAY_BUFFER, vboLast)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboLast)
+        glUseProgram(lastShader)
     }
 
 }

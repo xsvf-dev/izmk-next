@@ -84,7 +84,6 @@ class SimpleListScreen(
 
         scissorBox.updateAndDraw(window.x, window.y + padding, renderWidth, window.height - padding) {
             visibleWidgets.forEach { widget ->
-//                if (offsetY > window.y && offsetY < window.y + window.height - scrollBarPadding) {
                 if (offsetY in (window.y)..(window.y + window.height)) {
                     widget.draw(
                         renderWidth, viewportHeight,
