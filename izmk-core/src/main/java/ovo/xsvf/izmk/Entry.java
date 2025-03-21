@@ -11,6 +11,7 @@ import ovo.xsvf.patchify.annotation.Patch;
 import ovo.xsvf.patchify.asm.MethodWrapper;
 import ovo.xsvf.patchify.asm.ReflectionUtil;
 
+import java.io.InputStream;
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,18 +21,23 @@ public class Entry {
     private static final Logger log = LogManager.getLogger(Entry.class);
     private static final List<Class<?>> PATCHES = new ArrayList<>();
 
-    public static void entry(Instrumentation inst, boolean obfuscated,
-                             Map<String, byte[]> classes, byte[] mapping) throws Throwable {
+    public static void entry(Instrumentation inst, boolean obfuscated, Map<String, byte[]> classes) throws Throwable {
         log.info("Initializing IZMK...");
         ClassUtil.init(inst);
         IZMK.INSTANCE.setClasses(classes);
         IZMK.INSTANCE.setObfuscated(obfuscated);
         if (obfuscated) {
-            Mapping mapping0 = new Mapping(mapping);
+            log.info("IZMK running in obfuscated mode");
+            InputStream resource = Entry.class.getResourceAsStream("/mapping.srg");
+            if (resource == null) {
+                log.error("Mapping file not found, please provide mapping.srg in the root directory of the jar file");
+                throw new RuntimeException("Mapping file not found");
+            }
+            Mapping mapping0 = new Mapping(resource.readAllBytes());
             PatchLoader.mapping = mapping0;
             MethodWrapper.mapping = mapping0;
             ReflectionUtil.mapping = mapping0;
-            log.info("IZMK running in obfuscated mode");
+            resource.close();
         }
 
         IZMK.classes.entrySet().stream()

@@ -51,7 +51,6 @@ public class Bootstrap {
     public static void agentmain0(String agentArgs, Instrumentation inst) throws Exception {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
         String dll = jsonObject.get("dll").getAsString();
-        String mapping = jsonObject.get("mapping").getAsString();
         String file = jsonObject.get("file").getAsString();
         System.load(dll);
 
@@ -91,12 +90,10 @@ public class Bootstrap {
                 unsafe.getObject(finalClassLoader, unsafe.objectFieldOffset(parentLoadersField));
         packages.forEach(it -> parentLoaders.put(it, bmwClassLoader));
 
-        byte[] mappingBytes = Files.readAllBytes(Path.of(mapping));
-
         try {
             Class.forName("ovo.xsvf.izmk.Entry", true, finalClassLoader)
-                    .getMethod("entry", Instrumentation.class, boolean.class, Map.class, byte[].class)
-                    .invoke(null, inst, !CoreFileProvider.DEV, binaryMap, mappingBytes);
+                    .getMethod("entry", Instrumentation.class, boolean.class, Map.class)
+                    .invoke(null, inst, !CoreFileProvider.DEV, binaryMap);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             System.out.println("Entry class not found or entry method not found!!!!");
             throw e;
