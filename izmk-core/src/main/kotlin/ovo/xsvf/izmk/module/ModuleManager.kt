@@ -12,9 +12,7 @@ import ovo.xsvf.izmk.graphics.easing.AnimationFlag
 import ovo.xsvf.izmk.graphics.easing.Easing
 import ovo.xsvf.izmk.graphics.utils.RenderUtils2D
 import ovo.xsvf.izmk.module.impl.*
-import ovo.xsvf.izmk.module.impl.render.FPSDisplay
 import ovo.xsvf.izmk.module.impl.render.NeneHud
-import ovo.xsvf.izmk.module.impl.render.PotionStatus
 import ovo.xsvf.izmk.module.impl.render.WaterMark
 import ovo.xsvf.izmk.settings.KeyBindSetting
 import java.util.concurrent.ConcurrentHashMap
@@ -31,22 +29,15 @@ object ModuleManager {
 
     fun init() {
         addModule(OldAnimations)
-        addModule(ChatCopy)
         addModule(ClickGUI)
-        addModule(ItemPhysics)
-        addModule(HitColor)
         addModule(ItemScale)
         addModule(Hitboxes)
         addModule(Particles)
-        addModule(MinmalBobbing)
-//        addModule(TestScreen)
         addModule(FullBright)
 
         /* render modules */
         addModule(NeneHud)
-        addModule(PotionStatus)
         addModule(WaterMark)
-        addModule(FPSDisplay)
 
         modules().forEach { it.onLoad() }
     }

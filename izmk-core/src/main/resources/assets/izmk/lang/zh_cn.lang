@@ -110,7 +110,4 @@ modules.hit-boxes.projectiles=投射物
 modules.hit-boxes.vehicles=载具
 
 modules.full-bright=无限夜视
-modules.full-bright.mode=模式
-modules.full-bright.mode.gamma=伽马覆写
-modules.full-bright.mode.night-vision=夜视
 modules.full-bright.gamma=伽马值

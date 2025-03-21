@@ -16,11 +16,12 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @author LangYa466, xsvf
  * @since 2025/2/16
  */
-abstract class Module(val name: String,
-                      val loadFromConfig: Boolean = true,
-                      val showInGui: Boolean = true,
-                      defaultKeybind: Int? = null,
-): SettingsDesigner<Module> {
+abstract class Module(
+    val name: String,
+    val loadFromConfig: Boolean = true,
+    val showInGui: Boolean = true,
+    defaultKeybind: Int = -1,
+) : SettingsDesigner<Module> {
     val settings = CopyOnWriteArrayList<AbstractSetting<*>>()
     val translation = TranslationString("modules", name)
     val description = TranslationString("modules.$name", "description")
@@ -45,7 +46,7 @@ abstract class Module(val name: String,
             }
         }
 
-        defaultKeybind?.let {
+        defaultKeybind.let {
             keyBind = KeyBind(KeyBind.Type.KEYBOARD, it, GLFW.glfwGetKeyScancode(it))
         }
     }
@@ -77,8 +78,8 @@ abstract class RenderableModule(
     defaultX: Float,
     defaultY: Float,
     var width: Float = 0f,
-    var height: Float  = 0f
-): Module(name) {
+    var height: Float = 0f
+) : Module(name) {
     private val x0 = FloatSetting(
         TranslationString("modules.renderable", "x"), defaultX,
         minValue = 0f, maxValue = mc.window.width.toFloat(), step = mc.window.width / 500f,
