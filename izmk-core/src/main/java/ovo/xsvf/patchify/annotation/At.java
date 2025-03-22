@@ -13,20 +13,31 @@ import java.lang.annotation.Target;
 public @interface At {
     /**
      * The type of the injection point.
+     *
      * @return the type of the injection point
      */
     Type value() default Type.HEAD;
 
     /**
-     * The method name of the method to be invoked.
+     * The full method name (including class name) of the method to be invoked.
      * <p>Only works with the {@link Type#BEFORE_INVOKE} and {@link Type#AFTER_INVOKE} types.</p>
+     *
      * @return the method name
      */
     String method() default "";
 
     /**
+     * The full method name (including class name), which is already remapped.
+     * <p>Only works with the {@link Type#BEFORE_INVOKE} and {@link Type#AFTER_INVOKE} types.</p>
+     *
+     * @return the class name
+     */
+    String remapped() default "";
+
+    /**
      * The method descriptor of the method to be invoked.
      * <p>Only works with the {@link Type#BEFORE_INVOKE} and {@link Type#AFTER_INVOKE} types.</p>
+     *
      * @return the method name
      */
     String desc() default "";

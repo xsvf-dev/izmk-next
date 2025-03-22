@@ -91,20 +91,34 @@ public final class PatchLoader implements IPatchLoader {
             boolean head = slice.start().value() == At.Type.HEAD;
             boolean tail = slice.end().value() == At.Type.TAIL;
 
-            var start = Pair.of(slice.start().method(), slice.start().desc());
-            var end = Pair.of(slice.end().method(), slice.end().desc());
+            Pair<String, String> start = null;
+            Pair<String, String> end = null;
 
             if (mapping != null) {
-                if (!mapping.revMethodsMapping.containsKey(start)) {
-                    log.warn("start method {} not found in mapping", start);
-                } else {
-                    start = mapping.revMethodsMapping.get(start);
+                if (slice.start().remapped().isEmpty()) {
+                    start = Pair.of(slice.start().method(), slice.start().desc());
+                    if (mapping.revMethodsMapping.containsKey(start)) {
+                        start = mapping.revMethodsMapping.get(start);
+                    } else {
+                        log.warn("start method not found in mapping: " + start);
+                    }
                 }
-                if (!mapping.revMethodsMapping.containsKey(end)) {
-                    log.warn("end method {} not found in mapping", end);
-                } else {
-                    end = mapping.revMethodsMapping.get(end);
+                if (slice.end().remapped().isEmpty()) {
+                    end = Pair.of(slice.end().method(), slice.end().desc());
+                    if (mapping.revMethodsMapping.containsKey(end)) {
+                        end = mapping.revMethodsMapping.get(end);
+                    } else {
+                        log.warn("end method not found in mapping: " + end);
+                    }
                 }
+            } else {
+                start = Pair.of(slice.start().method(), slice.start().desc());
+                end = Pair.of(slice.end().method(), slice.end().desc());
+            }
+
+            if (start == null || end == null) {
+                log.warn("mapping not found for slice: {}", slice);
+                return Collections.emptyList();
             }
 
             var startSplit = ASMUtil.splitDesc(start.first());
@@ -555,7 +569,7 @@ public final class PatchLoader implements IPatchLoader {
                     }
                 }
             } else {
-                var target = Pair.of(at.method(), at.desc());
+                var target = Pair.of(at.remapped().isEmpty() ? at.method() : at.remapped(), at.desc());
                 var split = ASMUtil.splitDesc(target.first());
                 for (AbstractInsnNode insnNode : method.instructions) {
                     if (insnNode instanceof MethodInsnNode m && m.owner.equals(split.first()) &&
@@ -699,9 +713,15 @@ public final class PatchLoader implements IPatchLoader {
                             }
                             case TAIL -> injectTail(method, injectMethod);
                             case BEFORE_INVOKE, AFTER_INVOKE -> {
-                                if (at.method().isEmpty() || at.desc().isEmpty())
+                                if ((at.method().isEmpty() && at.remapped().isEmpty()) || at.desc().isEmpty())
                                     throw new IllegalArgumentException("At annotation in method " + injectMethod.getName() + " in class " + patchClass.getName() + " is missing method or desc");
-                                injectMethod(method, injectMethod, Pair.of(at.method(), at.desc()), at.value() == At.Type.BEFORE_INVOKE);
+                                String name;
+                                if (mapping != null) {
+                                    name = at.remapped().isEmpty() ? at.method() : at.remapped();
+                                } else {
+                                    name = at.method();
+                                }
+                                injectMethod(method, injectMethod, Pair.of(name, at.desc()), at.value() == At.Type.BEFORE_INVOKE);
                             }
                         }
                     } else if (injectMethod.isAnnotationPresent(Overwrite.class)) {

@@ -1,6 +1,9 @@
 package ovo.xsvf.izmk
 
 import net.minecraft.client.Minecraft
+import net.minecraft.server.packs.resources.ReloadableResourceManager
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener
+import net.optifine.CustomSky
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import ovo.xsvf.izmk.config.ConfigManager
@@ -42,6 +45,16 @@ object IZMK {
             FontRenderers
             // Utils
             RenderUtils
+        }
+
+        CustomSky.reset()
+        CustomSky.update()
+        val resourceManager = mc.resourceManager
+        if (resourceManager is ReloadableResourceManager) {
+            resourceManager.registerReloadListener(ResourceManagerReloadListener {
+                CustomSky.reset()
+                CustomSky.update()
+            })
         }
 
         PostInitEvent().post()
