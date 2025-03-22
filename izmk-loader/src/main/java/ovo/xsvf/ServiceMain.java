@@ -58,13 +58,13 @@ public class ServiceMain {
     }
 
     private static boolean extractLibrary() {
-        try (FileOutputStream fos = new FileOutputStream(library); FileOutputStream mappingFos = new FileOutputStream(mapping); InputStream is = ServiceMain.class.getResourceAsStream("/lib.dll"); InputStream mappingIs = ServiceMain.class.getResourceAsStream("/mapping.srg")) {
-            if (is == null || mappingIs == null) {
+        try (FileOutputStream fos = new FileOutputStream(library);
+             InputStream is = ServiceMain.class.getResourceAsStream("/lib.dll")) {
+            if (is == null) {
                 System.err.println("IZMK 资源文件未找到！");
                 return false;
             }
             fos.write(is.readAllBytes());
-            mappingFos.write(mappingIs.readAllBytes());
             return true;
         } catch (IOException e) {
             System.err.println("无法解压资源文件 " + library + " 或 " + mapping + ": " + e.getMessage());
@@ -82,6 +82,9 @@ public class ServiceMain {
 
     private static void attach(String pid, JsonObject launchArgs) {
         try {
+            if (!extractLibrary()) {
+                System.err.println("无法加载IZMK，请检查日志文件。");
+            }
             VirtualMachine vm = VirtualMachine.attach(pid);
             vm.loadAgent(self.getAbsolutePath(), launchArgs.toString());
             System.out.println("成功加载IZMK到进程 " + pid);

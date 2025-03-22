@@ -137,3 +137,17 @@ tasks.register('mergeRemapB', MergeTaskB) {
     inputs.files(loader, core)
     outputs.file(output)
 }
+
+tasks.register('mergeRemapNoObf', MergeTaskB) {
+    dependsOn tasks.mergeRemapA
+    dependsOn project(':izmk-core').tasks.remap
+
+    group 'merge'
+
+    loader = tasks.mergeRemapA.outputs.files.singleFile
+    core = project(':izmk-core').tasks.remap.outputs.files.singleFile
+    output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/merged-loader-remap-noobf.jar")
+
+    inputs.files(loader, core)
+    outputs.file(output)
+}

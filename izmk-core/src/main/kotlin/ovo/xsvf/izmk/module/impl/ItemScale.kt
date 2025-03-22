@@ -1,61 +1,120 @@
 package ovo.xsvf.izmk.module.impl
 
+import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.math.Axis
+import net.minecraft.nbt.*
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.enchantment.EnchantmentHelper
+import net.minecraft.world.item.enchantment.Enchantments
+import ovo.xsvf.izmk.event.EventTarget
+import ovo.xsvf.izmk.event.impl.ItemRenderEvent
 import ovo.xsvf.izmk.module.Module
 
-object ItemScale: Module("item-scale") {
+object ItemScale : Module("item-scale") {
     private val showFirstPerson by setting("show-first-person", true)
 
-    private val instantAxe by setting("instant-axe", false)
-    private val instantAxeScale by setting("instant-axe-scale", 1f, 0.1f..5f) { instantAxe }
-    private val instantAxeX by setting("instant-axe-x-rotation", 0f, -10f..10f) { instantAxe }
-    private val instantAxeY by setting("instant-axe-y-rotation", 0f, -10f..10f) { instantAxe }
-    private val instantAxeZ by setting("instant-axe-z-rotation", 0f, -10f..10f) { instantAxe }
+    private val itemChecks = listOf(
+        ItemData("instant-axe", Items.GOLDEN_AXE) {
+            it.tag != null && GoldenAxeTagVisitor.visit(it.tag!!)
+        },
+        ItemData("kb-ball", Items.SLIME_BALL) { true },
+        ItemData("totem", Items.TOTEM_OF_UNDYING) { true },
+        ItemData("enchanted-golden-apple", Items.ENCHANTED_GOLDEN_APPLE) { true },
+        ItemData("power-5-bow", Items.BOW) {
+            EnchantmentHelper.getEnchantments(it)
+                .getOrDefault(Enchantments.POWER_ARROWS, 0) >= 5
+        },
+        ItemData("punch-3-bow", Items.BOW) {
+            EnchantmentHelper.getEnchantments(it)
+                .getOrDefault(Enchantments.PUNCH_ARROWS, 0) >= 3
+        },
+        ItemData("flame-bow", Items.BOW) {
+            EnchantmentHelper.getEnchantments(it).contains(Enchantments.FLAMING_ARROWS)
+        },
+        ItemData("end-crystal", Items.END_CRYSTAL) { true },
+        ItemData("sharp-8", Items.DIAMOND_SWORD) {
+            EnchantmentHelper.getEnchantments(it)
+                .getOrDefault(Enchantments.SHARPNESS, 0) >= 8
+        }
+    )
 
-    private val kbBall by setting("kb-ball", false)
-    private val kbBallScale by setting("kb-ball-scale", 1f, 0.1f..5f) { kbBall }
-    private val kbBallX by setting("kb-ball-x-rotation", 0f, -10f..10f) { kbBall }
-    private val kbBallY by setting("kb-ball-y-rotation", 0f, -10f..10f) { kbBall }
-    private val kbBallZ by setting("kb-ball-z-rotation", 0f, -10f..10f) { kbBall }
+    @EventTarget
+    fun onItemRender(e: ItemRenderEvent) {
+        if (showFirstPerson && e.itemDisplayContext.firstPerson()) return
 
-    private val totem by setting("totem", false)
-    private val totemScale by setting("totem-scale", 1f, 0.1f..5f) { totem }
-    private val totemX by setting("totem-x-rotation", 0f, -10f..10f) { totem }
-    private val totemY by setting("totem-y-rotation", 0f, -10f..10f) { totem }
-    private val totemZ by setting("totem-z-rotation", 0f, -10f..10f) { totem }
+        itemChecks.forEach { if (it.checkAndApply(e.itemStack, e.poseStack)) return@forEach }
+    }
 
-    private val enchantedGApple by setting("enchanted-golden-apple", false)
-    private val enchantedGAppleScale by setting("enchanted-golden-apple-scale", 1f, 0.1f..5f)  { enchantedGApple }
-    private val enchantedGAppleX by setting("enchanted-golden-apple-x-rotation", 0f, -10f..10f)  { enchantedGApple }
-    private val enchantedGAppleY by setting("enchanted-golden-apple-y-rotation", 0f, -10f..10f)  { enchantedGApple }
-    private val enchantedGAppleZ by setting("enchanted-golden-apple-z-rotation", 0f, -10f..10f)  { enchantedGApple }
+    object GoldenAxeTagVisitor : TagVisitor {
+        private var found = false
 
-    private val power5Bow by setting("power-5-bow", false)
-    private val power5BowScale by setting("power-5-bow-scale", 1f, 0.1f..5f) { power5Bow }
-    private val power5BowX by setting("power-5-bow-x-rotation", 0f, -10f..10f) { power5Bow }
-    private val power5BowY by setting("power-5-bow-y-rotation", 0f, -10f..10f) { power5Bow }
-    private val power5BowZ by setting("power-5-bow-z-rotation", 0f, -10f..10f) { power5Bow }
+        override fun visitString(stringTag: StringTag) = Unit
+        override fun visitByte(byteTag: ByteTag) = Unit
+        override fun visitShort(shortTag: ShortTag) = Unit
+        override fun visitInt(intTag: IntTag) = Unit
+        override fun visitLong(longTag: LongTag) = Unit
+        override fun visitFloat(floatTag: FloatTag) = Unit
+        override fun visitDouble(doubleTag: DoubleTag) = Unit
+        override fun visitByteArray(byteArrayTag: ByteArrayTag) = Unit
+        override fun visitIntArray(intArrayTag: IntArrayTag) = Unit
+        override fun visitLongArray(longArrayTag: LongArrayTag) = Unit
+        override fun visitList(listTag: ListTag) = Unit
+        override fun visitEnd(endTag: EndTag) = Unit
 
-    private val punch3Bow by setting("punch-3-bow", false)
-    private val punch3BowScale by setting("punch-3-bow-scale", 1f, 0.1f..5f) { punch3Bow }
-    private val punch3BowX by setting("punch-3-bow-x-rotation", 0f, -10f..10f) { punch3Bow }
-    private val punch3BowY by setting("punch-3-bow-y-rotation", 0f, -10f..10f) { punch3Bow }
-    private val punch3BowZ by setting("punch-3-bow-z-rotation", 0f, -10f..10f) { punch3Bow }
+        override fun visitCompound(compoundTag: CompoundTag) {
+            if (compoundTag.allKeys.contains("display")) {
+                val display = compoundTag.getCompound("display")
+                if (display.allKeys.contains("Lore") &&
+                    display.toString().contains("\"text\":\"一刀999!\"")
+                ) {
+                    found = true
+                    return
+                }
+            }
+        }
 
-    private val flameBow by setting("flame-bow", false)
-    private val flameBowScale by setting("flame-bow-scale", 1f, 0.1f..5f) { flameBow }
-    private val flameBowX by setting("flame-bow-x-rotation", 0f, -10f..10f) { flameBow }
-    private val flameBowY by setting("flame-bow-y-rotation", 0f, -10f..10f) { flameBow }
-    private val flameBowZ by setting("flame-bow-z-rotation", 0f, -10f..10f) { flameBow }
+        fun visit(tag: Tag): Boolean {
+            found = false
+            tag.accept(this)
+            return found
+        }
+    }
 
-    private val endCrystal by setting("end-crystal", false)
-    private val endCrystalScale by setting("end-crystal-scale", 1f, 0.1f..5f) { endCrystal }
-    private val endCrystalX by setting("end-crystal-x-rotation", 0f, -10f..10f) { endCrystal }
-    private val endCrystalY by setting("end-crystal-y-rotation", 0f, -10f..10f) { endCrystal }
-    private val endCrystalZ by setting("end-crystal-z-rotation", 0f, -10f..10f) { endCrystal }
+    data class ItemData(
+        private val name: String,
+        private val item: Item,
+        private val checker: (ItemStack) -> Boolean
+    ) {
+        private val enabled by setting(name, false)
 
-    private val sharp8 by setting("sharp-5", false)
-    private val sharp8Scale by setting("sharp-5-scale", 1f, 0.1f..5f) { sharp8 }
-    private val sharp8X by setting("sharp-5-x-rotation", 0f, -10f..10f) { sharp8 }
-    private val sharp8Y by setting("sharp-5-y-rotation", 0f, -10f..10f) { sharp8 }
-    private val sharp8Z by setting("sharp-5-z-rotation", 0f, -10f..10f) { sharp8 }
+        private val scale by setting("$name-scale", 1f, 0.1f..10f, 0.05f)
+            .visibility { enabled }
+        private val xRotation by setting("$name-x-rotation", 0f, -180f..180f)
+            .visibility { enabled }
+        private val yRotation by setting("$name-y-rotation", 0f, -180f..180f)
+            .visibility { enabled }
+        private val zRotation by setting("$name-z-rotation", 0f, -180f..180f)
+            .visibility { enabled }
+        private val xOffset by setting("$name-x-offset", 0f, -1.5f..1.5f, 0.01f)
+            .visibility { enabled }
+        private val yOffset by setting("$name-y-offset", 0f, -1.5f..1.5f, 0.01f)
+            .visibility { enabled }
+        private val zOffset by setting("$name-z-offset", 0f, -1.5f..1.5f, 0.01f)
+            .visibility { enabled }
+
+        fun check(stack: ItemStack) = enabled && stack.item == item && checker(stack)
+
+        fun apply(poseStack: PoseStack) {
+            poseStack.scale(scale, scale, scale)
+            poseStack.translate(xOffset, yOffset, zOffset)
+            poseStack.mulPose(Axis.XP.rotationDegrees(xRotation))
+            poseStack.mulPose(Axis.YP.rotationDegrees(yRotation))
+            poseStack.mulPose(Axis.ZP.rotationDegrees(zRotation))
+        }
+
+        fun checkAndApply(stack: ItemStack, poseStack: PoseStack) =
+            check(stack).also { if (it) apply(poseStack) }
+    }
 }

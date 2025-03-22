@@ -28,12 +28,14 @@ public class Entry {
         IZMK.INSTANCE.setObfuscated(obfuscated);
         if (obfuscated) {
             log.info("IZMK running in obfuscated mode");
-            InputStream resource = Entry.class.getResourceAsStream("/mapping.srg");
+            InputStream resource = Entry.class.getResourceAsStream("/assets/izmk/mapping.srg");
             if (resource == null) {
                 log.error("Mapping file not found, please provide mapping.srg in the root directory of the jar file");
                 throw new RuntimeException("Mapping file not found");
             }
             Mapping mapping0 = new Mapping(resource.readAllBytes());
+            log.info("Mapping loaded: Methods Size: {}, Fields Size: {}",
+                    mapping0.methodsMapping.size(), mapping0.fieldMapping.size());
             PatchLoader.mapping = mapping0;
             MethodWrapper.mapping = mapping0;
             ReflectionUtil.mapping = mapping0;

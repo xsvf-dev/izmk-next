@@ -26,7 +26,7 @@ public class EntityRenderDispatcherPatch {
 
     @Inject(method = "renderHitbox", desc = "(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/entity/Entity;F)V")
     public static void renderHitbox(PoseStack poseStack, VertexConsumer vertexConsumer, Entity entity, float tickDelta, CallbackInfo callbackInfo) {
-        if (Hitboxes.INSTANCE.getEnabled()) {
+        if (Hitboxes.INSTANCE.getEnabled() && entity != null) {
             callbackInfo.cancelled = true;
             if (entity instanceof ItemEntity && !Hitboxes.INSTANCE.getItems()) {
                 return;
