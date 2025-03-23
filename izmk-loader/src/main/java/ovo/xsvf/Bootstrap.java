@@ -52,6 +52,10 @@ public class Bootstrap {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
         String dll = jsonObject.get("dll").getAsString();
         String file = jsonObject.get("file").getAsString();
+        String mapping = null;
+        if (jsonObject.has("mapping")) {
+            mapping = jsonObject.get("mapping").getAsString();
+        }
         System.load(dll);
 
         ClassLoader classLoader = null;
@@ -119,20 +123,24 @@ public class Bootstrap {
         return idx != -1 && idx != name.length() - 1 ? name.substring(0, idx) : "";
     }
 
-    // For testing
-    public static void premain(String loaderSrcPath, Instrumentation inst) throws Exception {
-        System.out.println("Premain starting..");
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("dll", loaderSrcPath + "\\src\\main\\resources\\lib.dll");
-        jsonObject.addProperty("mapping", loaderSrcPath + "\\src\\main\\resources\\mapping.srg");
-        jsonObject.addProperty("file", loaderSrcPath + "\\build\\libs\\merged-loader.jar");
-
-        new Thread(() -> {
-            try {
-                agentmain(jsonObject.toString(), inst);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+    // For testing - updated to match agentmain pattern
+    @DoNotRename
+    public static void premain(String agentArgs, Instrumentation inst) {
+        try {
+            System.out.println("Premain starting..");
+            // If no arguments provided, use defaults for testing
+            if (agentArgs == null || agentArgs.isEmpty()) {
+                String loaderSrcPath = System.getProperty("user.dir");
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("dll", loaderSrcPath + "\\src\\main\\resources\\lib.dll");
+                jsonObject.addProperty("mapping", loaderSrcPath + "\\src\\main\\resources\\mapping.srg");
+                jsonObject.addProperty("file", loaderSrcPath + "\\build\\libs\\merged-loader.jar");
+                agentArgs = jsonObject.toString();
             }
-        }, "IZMK Thread").start();
+            
+            agentmain(agentArgs, inst);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
