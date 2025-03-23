@@ -23,6 +23,19 @@ public class ServiceMain {
     private static final File self = new File(ServiceMain.class.getProtectionDomain().getCodeSource().getLocation().getPath());
     private static final Set<String> pids = new HashSet<>();
     private static final AtomicBoolean running = new AtomicBoolean(true);
+    
+    // Loading phases to track progress
+    private static final String[] LOADING_PHASES = {
+        "Initializing",
+        "Searching for game process",
+        "Attaching to game",
+        "Loading classes",
+        "Extracting resources",
+        "Setting up class loader",
+        "Starting IZMK"
+    };
+    
+    private static int currentPhase = 0;
 
     static {
         try {
@@ -39,21 +52,55 @@ public class ServiceMain {
 
     @DoNotRename
     public static void main(String[] args) throws Exception {
+        // Initialize and show loading UI
+        LoadingUI loadingUI = LoadingUI.getInstance();
+        loadingUI.setStage("Finding Minecraft...");
+        loadingUI.setStatus("Initializing loader");
+        loadingUI.setIndeterminate(true);
+        loadingUI.show();
+        
+        // Short delay to allow UI to appear
+        TimeUnit.MILLISECONDS.sleep(500);
+        
+        // Update status to searching
+        loadingUI.setStatus("Searching for game process");
+        
         while (running.get()) {
-            System.out.println("Waiting for HeyPixel...");
             List<VirtualMachineDescriptor> list = VirtualMachine.list();
 
-            // 清理已不存在的进程ID
+            // Clean up PIDs of processes that no longer exist
             pids.removeIf(pid -> list.stream().map(VirtualMachineDescriptor::id).noneMatch(it -> it.equals(pid)));
 
-            // 查找目标进程并附加
-            list.stream().filter(it -> !pids.contains(it.id()) && it.displayName().startsWith("cpw.mods.bootstraplauncher.BootstrapLauncher")).findFirst().ifPresent(vmd -> {
-                System.out.println("Attach to (" + vmd.id() + ") " + vmd.displayName());
-                attach(vmd.id(), buildLaunchArgs());
-                pids.add(vmd.id());
-            });
+            // Look for target process and attach
+            list.stream()
+                .filter(it -> !pids.contains(it.id()) && it.displayName().startsWith("cpw.mods.bootstraplauncher.BootstrapLauncher"))
+                .findFirst()
+                .ifPresent(vmd -> {
+                    try {
+                        System.out.println("Found Minecraft (" + vmd.id() + ") " + vmd.displayName());
+                        loadingUI.setStage("Loading IZMK...");
+                        loadingUI.setStatus("Attaching to game process");
+                        loadingUI.setIndeterminate(false);
+                        currentPhase = 2; // Attaching phase
+                        updateProgress(loadingUI);
+                        
+                        // Attach to the game and inject our agent
+                        if (attach(vmd.id(), buildLaunchArgs())) {
+                            // Successfully attached
+                            pids.add(vmd.id());
+                            
+                            // Final progress update
+                            currentPhase = LOADING_PHASES.length;
+                            updateProgress(loadingUI);
+                            System.out.println("Successfully loaded IZMK!");
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error during loading: " + e.getMessage());
+                        e.printStackTrace(System.err);
+                    }
+                });
 
-            // 等待一秒再检查
+            // Wait before checking again
             TimeUnit.SECONDS.sleep(1);
         }
     }
@@ -64,14 +111,40 @@ public class ServiceMain {
         return launchArgs;
     }
 
-    private static void attach(String pid, JsonObject launchArgs) {
+    private static boolean attach(String pid, JsonObject launchArgs) {
+        LoadingUI loadingUI = LoadingUI.getInstance();
         try {
             VirtualMachine vm = VirtualMachine.attach(pid);
+            loadingUI.setStatus("Loading agent into game");
+            currentPhase = 3; // Loading classes phase
+            updateProgress(loadingUI);
+            
             vm.loadAgent(self.getAbsolutePath(), launchArgs.toString());
-            System.out.println("成功加载IZMK到进程 " + pid);
+            System.out.println("Successfully loaded IZMK into process " + pid);
+            
+            // Dispose of the UI after successful load
+            loadingUI.dispose();
+            return true;
         } catch (Exception e) {
-            System.err.println("无法加载IZMK到进程 " + pid + ": " + e.getMessage());
+            System.err.println("Failed to load IZMK into process " + pid + ": " + e.getMessage());
             e.printStackTrace(System.err);
+            
+            // Show error in the UI but don't exit
+            loadingUI.setStage("Failed to load");
+            loadingUI.setStatus("Error: " + e.getMessage());
+            loadingUI.setError(true);
+            
+            return false;
+        }
+    }
+    
+    private static void updateProgress(LoadingUI ui) {
+        // Calculate progress percentage based on current phase
+        int progressValue = (int)((currentPhase / (float)LOADING_PHASES.length) * 100);
+        ui.setProgress(progressValue);
+        
+        if (currentPhase < LOADING_PHASES.length) {
+            ui.setStatus(LOADING_PHASES[currentPhase]);
         }
     }
 }

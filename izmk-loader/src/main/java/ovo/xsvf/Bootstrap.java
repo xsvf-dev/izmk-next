@@ -32,16 +32,10 @@ public class Bootstrap {
     public static void agentmain(String agentArgs, Instrumentation inst) {
         try {
             agentmain0(agentArgs, inst);
+            System.out.println("Successfully loaded IZMK!");
         } catch (Exception e) {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
-                System.exit(1);
-            }).start();
-            throw new RuntimeException(e);
+            System.err.println("Failed to load IZMK: " + e.getMessage());
+            e.printStackTrace(System.err);
         }
     }
 
@@ -49,7 +43,7 @@ public class Bootstrap {
     public static void agentmain0(String agentArgs, Instrumentation inst) throws Exception {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
         String file = jsonObject.get("file").getAsString();
-
+        
         ClassLoader classLoader = null;
         do {
             for (Thread thread : Thread.getAllStackTraces().keySet()) {
@@ -64,6 +58,7 @@ public class Bootstrap {
 
         List<byte[]> classes = CoreFileProvider.getClasses(file);
         extractResources(CoreFileProvider.getResources(file));
+        
         Map<String, byte[]> binaryMap = new HashMap<>();
         Set<String> packages = new HashSet<>();
 
@@ -125,7 +120,8 @@ public class Bootstrap {
             try {
                 agentmain(jsonObject.toString(), inst);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                System.err.println("Failed to load IZMK: " + e.getMessage());
+                e.printStackTrace(System.err);
             }
         }, "IZMK Thread").start();
     }
