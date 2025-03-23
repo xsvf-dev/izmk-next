@@ -89,10 +89,13 @@ public class ServiceMain {
                             // Successfully attached
                             pids.add(vmd.id());
                             
-                            // Final progress update
+                            // Final progress update and show success animation
                             currentPhase = LOADING_PHASES.length;
                             updateProgress(loadingUI);
+                            loadingUI.showSuccess(); // Show success countdown
                             System.out.println("Successfully loaded IZMK!");
+                            
+                            // Don't exit the loop immediately - let the UI handle the exit
                         }
                     } catch (Exception e) {
                         System.err.println("Error during loading: " + e.getMessage());
@@ -122,8 +125,7 @@ public class ServiceMain {
             vm.loadAgent(self.getAbsolutePath(), launchArgs.toString());
             System.out.println("Successfully loaded IZMK into process " + pid);
             
-            // Dispose of the UI after successful load
-            loadingUI.dispose();
+            // Don't dispose immediately, let the success animation play
             return true;
         } catch (Exception e) {
             System.err.println("Failed to load IZMK into process " + pid + ": " + e.getMessage());

@@ -21,6 +21,7 @@ public class LoadingUI extends JFrame {
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final AtomicBoolean indeterminateMode = new AtomicBoolean(true);
     private final AtomicBoolean errorMode = new AtomicBoolean(false);
+    private final AtomicBoolean successMode = new AtomicBoolean(false);
     private final AtomicInteger progress = new AtomicInteger(0);
 
     private LoadingUI() {
@@ -161,6 +162,46 @@ public class LoadingUI extends JFrame {
             });
         }
     }
+    
+    public void showSuccess() {
+        if (successMode.get()) return;
+        
+        successMode.set(true);
+        indeterminateMode.set(false);
+        
+        // Update UI to show success
+        SwingUtilities.invokeLater(() -> {
+            setStage("Success!");
+            setStatus("IZMK loaded successfully");
+            statusLabel.setForeground(new Color(50, 205, 50));
+            statusLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            setProgress(100);
+        });
+        
+        // Cancel any existing tasks
+        executor.shutdownNow();
+        final ScheduledExecutorService countdownExecutor = Executors.newSingleThreadScheduledExecutor();
+        
+        // Start countdown animation (5 seconds)
+        final long startTime = System.currentTimeMillis();
+        final long duration = 5000; // 5 seconds
+        
+        countdownExecutor.scheduleAtFixedRate(() -> {
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            if (elapsedTime >= duration) {
+                // Exit application after countdown completes
+                countdownExecutor.shutdown();
+                SwingUtilities.invokeLater(() -> {
+                    dispose();
+                    System.exit(0);
+                });
+            } else {
+                // Update progress bar based on remaining time
+                float remainingPercentage = 100 * (1 - (float)elapsedTime / duration);
+                setProgress((int)remainingPercentage);
+            }
+        }, 0, 16, TimeUnit.MILLISECONDS);
+    }
 
     private void startAnimation() {
         executor.scheduleAtFixedRate(() -> SwingUtilities.invokeLater(() -> progressBar.repaint()), 0, 16, TimeUnit.MILLISECONDS);
@@ -190,9 +231,11 @@ public class LoadingUI extends JFrame {
             g2.fillRect(0, 0, width, height); // Square edges
 
             // Foreground
-            Color progressColor = errorMode.get() ?
-                    new Color(220, 50, 50) :
-                    new Color(50, 150, 250);
+            Color progressColor = errorMode.get() ? 
+                    new Color(220, 50, 50) : 
+                    successMode.get() ? 
+                        new Color(50, 205, 50) : 
+                        new Color(50, 150, 250);
             g2.setColor(progressColor);
 
             if (indeterminateMode.get()) {
