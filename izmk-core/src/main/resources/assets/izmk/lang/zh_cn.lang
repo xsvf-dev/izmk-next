@@ -7,17 +7,14 @@ modules.renderable.y=Y坐标
 languages.en_us=英语
 languages.zh_cn=简体中文
 
-# Modules
-modules.fps-display=帧数显示
-modules.fps-display.draw-string=绘制字符串
-modules.fps-display.font-scale=字体缩放
-modules.fps-display.string-color=字符串颜色
+modules.fps-display=FPS Display
+modules.fps-display.draw-string=Draw String
+modules.fps-display.font-scale=Font Scale
+modules.fps-display.string-color=String Color
 
-modules.no-hurtcam=无受伤抖动
+modules.no-hurtcam=No HurtCam
 
-modules.render-test=渲染测试
-
-modules.test-hud=测试HUD
+modules.test-hud=Test HUD
 
 modules.click-gui=设置
 modules.click-gui.font-renderer=字体渲染器
@@ -25,14 +22,11 @@ modules.click-gui.font-renderer.general=常规
 modules.click-gui.font-renderer.sparse=稀疏纹理
 modules.click-gui.language=语言
 
-modules.chat-copy=聊天复制
-
 modules.nene-hud=柚子厨滚出本客户端
 
-modules.potion-status=药水状态
-
 modules.old-animations=旧版本动画
-modules.old-animations.sword-blocking=防砍
+modules.old-animations.sword-blocking=防砍动画
+modules.old-animations.swing=挥手动画
 
 modules.water-mark=水印
 modules.water-mark.text=文本
@@ -40,14 +34,11 @@ modules.water-mark.color=颜色
 modules.water-mark.shadow=阴影
 modules.water-mark.scale=缩放
 
-modules.hit-color=打击颜色
-modules.hit-color.color=颜色
+modules.particles=粒子隐藏
+modules.particles.show-first-person=第一人称粒子
+modules.particles.block-breaking=方块破坏粒子
 
-modules.particles=粒子
-modules.particles.show-first-person=第一人称显示
-modules.particles.block-breaking=破坏方块
-
-modules.minimal-bobbing=最小抖动
+modules.minimal-bobbing=Minimal Bobbing
 
 modules.item-scale=物品缩放
 modules.item-scale.show-first-person=第一人称显示
@@ -71,31 +62,31 @@ modules.item-scale.enchanted-golden-apple-scale=附魔金苹果 缩放
 modules.item-scale.enchanted-golden-apple-x-rotation=附魔金苹果 X 旋转
 modules.item-scale.enchanted-golden-apple-y-rotation=附魔金苹果 Y 旋转
 modules.item-scale.enchanted-golden-apple-z-rotation=附魔金苹果 Z 旋转
-modules.item-scale.power-5-bow=动力5弓
-modules.item-scale.power-5-bow-scale=动力5弓 缩放
-modules.item-scale.power-5-bow-x-rotation=动力5弓 X 旋转
-modules.item-scale.power-5-bow-y-rotation=动力5弓 Y 旋转
-modules.item-scale.power-5-bow-z-rotation=动力5弓 Z 旋转
-modules.item-scale.punch-3-bow=冲击3弓
-modules.item-scale.punch-3-bow-scale=冲击3弓 缩放
-modules.item-scale.punch-3-bow-x-rotation=冲击3弓 X 旋转
-modules.item-scale.punch-3-bow-y-rotation=冲击3弓 Y 旋转
-modules.item-scale.punch-3-bow-z-rotation=冲击3弓 Z 旋转
-modules.item-scale.flame-bow=火焰弓
-modules.item-scale.flame-bow-scale=火焰弓 缩放
-modules.item-scale.flame-bow-x-rotation=火焰弓 X 旋转
-modules.item-scale.flame-bow-y-rotation=火焰弓 Y 旋转
-modules.item-scale.flame-bow-z-rotation=火焰弓 Z 旋转
-modules.item-scale.end-crystal=末地水晶
-modules.item-scale.end-crystal-scale=末地水晶 缩放
-modules.item-scale.end-crystal-x-rotation=末地水晶 X 旋转
-modules.item-scale.end-crystal-y-rotation=末地水晶 Y 旋转
-modules.item-scale.end-crystal-z-rotation=末地水晶 Z 旋转
-modules.item-scale.sharp-5=锋利5
-modules.item-scale.sharp-5-scale=锋利5 缩放
-modules.item-scale.sharp-5-x-rotation=锋利5 X 旋转
-modules.item-scale.sharp-5-y-rotation=锋利5 Y 旋转
-modules.item-scale.sharp-5-z-rotation=锋利5 Z 旋转
+modules.item-scale.power-5-bow=力量5 弓
+modules.item-scale.power-5-bow-scale=力量5 弓 缩放
+modules.item-scale.power-5-bow-x-rotation=力量5 弓 X 旋转
+modules.item-scale.power-5-bow-y-rotation=力量5 弓 Y 旋转
+modules.item-scale.power-5-bow-z-rotation=力量5 弓 Z 旋转
+modules.item-scale.punch-3-bow=冲击3 弓
+modules.item-scale.punch-3-bow-scale=冲击3 弓 缩放
+modules.item-scale.punch-3-bow-x-rotation=冲击3 弓 X 旋转
+modules.item-scale.punch-3-bow-y-rotation=冲击3 弓 Y 旋转
+modules.item-scale.punch-3-bow-z-rotation=冲击3 弓 Z 旋转
+modules.item-scale.flame-bow=火焰附加 弓
+modules.item-scale.flame-bow-scale=火焰附加 弓 缩放
+modules.item-scale.flame-bow-x-rotation=火焰附加 弓 X 旋转
+modules.item-scale.flame-bow-y-rotation=火焰附加 弓 Y 旋转
+modules.item-scale.flame-bow-z-rotation=火焰附加 弓 Z 旋转
+modules.item-scale.end-crystal=末影水晶
+modules.item-scale.end-crystal-scale=末影水晶 缩放
+modules.item-scale.end-crystal-x-rotation=末影水晶 X 旋转
+modules.item-scale.end-crystal-y-rotation=末影水晶 Y 旋转
+modules.item-scale.end-crystal-z-rotation=末影水晶 Z 旋转
+modules.item-scale.sharp-8=锋利8
+modules.item-scale.sharp-8-scale=锋利8 缩放
+modules.item-scale.sharp-8-x-rotation=锋利8 X 旋转
+modules.item-scale.sharp-8-y-rotation=锋利8 Y 旋转
+modules.item-scale.sharp-8-z-rotation=锋利8 Z 旋转
 
 modules.item-physics=物品物理掉落
 
@@ -110,11 +101,9 @@ modules.hit-boxes.projectiles=投射物
 modules.hit-boxes.vehicles=载具
 
 modules.full-bright=无限夜视
-modules.full-bright.mode=模式
-modules.full-bright.mode.gamma=伽马覆写
-modules.full-bright.mode.night-vision=夜视
 modules.full-bright.gamma=伽马值
 
 modules.motion-blur=动态模糊
+modules.motion-blur.strength=强度
 
 modules.custom-sky=自定义天空

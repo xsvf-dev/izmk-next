@@ -15,8 +15,6 @@ modules.fps-display.string-color=String Color
 
 modules.no-hurtcam=No HurtCam
 
-modules.render-test=Render Test
-
 modules.test-hud=Test HUD
 
 modules.click-gui=Click GUI
@@ -25,14 +23,11 @@ modules.click-gui.font-renderer.general=General
 modules.click-gui.font-renderer.sparse=Sparse Texture
 modules.click-gui.language=Language
 
-modules.chat-copy=Chat Copy
-
 modules.nene-hud=Nene HUD
-
-modules.potion-status=Potion Status
 
 modules.old-animations=Old Animations
 modules.old-animations.sword-blocking=Sword Blocking
+modules.old-animations.swing=Swing While Using Item
 
 modules.water-mark=Water Mark
 modules.water-mark.text=Text
@@ -40,12 +35,9 @@ modules.water-mark.color=Color
 modules.water-mark.shadow=Text Shadow
 modules.water-mark.scale=Scale
 
-modules.hit-color=Hit Color
-modules.hit-color.color=Color
-
-modules.particles=Particles
-modules.particles.show-first-person=First Person
-modules.particles.block-breaking=Block Breaking
+modules.particles=Particles Hider
+modules.particles.show-first-person=First Person Particles
+modules.particles.block-breaking=Block Breaking Particles
 
 modules.minimal-bobbing=Minimal Bobbing
 
@@ -91,11 +83,11 @@ modules.item-scale.end-crystal-scale=End Crystal Scale
 modules.item-scale.end-crystal-x-rotation=End Crystal X Rot
 modules.item-scale.end-crystal-y-rotation=End Crystal Y Rot
 modules.item-scale.end-crystal-z-rotation=End Crystal Z Rot
-modules.item-scale.sharp-5=Sharp 5
-modules.item-scale.sharp-5-scale=Sharp 5 Scale
-modules.item-scale.sharp-5-x-rotation=Sharp 5 X Rot
-modules.item-scale.sharp-5-y-rotation=Sharp 5 Y Rot
-modules.item-scale.sharp-5-z-rotation=Sharp 5 Z Rot
+modules.item-scale.sharp-8=Sharpness 8
+modules.item-scale.sharp-8-scale=Sharpness 8 Scale
+modules.item-scale.sharp-8-x-rotation=Sharpness 8 X Rot
+modules.item-scale.sharp-8-y-rotation=Sharpness 8 Y Rot
+modules.item-scale.sharp-8-z-rotation=Sharpness 8 Z Rot
 
 modules.item-physics=Item Physics
 
@@ -110,9 +102,6 @@ modules.hit-boxes.projectiles=Projectiles
 modules.hit-boxes.vehicles=Vehicles
 
 modules.full-bright=Full Bright
-modules.full-bright.mode=Mode
-modules.full-bright.mode.gamma=Gamma
-modules.full-bright.mode.night-vision=Night Vision
 modules.full-bright.gamma=Gamma
 
 modules.motion-blur=Motion Blur
