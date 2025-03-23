@@ -27,8 +27,7 @@ public class CustomSky {
 
     public static void update() {
         reset();
-        // TODO: Config.isCustomSky() Check
-        if (true) {
+        if (ovo.xsvf.izmk.module.impl.CustomSky.INSTANCE.getEnabled()) {
             worldSkyLayers = readCustomSkies();
         }
     }

@@ -47,12 +47,10 @@ object IZMK {
             RenderUtils
         }
 
-        CustomSky.reset()
         CustomSky.update()
         val resourceManager = mc.resourceManager
         if (resourceManager is ReloadableResourceManager) {
             resourceManager.registerReloadListener(ResourceManagerReloadListener {
-                CustomSky.reset()
                 CustomSky.update()
             })
         }

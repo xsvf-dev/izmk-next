@@ -117,3 +117,5 @@ modules.full-bright.gamma=Gamma
 
 modules.motion-blur=Motion Blur
 modules.motion-blur.strength=Strength
+
+modules.custom-sky=Custom Sky

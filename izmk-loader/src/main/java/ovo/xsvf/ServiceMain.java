@@ -5,7 +5,10 @@ import com.google.gson.JsonObject;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +21,6 @@ public class ServiceMain {
     private static final File errorLog = new File("izmk-loader-error.log");
 
     private static final File self = new File(ServiceMain.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-    private static final File library = self.toPath().resolveSibling("izmk-lib.dll").toFile();
-    private static final File mapping = self.toPath().resolveSibling("mapping.srg").toFile();
     private static final Set<String> pids = new HashSet<>();
     private static final AtomicBoolean running = new AtomicBoolean(true);
 
@@ -57,34 +58,14 @@ public class ServiceMain {
         }
     }
 
-    private static boolean extractLibrary() {
-        try (FileOutputStream fos = new FileOutputStream(library);
-             InputStream is = ServiceMain.class.getResourceAsStream("/lib.dll")) {
-            if (is == null) {
-                System.err.println("IZMK 资源文件未找到！");
-                return false;
-            }
-            fos.write(is.readAllBytes());
-            return true;
-        } catch (IOException e) {
-            System.err.println("无法解压资源文件 " + library + " 或 " + mapping + ": " + e.getMessage());
-            e.printStackTrace(System.err);
-            return false;
-        }
-    }
-
     private static JsonObject buildLaunchArgs() {
         JsonObject launchArgs = new JsonObject();
-        launchArgs.addProperty("dll", library.getAbsolutePath());
         launchArgs.addProperty("file", self.getAbsolutePath());
         return launchArgs;
     }
 
     private static void attach(String pid, JsonObject launchArgs) {
         try {
-            if (!extractLibrary()) {
-                System.err.println("无法加载IZMK，请检查日志文件。");
-            }
             VirtualMachine vm = VirtualMachine.attach(pid);
             vm.loadAgent(self.getAbsolutePath(), launchArgs.toString());
             System.out.println("成功加载IZMK到进程 " + pid);

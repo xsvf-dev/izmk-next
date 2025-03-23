@@ -6,7 +6,6 @@ import ovo.xsvf.izmk.graphics.color.ColorRGB
 import ovo.xsvf.izmk.graphics.matrix.MatrixStack
 import ovo.xsvf.izmk.graphics.shader.Shader
 import ovo.xsvf.izmk.graphics.shader.impl.FontShader
-import ovo.xsvf.izmk.graphics.shader.impl.MotionBlurShader
 import ovo.xsvf.izmk.graphics.shader.impl.PosColorShader2D
 import ovo.xsvf.izmk.graphics.shader.impl.PosColorShader3D
 import ovo.xsvf.izmk.graphics.shader.impl.PosTexShader2D
@@ -26,10 +25,10 @@ object VertexBufferObjects {
         PosTex2D,
         PosColor3D,
         RenderFont,
-        MotionBlur,
+//        MotionBlur,
     )
 
-    data object PosColor2D: VertexMode(
+    data object PosColor2D : VertexMode(
         PosColorShader2D, buildAttribute(12) {
             float(0, 2, GlDataType.GL_FLOAT, false)         // 8 bytes
             float(1, 4, GlDataType.GL_UNSIGNED_BYTE, true)  // 4 bytes
@@ -89,7 +88,7 @@ object VertexBufferObjects {
         }
     }
 
-    data object PosTex2D: VertexMode(
+    data object PosTex2D : VertexMode(
         PosTexShader2D, buildAttribute(20) {
             float(0, 2, GlDataType.GL_FLOAT, false)         // 8 bytes
             float(1, 2, GlDataType.GL_FLOAT, false)         // 8 bytes
@@ -109,7 +108,7 @@ object VertexBufferObjects {
         }
     }
 
-    data object PosColor3D: VertexMode(
+    data object PosColor3D : VertexMode(
         PosColorShader3D, buildAttribute(16) {
             float(0, 3, GlDataType.GL_FLOAT, false)         // 12 bytes
             float(1, 4, GlDataType.GL_UNSIGNED_BYTE, true)  // 4 bytes
@@ -127,7 +126,7 @@ object VertexBufferObjects {
         }
     }
 
-    data object RenderFont: VertexMode(
+    data object RenderFont : VertexMode(
         FontShader, buildAttribute(24) {
             float(0, 2, GlDataType.GL_FLOAT, false)         // 8 bytes
             float(1, 3, GlDataType.GL_FLOAT, false)         // 12 bytes
@@ -148,33 +147,38 @@ object VertexBufferObjects {
         }
     }
 
-    data object MotionBlur: VertexMode(
-        MotionBlurShader, buildAttribute(8) {
-            float(0, 2, GlDataType.GL_FLOAT, false)
-        }, 1L
-    ) {
-        fun vertex(x: Float, y: Float) {
-            // Needn't to update matrix
-            val pointer = arr.ptr
-            pointer[0] = x
-            pointer[4] = y
-            arr += attribute.stride.toLong()
-            vertexSize++
-        }
-    }
+//    data object MotionBlur: VertexMode(
+//        MotionBlurShader, buildAttribute(8) {
+//            float(0, 2, GlDataType.GL_FLOAT, false)
+//        }, 1L
+//    ) {
+//        fun vertex(x: Float, y: Float) {
+//            // Needn't to update matrix
+//            val pointer = arr.ptr
+//            pointer[0] = x
+//            pointer[4] = y
+//            arr += attribute.stride.toLong()
+//            vertexSize++
+//        }
+//    }
 }
 
-inline fun <reified T: VertexMode> T.drawArrays(mode: Int, shader: Shader = this.shader, block: T.() -> Unit) {
+inline fun <reified T : VertexMode> T.drawArrays(mode: Int, shader: Shader = this.shader, block: T.() -> Unit) {
     this.block()
     this.drawArrays(shader, mode)
 }
 
-inline fun <reified T: VertexMode> T.drawElements(mode: Int, ebo: ElementBufferObject, shader: Shader = this.shader, block: T.() -> Unit) {
+inline fun <reified T : VertexMode> T.drawElements(
+    mode: Int,
+    ebo: ElementBufferObject,
+    shader: Shader = this.shader,
+    block: T.() -> Unit
+) {
     this.block()
     this.drawElements(shader, ebo, mode)
 }
 
-inline fun <reified T: VertexMode> T.multiDrawArrays(
+inline fun <reified T : VertexMode> T.multiDrawArrays(
     mode: Int, first: Arr, count: Arr, drawCount: Int,
     shader: Shader = this.shader, block: T.() -> Unit
 ) {

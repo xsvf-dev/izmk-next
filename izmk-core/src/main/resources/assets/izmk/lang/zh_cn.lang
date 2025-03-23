@@ -116,4 +116,5 @@ modules.full-bright.mode.night-vision=夜视
 modules.full-bright.gamma=伽马值
 
 modules.motion-blur=动态模糊
-modules.motion-blur.strength=强度
+
+modules.custom-sky=自定义天空

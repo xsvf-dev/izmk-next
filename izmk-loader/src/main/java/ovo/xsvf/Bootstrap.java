@@ -28,8 +28,6 @@ public class Bootstrap {
         }
     }
 
-    private static native Class<?> defineClass(String name, ClassLoader loader, byte[] b);
-
     @DoNotRename
     public static void agentmain(String agentArgs, Instrumentation inst) {
         try {
@@ -50,9 +48,7 @@ public class Bootstrap {
     @SuppressWarnings("unchecked")
     public static void agentmain0(String agentArgs, Instrumentation inst) throws Exception {
         JsonObject jsonObject = JsonParser.parseString(agentArgs).getAsJsonObject();
-        String dll = jsonObject.get("dll").getAsString();
         String file = jsonObject.get("file").getAsString();
-        System.load(dll);
 
         ClassLoader classLoader = null;
         do {
@@ -123,8 +119,6 @@ public class Bootstrap {
     public static void premain(String loaderSrcPath, Instrumentation inst) throws Exception {
         System.out.println("Premain starting..");
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("dll", loaderSrcPath + "\\src\\main\\resources\\lib.dll");
-        jsonObject.addProperty("mapping", loaderSrcPath + "\\src\\main\\resources\\mapping.srg");
         jsonObject.addProperty("file", loaderSrcPath + "\\build\\libs\\merged-loader.jar");
 
         new Thread(() -> {
