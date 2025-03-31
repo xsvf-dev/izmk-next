@@ -1,0 +1,64 @@
+import ovo.xsvf.task.MergeTask
+import ovo.xsvf.task.MergeTask2
+
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '9.0.0-beta8'
+}
+
+group = 'ovo.xsvf'
+version = '1.0-SNAPSHOT'
+
+dependencies {
+    // gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // asm
+    implementation 'org.ow2.asm:asm:9.2'
+    implementation 'org.ow2.asm:asm-commons:9.2'
+    implementation 'org.ow2.asm:asm-tree:9.2'
+    implementation 'org.ow2.asm:asm-analysis:9.2'
+
+    // jna
+    implementation 'net.java.dev.jna:jna:5.12.1'
+    implementation 'net.java.dev.jna:jna-platform:5.12.1'
+
+    implementation project(':izmk-common')
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ovo.xsvf.ServiceMain'
+        attributes 'Premain-Class': 'ovo.xsvf.Bootstrap'
+        attributes 'Agent-Class': 'ovo.xsvf.Bootstrap'
+        attributes 'Can-Redefine-Classes': true, 'Can-Retransform-Classes': true, 'Can-Set-Native-Method-Prefix': true
+    }
+}
+
+tasks.register('merge', MergeTask) {
+    dependsOn project(':izmk-core').tasks.accessor
+    dependsOn shadowJar
+
+    group 'merge'
+
+    loader = tasks.shadowJar.archiveFile.get().asFile
+    core = project(':izmk-core').tasks.accessor.outputs.files.singleFile
+    output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/merged-loader.jar")
+
+    inputs.files(loader, core)
+    outputs.file(output)
+}
+
+tasks.register('mergeRemap', MergeTask2) {
+    dependsOn project(':izmk-core').tasks.remap
+    dependsOn shadowJar
+
+    group 'merge'
+
+    loader = tasks.shadowJar.archiveFile.get().asFile
+    core = project(':izmk-core').tasks.accessor.outputs.files.singleFile
+    output = file("${layout.buildDirectory.asFile.get().absolutePath}/libs/merged-loader.jar")
+
+    inputs.files(loader, core)
+    outputs.file(output)
+}

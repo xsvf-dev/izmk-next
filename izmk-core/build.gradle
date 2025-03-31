@@ -1,0 +1,93 @@
+import ovo.xsvf.task.AccessorTask
+import ovo.xsvf.task.RemapTask
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
+    id 'com.gradleup.shadow' version '9.0.0-beta8'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+group = 'ovo.xsvf'
+version = '1.0-SNAPSHOT'
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+
+    reobf = true
+    copyIdeResources = true
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir = dir
+    it.java.destinationDirectory = dir
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+
+jar {
+    archiveClassifier = 'slim'
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    shade project(':izmk-common')
+    shade "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    shade "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
+    shade "com.twelvemonkeys.imageio:imageio-core:3.7.0"
+    shade 'com.twelvemonkeys.imageio:imageio-metadata:3.7.1'
+    shade "com.twelvemonkeys.imageio:imageio-webp:3.7.1"
+    shade "dev.luna5ama:kmogus-core:1.1-SNAPSHOT"
+    shade "dev.luna5ama:kmogus-struct-api:1.1-SNAPSHOT"
+}
+
+tasks.register("copyDeps", Copy) {
+    from configurations.runtimeClasspath
+    into "$buildDir/deps"
+}
+
+tasks.register('accessor', AccessorTask) {
+    dependsOn shadowJar
+    dependsOn copyDeps
+
+    targetFile = tasks.shadowJar.archiveFile.get().asFile
+    outputFile = tasks.shadowJar.archiveFile.get().asFile
+
+    outputs.file(outputFile)
+    def collect = fileTree("$buildDir/deps").collect { it.toPath() }
+    collect.forEach { inputs.file(it) }
+    libs.addAll(collect)
+}
+
+tasks.register('remap', RemapTask) {
+    dependsOn accessor
+
+    targetFile = tasks.shadowJar.archiveFile.get().asFile
+    outputFile = tasks.shadowJar.archiveFile.get().asFile
+    mapFile = file("$projectDir/mapping.srg") as File
+
+    inputs.file(mapFile)
+    inputs.file(targetFile)
+    outputs.file(outputFile)
+    def collect = fileTree("$buildDir/deps")
+    collect.forEach { inputs.file(it) }
+    libs.addAll(collect)
+}
+
+shadowJar {
+    configurations = [project.configurations.shade]
+    archiveClassifier = ''
+}

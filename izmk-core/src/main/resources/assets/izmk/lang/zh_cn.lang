@@ -1,0 +1,114 @@
+modules.key-bind=按键绑定
+modules.enabled=启用
+
+modules.renderable.x=X坐标
+modules.renderable.y=Y坐标
+
+languages.en_us=英语
+languages.zh_cn=简体中文
+
+modules.fps-display=FPS Display
+modules.fps-display.draw-string=Draw String
+modules.fps-display.font-scale=Font Scale
+modules.fps-display.string-color=String Color
+
+modules.no-hurtcam=No HurtCam
+
+modules.test-hud=Test HUD
+
+modules.click-gui=设置
+modules.click-gui.font-renderer=字体渲染器
+modules.click-gui.font-renderer.general=常规
+modules.click-gui.font-renderer.sparse=稀疏纹理
+modules.click-gui.language=语言
+modules.click-gui.save-cfg-on-close-gui=关闭界面时保存配置
+
+modules.nene-hud=柚子厨滚出本客户端
+
+modules.old-animations=旧版本动画
+modules.old-animations.sword-blocking=防砍动画
+modules.old-animations.swing=挥手动画
+modules.old-animations.old-camera=旧版相机视角
+modules.old-animations.rotate-backwards=后退时旋转身体
+modules.old-animations.held-item-position=旧版物品手持位置
+modules.old-animations.fishing-rod=旧版鱼竿位置
+
+modules.water-mark=水印
+modules.water-mark.text=文本
+modules.water-mark.color=颜色
+modules.water-mark.shadow=阴影
+modules.water-mark.scale=缩放
+
+modules.particles=粒子隐藏
+modules.particles.show-first-person=第一人称粒子
+modules.particles.block-breaking=方块破坏粒子
+
+modules.minimal-bobbing=Minimal Bobbing
+
+modules.item-scale=物品缩放
+modules.item-scale.show-first-person=第一人称显示
+modules.item-scale.instant-axe=秒人斧
+modules.item-scale.instant-axe-scale=秒人斧 缩放
+modules.item-scale.instant-axe-x-rotation=秒人斧 X 旋转
+modules.item-scale.instant-axe-y-rotation=秒人斧 Y 旋转
+modules.item-scale.instant-axe-z-rotation=秒人斧 Z 旋转
+modules.item-scale.kb-ball=KB 球
+modules.item-scale.kb-ball-scale=KB 球 缩放
+modules.item-scale.kb-ball-x-rotation=KB 球 X 旋转
+modules.item-scale.kb-ball-y-rotation=KB 球 Y 旋转
+modules.item-scale.kb-ball-z-rotation=KB 球 Z 旋转
+modules.item-scale.totem=图腾
+modules.item-scale.totem-scale=图腾 缩放
+modules.item-scale.totem-x-rotation=图腾 X 旋转
+modules.item-scale.totem-y-rotation=图腾 Y 旋转
+modules.item-scale.totem-z-rotation=图腾 Z 旋转
+modules.item-scale.enchanted-golden-apple=附魔金苹果
+modules.item-scale.enchanted-golden-apple-scale=附魔金苹果 缩放
+modules.item-scale.enchanted-golden-apple-x-rotation=附魔金苹果 X 旋转
+modules.item-scale.enchanted-golden-apple-y-rotation=附魔金苹果 Y 旋转
+modules.item-scale.enchanted-golden-apple-z-rotation=附魔金苹果 Z 旋转
+modules.item-scale.power-5-bow=力量5 弓
+modules.item-scale.power-5-bow-scale=力量5 弓 缩放
+modules.item-scale.power-5-bow-x-rotation=力量5 弓 X 旋转
+modules.item-scale.power-5-bow-y-rotation=力量5 弓 Y 旋转
+modules.item-scale.power-5-bow-z-rotation=力量5 弓 Z 旋转
+modules.item-scale.punch-3-bow=冲击3 弓
+modules.item-scale.punch-3-bow-scale=冲击3 弓 缩放
+modules.item-scale.punch-3-bow-x-rotation=冲击3 弓 X 旋转
+modules.item-scale.punch-3-bow-y-rotation=冲击3 弓 Y 旋转
+modules.item-scale.punch-3-bow-z-rotation=冲击3 弓 Z 旋转
+modules.item-scale.flame-bow=火焰附加 弓
+modules.item-scale.flame-bow-scale=火焰附加 弓 缩放
+modules.item-scale.flame-bow-x-rotation=火焰附加 弓 X 旋转
+modules.item-scale.flame-bow-y-rotation=火焰附加 弓 Y 旋转
+modules.item-scale.flame-bow-z-rotation=火焰附加 弓 Z 旋转
+modules.item-scale.end-crystal=末影水晶
+modules.item-scale.end-crystal-scale=末影水晶 缩放
+modules.item-scale.end-crystal-x-rotation=末影水晶 X 旋转
+modules.item-scale.end-crystal-y-rotation=末影水晶 Y 旋转
+modules.item-scale.end-crystal-z-rotation=末影水晶 Z 旋转
+modules.item-scale.sharp-8=锋利8
+modules.item-scale.sharp-8-scale=锋利8 缩放
+modules.item-scale.sharp-8-x-rotation=锋利8 X 旋转
+modules.item-scale.sharp-8-y-rotation=锋利8 Y 旋转
+modules.item-scale.sharp-8-z-rotation=锋利8 Z 旋转
+
+modules.item-physics=物品物理掉落
+
+modules.hit-boxes=碰撞箱显示
+modules.hit-boxes.color=颜色
+modules.hit-boxes.show-eye-vector=显示视线方向
+modules.hit-boxes.eye-vector-color=视线方向颜色
+modules.hit-boxes.players=玩家
+modules.hit-boxes.items=物品
+modules.hit-boxes.mobs=生物
+modules.hit-boxes.projectiles=投射物
+modules.hit-boxes.vehicles=载具
+
+modules.full-bright=无限夜视
+modules.full-bright.gamma=伽马值
+
+modules.motion-blur=动态模糊
+modules.motion-blur.strength=强度
+
+modules.custom-sky=自定义天空

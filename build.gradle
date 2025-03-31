@@ -1,0 +1,67 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    runs {
+        // applies to all the run configs below
+        configureEach {
+            workingDirectory file(runDir)
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', "izmk"
+            property 'log4j.configurationFile', "${rootDir}\\log4j.xml"
+            jvmArgs.add "-javaagent:${file(agent_file).absolutePath}=${file(agent_dir).absolutePath}".toString()
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+}
+
+subprojects {
+    // mirror repositories to speed up builds
+    repositories {
+        mavenLocal()
+        maven { url 'https://lss233.littleservice.cn/repositories/minecraft/' }
+        maven { url 'https://repository.hanbings.io/proxy' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url "https://maven.aliyun.com/repository/central" }
+        maven { url "https://maven.aliyun.com/repository/public" }
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
+        maven { url "https://maven.aliyun.com/repository/apache-snapshots" }
+        maven { url 'https://maven.luna5ama.dev/' }
+        maven { url 'https://repo.essential.gg/repository/maven-public' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://repo.jeff-media.com/public/' }
+    }
+
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.encoding = 'UTF-8'
+        }
+    }
+}
+
+tasks.register('runClient0') {
+    group = 'forgegradle runs'
+    dependsOn project(':izmk-loader').tasks.merge
+    finalizedBy tasks.runClient
+}
+
+tasks.register("runAttach", JavaExec) {
+    dependsOn project(':izmk-loader').tasks.mergeRemap
+    workingDir runDir
+    description 'Attaches the Minecraft client with IZMK to a running instance'
+
+    classpath += fileTree(project(':izmk-loader').tasks.mergeRemap.outputs.files.singleFile)
+    mainClass = "ovo.xsvf.ServiceMain"
+
+    args "dev"
+}

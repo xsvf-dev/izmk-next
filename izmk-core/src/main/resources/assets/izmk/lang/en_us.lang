@@ -1,0 +1,115 @@
+modules.key-bind=Key Bind
+modules.enabled=Enabled
+
+modules.renderable.x=X Position
+modules.renderable.y=Y Position
+
+languages.en_us=English (US)
+languages.zh_cn=Chinese (Simplified)
+
+# Modules
+modules.fps-display=FPS Display
+modules.fps-display.draw-string=Draw String
+modules.fps-display.font-scale=Font Scale
+modules.fps-display.string-color=String Color
+
+modules.no-hurtcam=No HurtCam
+
+modules.test-hud=Test HUD
+
+modules.click-gui=Click GUI
+modules.click-gui.font-renderer=Font Renderer
+modules.click-gui.font-renderer.general=General
+modules.click-gui.font-renderer.sparse=Sparse Texture
+modules.click-gui.language=Language
+modules.click-gui.save-cfg-on-close-gui=Save Config on Close GUI
+
+modules.nene-hud=Nene HUD
+
+modules.old-animations=Old Animations
+modules.old-animations.sword-blocking=Sword Blocking
+modules.old-animations.swing=Swing While Using Item
+modules.old-animations.old-camera=Old Camera View
+modules.old-animations.rotate-backwards=Rotate Body when Backwards
+modules.old-animations.held-item-position=Old Held Item Position
+modules.old-animations.fishing-rod=Old Fishing Rod Position
+
+modules.water-mark=Water Mark
+modules.water-mark.text=Text
+modules.water-mark.color=Color
+modules.water-mark.shadow=Text Shadow
+modules.water-mark.scale=Scale
+
+modules.particles=Particles Hider
+modules.particles.show-first-person=First Person Particles
+modules.particles.block-breaking=Block Breaking Particles
+
+modules.minimal-bobbing=Minimal Bobbing
+
+modules.item-scale=Item Scale
+modules.item-scale.show-first-person=Show First Person
+modules.item-scale.instant-axe=Instant Axe
+modules.item-scale.instant-axe-scale=Instant Axe Scale
+modules.item-scale.instant-axe-x-rotation=Instant Axe X Rot
+modules.item-scale.instant-axe-y-rotation=Instant Axe Y Rot
+modules.item-scale.instant-axe-z-rotation=Instant Axe Z Rot
+modules.item-scale.kb-ball=KB Ball
+modules.item-scale.kb-ball-scale=KB Ball Scale
+modules.item-scale.kb-ball-x-rotation=KB Ball X Rot
+modules.item-scale.kb-ball-y-rotation=KB Ball Y Rot
+modules.item-scale.kb-ball-z-rotation=KB Ball Z Rot
+modules.item-scale.totem=Totem
+modules.item-scale.totem-scale=Totem Scale
+modules.item-scale.totem-x-rotation=Totem X Rot
+modules.item-scale.totem-y-rotation=Totem Y Rot
+modules.item-scale.totem-z-rotation=Totem Z Rot
+modules.item-scale.enchanted-golden-apple=Enchanted GApple
+modules.item-scale.enchanted-golden-apple-scale=Enchanted GApple Scale
+modules.item-scale.enchanted-golden-apple-x-rotation=Enchanted GApple X Rot
+modules.item-scale.enchanted-golden-apple-y-rotation=Enchanted GApple Y Rot
+modules.item-scale.enchanted-golden-apple-z-rotation=Enchanted GApple Z Rot
+modules.item-scale.power-5-bow=Power 5 Bow
+modules.item-scale.power-5-bow-scale=Power 5 Bow Scale
+modules.item-scale.power-5-bow-x-rotation=Power 5 Bow X Rot
+modules.item-scale.power-5-bow-y-rotation=Power 5 Bow Y Rot
+modules.item-scale.power-5-bow-z-rotation=Power 5 Bow Z Rot
+modules.item-scale.punch-3-bow=Punch 3 Bow
+modules.item-scale.punch-3-bow-scale=Punch 3 Bow Scale
+modules.item-scale.punch-3-bow-x-rotation=Punch 3 Bow X Rot
+modules.item-scale.punch-3-bow-y-rotation=Punch 3 Bow Y Rot
+modules.item-scale.punch-3-bow-z-rotation=Punch 3 Bow Z Rot
+modules.item-scale.flame-bow=Flame Bow
+modules.item-scale.flame-bow-scale=Flame Bow Scale
+modules.item-scale.flame-bow-x-rotation=Flame Bow X Rot
+modules.item-scale.flame-bow-y-rotation=Flame Bow Y Rot
+modules.item-scale.flame-bow-z-rotation=Flame Bow Z Rot
+modules.item-scale.end-crystal=End Crystal
+modules.item-scale.end-crystal-scale=End Crystal Scale
+modules.item-scale.end-crystal-x-rotation=End Crystal X Rot
+modules.item-scale.end-crystal-y-rotation=End Crystal Y Rot
+modules.item-scale.end-crystal-z-rotation=End Crystal Z Rot
+modules.item-scale.sharp-8=Sharpness 8
+modules.item-scale.sharp-8-scale=Sharpness 8 Scale
+modules.item-scale.sharp-8-x-rotation=Sharpness 8 X Rot
+modules.item-scale.sharp-8-y-rotation=Sharpness 8 Y Rot
+modules.item-scale.sharp-8-z-rotation=Sharpness 8 Z Rot
+
+modules.item-physics=Item Physics
+
+modules.hit-boxes=Hit Boxes
+modules.hit-boxes.color=Color
+modules.hit-boxes.show-eye-vector=Show Eye Vector
+modules.hit-boxes.eye-vector-color=Eye Vector Color
+modules.hit-boxes.players=Players
+modules.hit-boxes.items=Items
+modules.hit-boxes.mobs=Mobs
+modules.hit-boxes.projectiles=Projectiles
+modules.hit-boxes.vehicles=Vehicles
+
+modules.full-bright=Full Bright
+modules.full-bright.gamma=Gamma
+
+modules.motion-blur=Motion Blur
+modules.motion-blur.strength=Strength
+
+modules.custom-sky=Custom Sky

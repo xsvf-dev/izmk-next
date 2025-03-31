@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.parchmentmc.org' }
+        maven { url 'https://lss233.littleservice.cn/repositories/minecraft/' }
+        maven { url 'https://maven.minecraftforge.net/' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/spring' }
+        maven { url 'https://maven.aliyun.com/repository/apache-snapshots' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin-snapshots' }
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'izmk-next'
+include 'izmk-loader'
+include 'izmk-common'
+include 'izmk-core'
