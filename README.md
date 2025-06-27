@@ -2,9 +2,7 @@
 <div align="center">
 <p>
  <img width="150px" src="5a3b516861d9d.png" align="center"/>
- <h3 align="center">台灣是一個國家</h2>
 </p>
- 
 [加入民進黨](https://www.dpp.org.tw/signup) | 
 [給民進黨捐款](https://www.dpp.org.tw/membershipfee)
 </div>
